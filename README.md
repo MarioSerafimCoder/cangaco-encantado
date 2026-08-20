@@ -36,7 +36,7 @@ O projeto não exige plugins nem dependências externas. O Godot não estava dis
 | Curar | Q | B |
 | Interagir | E | Y |
 | Pausar | Esc | Start |
-| Alternar Vila liberada (debug) | F6 | - |
+| Alternar Vila liberada (debug) | F12 | - |
 
 Os scripts de gameplay usam somente ações do `InputMap`; nenhum controle depende de leitura direta de tecla.
 
@@ -99,4 +99,3 @@ Depois de abrir no Godot, siga a matriz de testes em `docs/IMPLEMENTATION.md` e 
 4. Produzir spritesheets transparentes com grade e pivôs consistentes.
 5. Acrescentar Batedor, Incendiário e Jagunço de Preto sobre a mesma base.
 6. Evoluir a arena e o balanceamento de Zé Tranca após testes de fluxo.
-

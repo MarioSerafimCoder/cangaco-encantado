@@ -70,7 +70,7 @@ Postura se regenera fora da quebra. Ao chegar a zero, o alvo entra em `STAGGER` 
 
 ## Mundo e persistência
 
-`WorldState` guarda estados de região e flags sistêmicas. A Vila começa `OCCUPIED`; derrotar Zé Tranca ou apertar F6 chama `liberate_vila()`.
+`WorldState` guarda estados de região e flags sistêmicas. A Vila começa `OCCUPIED`; derrotar Zé Tranca ou apertar F12 chama `liberate_vila()`.
 
 A mudança é reativa:
 
@@ -120,7 +120,7 @@ Quando o Godot 4.x estiver disponível:
 13. Abrir o atalho do Armazém e usá-lo para voltar à Praça.
 14. Chegar à arena sem dash/wall jump/double jump.
 15. Derrotar Zé Tranca, salvar, reiniciar e confirmar a Vila `LIBERATED`.
-16. Repetir o teste com F6 para validar a rota de debug.
+16. Repetir o teste com F12 para validar a rota de debug.
 
 ## Limitações conhecidas
 
@@ -129,4 +129,3 @@ Quando o Godot 4.x estiver disponível:
 - Não há animação, áudio, hitstop, partículas nem balanceamento final.
 - Batedor, Incendiário e Jagunço de Preto possuem espaço na arquitetura, mas ainda não têm IA própria.
 - A arte conceitual precisa ser convertida em spritesheets transparentes antes do uso em produção.
-

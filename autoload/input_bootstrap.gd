@@ -14,7 +14,7 @@ const KEYBOARD_BINDINGS := {
 	"heal": [KEY_Q],
 	"interact": [KEY_E],
 	"pause": [KEY_ESCAPE],
-	"debug_liberate": [KEY_F6],
+	"debug_liberate": [KEY_F12],
 }
 
 const JOYPAD_BUTTON_BINDINGS := {
