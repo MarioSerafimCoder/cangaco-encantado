@@ -132,6 +132,9 @@ func _on_world_state_changed(region_id: StringName, state: StringName) -> void:
 
 
 func _draw() -> void:
+	var visual := get_node_or_null("Visual") as Sprite2D
+	if visual != null and visual.texture != null:
+		return
 	var color := Color("a73d31")
 	if data.behavior == EnemyData.Behavior.RANGED:
 		color = Color("663f8c")

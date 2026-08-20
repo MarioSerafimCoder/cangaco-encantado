@@ -8,6 +8,7 @@ var heal_label: Label
 var room_label: Label
 var state_label: Label
 var world_label: Label
+var boss_label: Label
 var help_label: Label
 var player: NiloPlayer
 var room_fade := 0.0
@@ -20,6 +21,10 @@ func _ready() -> void:
 	heal_label = _make_label(Vector2(6.0, 40.0), 8)
 	world_label = _make_label(Vector2(226.0, 5.0), 8)
 	state_label = _make_label(Vector2(226.0, 16.0), 7)
+	boss_label = _make_label(Vector2(90.0, 34.0), 8)
+	boss_label.size = Vector2(140.0, 14.0)
+	boss_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	boss_label.visible = false
 	room_label = _make_label(Vector2(58.0, 58.0), 12)
 	room_label.size = Vector2(204.0, 20.0)
 	room_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -42,8 +47,20 @@ func _process(delta: float) -> void:
 		player = get_tree().get_first_node_in_group("player") as NiloPlayer
 	if player != null:
 		state_label.text = "%s  vx:%d vy:%d" % [player.state_machine.state_name(), int(player.velocity.x), int(player.velocity.y)]
+		_update_boss_bar()
 	room_fade = maxf(0.0, room_fade - delta)
 	room_label.modulate.a = minf(1.0, room_fade)
+
+
+func _update_boss_bar() -> void:
+	var boss := get_tree().get_first_node_in_group("bosses") as EnemyBase
+	if boss == null or not is_instance_valid(boss) or player.global_position.distance_to(boss.global_position) > 300.0:
+		boss_label.visible = false
+		return
+	boss_label.visible = true
+	var filled := "■".repeat(boss.health.current_health)
+	var empty := "·".repeat(boss.health.max_health - boss.health.current_health)
+	boss_label.text = "ZÉ TRANCA  %s%s" % [filled, empty]
 
 
 func _make_label(position_value: Vector2, font_size: int) -> Label:

@@ -144,6 +144,9 @@ func _on_died() -> void:
 
 
 func _draw() -> void:
+	var visual := get_node_or_null("Visual") as Sprite2D
+	if visual != null and visual.texture != null:
+		return
 	var flash := invulnerability_remaining > 0.0 and int(invulnerability_remaining * 18.0) % 2 == 0
 	if flash:
 		return
@@ -152,4 +155,3 @@ func _draw() -> void:
 	draw_rect(Rect2(-6.0, top, 12.0, body_height), Color("c58b45"), true)
 	draw_rect(Rect2(-7.0, top - 3.0, 14.0, 4.0), Color("7d3328"), true)
 	draw_line(Vector2(0.0, top + 5.0), Vector2(facing * 8.0, top + 5.0), Color("f4d35e"), 2.0)
-
