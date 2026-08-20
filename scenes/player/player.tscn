@@ -1,0 +1,63 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/player/player_config.tres" id="2"]
+[ext_resource type="Script" path="res://scripts/components/health_component.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/player/player_movement.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/player/player_combat.gd" id="5"]
+[ext_resource type="Script" path="res://scripts/player/player_state_machine.gd" id="6"]
+[ext_resource type="Script" path="res://scripts/combat/hurtbox.gd" id="7"]
+[ext_resource type="Resource" path="res://resources/weapons/revolver.tres" id="8"]
+[ext_resource type="Resource" path="res://resources/weapons/shotgun.tres" id="9"]
+[ext_resource type="Resource" path="res://resources/weapons/machete.tres" id="10"]
+
+[sub_resource type="RectangleShape2D" id="PlayerShape"]
+size = Vector2(12, 24)
+
+[sub_resource type="RectangleShape2D" id="HurtShape"]
+size = Vector2(12, 24)
+
+[node name="Nilo" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1")
+config = ExtResource("2")
+
+[node name="BodyCollision" type="CollisionShape2D" parent="."]
+shape = SubResource("PlayerShape")
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("3")
+max_health = 5
+current_health = 5
+
+[node name="PlayerMovement" type="Node" parent="."]
+script = ExtResource("4")
+config = ExtResource("2")
+
+[node name="PlayerCombat" type="Node" parent="."]
+script = ExtResource("5")
+revolver_data = ExtResource("8")
+shotgun_data = ExtResource("9")
+machete_data = ExtResource("10")
+
+[node name="PlayerStateMachine" type="Node" parent="."]
+script = ExtResource("6")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+script = ExtResource("7")
+team = "player"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("HurtShape")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, -12)
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+drag_horizontal_enabled = true
+drag_vertical_enabled = true
+drag_left_margin = 0.18
+drag_top_margin = 0.22
+drag_right_margin = 0.18
+drag_bottom_margin = 0.22

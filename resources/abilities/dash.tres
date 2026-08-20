@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="AbilityData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/ability_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"dash"
+display_name = "Passo da Poeira"
+source_region = &"feira_do_sol"
+enabled_at_start = false
+exploration_use = "Cruza vãos e obstáculos baixos."
+combat_use = "Esquiva e aproximação."
+

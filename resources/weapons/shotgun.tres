@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/weapon_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"shotgun"
+display_name = "Espingarda"
+magazine_size = 2
+fire_interval = 0.45
+reload_time = 1.2
+damage = 2
+posture_damage = 3.2
+range = 82.0
+projectile_speed = 430.0
+knockback = 145.0
+recoil = 42.0
+

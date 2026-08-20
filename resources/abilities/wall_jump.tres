@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="AbilityData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/ability_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"wall_jump"
+display_name = "Passo da Pedra"
+source_region = &"pedra_seca"
+enabled_at_start = false
+exploration_use = "Impulso em paredes válidas; abre poços e torres marcados."
+combat_use = "Reposicionamento em arenas verticais."
+

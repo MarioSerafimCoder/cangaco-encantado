@@ -1,0 +1,72 @@
+extends Node
+
+const KEYBOARD_BINDINGS := {
+	"move_left": [KEY_A, KEY_LEFT],
+	"move_right": [KEY_D, KEY_RIGHT],
+	"move_up": [KEY_W, KEY_UP],
+	"move_down": [KEY_S, KEY_DOWN],
+	"jump": [KEY_SPACE],
+	"crouch": [KEY_CTRL],
+	"melee": [KEY_J],
+	"shoot_revolver": [KEY_K],
+	"shoot_shotgun": [KEY_L],
+	"aim": [KEY_SHIFT],
+	"heal": [KEY_Q],
+	"interact": [KEY_E],
+	"pause": [KEY_ESCAPE],
+	"debug_liberate": [KEY_F6],
+}
+
+const JOYPAD_BUTTON_BINDINGS := {
+	"jump": JOY_BUTTON_A,
+	"crouch": JOY_BUTTON_LEFT_STICK,
+	"melee": JOY_BUTTON_X,
+	"shoot_shotgun": JOY_BUTTON_RIGHT_SHOULDER,
+	"heal": JOY_BUTTON_B,
+	"interact": JOY_BUTTON_Y,
+	"pause": JOY_BUTTON_START,
+}
+
+
+func _enter_tree() -> void:
+	for action in KEYBOARD_BINDINGS:
+		_ensure_action(action)
+		for keycode in KEYBOARD_BINDINGS[action]:
+			_add_key_if_missing(action, keycode)
+	for action in JOYPAD_BUTTON_BINDINGS:
+		_ensure_action(action)
+		_add_joy_button_if_missing(action, JOYPAD_BUTTON_BINDINGS[action])
+	_add_joy_axis_if_missing("move_left", JOY_AXIS_LEFT_X, -1.0)
+	_add_joy_axis_if_missing("move_right", JOY_AXIS_LEFT_X, 1.0)
+	_add_joy_axis_if_missing("move_up", JOY_AXIS_LEFT_Y, -1.0)
+	_add_joy_axis_if_missing("move_down", JOY_AXIS_LEFT_Y, 1.0)
+	_add_joy_axis_if_missing("aim", JOY_AXIS_TRIGGER_LEFT, 1.0)
+	_add_joy_axis_if_missing("shoot_revolver", JOY_AXIS_TRIGGER_RIGHT, 1.0)
+
+
+func _ensure_action(action: StringName) -> void:
+	if not InputMap.has_action(action):
+		InputMap.add_action(action, 0.3)
+
+
+func _add_key_if_missing(action: StringName, keycode: Key) -> void:
+	var event := InputEventKey.new()
+	event.physical_keycode = keycode
+	if not InputMap.action_has_event(action, event):
+		InputMap.action_add_event(action, event)
+
+
+func _add_joy_button_if_missing(action: StringName, button: JoyButton) -> void:
+	var event := InputEventJoypadButton.new()
+	event.button_index = button
+	if not InputMap.action_has_event(action, event):
+		InputMap.action_add_event(action, event)
+
+
+func _add_joy_axis_if_missing(action: StringName, axis: JoyAxis, value: float) -> void:
+	_ensure_action(action)
+	var event := InputEventJoypadMotion.new()
+	event.axis = axis
+	event.axis_value = value
+	if not InputMap.action_has_event(action, event):
+		InputMap.action_add_event(action, event)
