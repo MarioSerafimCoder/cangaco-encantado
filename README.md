@@ -20,7 +20,7 @@ Esta entrega é a fundação técnica e o primeiro graybox jogável. A prioridad
 3. Importe o arquivo `project.godot` desta pasta.
 4. Execute a cena principal com **F6/F5**.
 
-O projeto não exige plugins nem dependências externas. O Godot não estava disponível no computador em que o bootstrap foi criado; por isso a estrutura passou por validação estática, mas o primeiro teste de runtime ainda precisa ser feito no editor.
+O projeto não exige plugins nem dependências externas. Ele foi importado e inicializado com sucesso no Godot 4.7.1 estável: todos os scripts foram compilados e a cena principal completou um smoke test headless de 180 frames sem erros.
 
 ## Controles
 
@@ -89,11 +89,11 @@ No PowerShell:
 powershell -ExecutionPolicy Bypass -File tools/validate_project.ps1
 ```
 
-Depois de abrir no Godot, siga a matriz de testes em `docs/IMPLEMENTATION.md` e corrija qualquer aviso do parser antes de iniciar polimento.
+Depois de abrir no Godot, siga a matriz de testes manuais em `docs/IMPLEMENTATION.md` antes de iniciar polimento.
 
 ## Roadmap imediato
 
-1. Rodar o projeto no Godot 4.x e ajustar qualquer diferença de versão do parser/API.
+1. Fazer o primeiro playtest manual completo com teclado e gamepad.
 2. Fazer uma rodada de game-feel com controle: aceleração, janela de combo, recoil, hitstop e câmera.
 3. Separar salas em cenas individuais com transições e `CameraBounds` próprios.
 4. Produzir spritesheets transparentes com grade e pivôs consistentes.

@@ -88,7 +88,7 @@ func _fire_shotgun() -> void:
 	shotgun_ammo -= 1
 	cooldown = shotgun_data.fire_interval
 	player.state_machine.request(PlayerStateMachine.State.SHOTGUN, 0.18)
-	var direction := player.get_aim_direction()
+	var direction: Vector2 = player.get_aim_direction()
 	for angle in [-0.10, 0.0, 0.10]:
 		player.spawn_projectile(shotgun_data, direction.rotated(angle), &"shotgun")
 	player.velocity.x -= direction.x * shotgun_data.recoil

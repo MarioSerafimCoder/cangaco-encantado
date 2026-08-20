@@ -103,7 +103,7 @@ O projeto usa viewport 320x180, `canvas_items`, filtro nearest e snap 2D. As ima
 
 ## Matriz de teste de runtime
 
-Quando o Godot 4.x estiver disponível:
+O projeto foi importado no Godot 4.7.1 e completou um smoke test headless de 180 frames sem erros. Para validar sensação de jogo e interação visual:
 
 1. Abrir `project.godot` e confirmar zero erros de parser/carregamento.
 2. Iniciar na Casa de Nilo e validar teclado + gamepad.
@@ -124,7 +124,7 @@ Quando o Godot 4.x estiver disponível:
 
 ## Limitações conhecidas
 
-- O executável Godot não estava disponível durante a criação; a execução real permanece pendente.
+- A importação, compilação e inicialização automatizada passaram; o playtest humano completo ainda está pendente.
 - O graybox ainda é uma faixa única, não um sistema de streaming de salas.
 - Não há animação, áudio, hitstop, partículas nem balanceamento final.
 - Batedor, Incendiário e Jagunço de Preto possuem espaço na arquitetura, mas ainda não têm IA própria.
