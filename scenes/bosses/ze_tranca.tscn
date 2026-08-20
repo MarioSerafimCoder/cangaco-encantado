@@ -1,0 +1,47 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/bosses/ze_tranca.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/bosses/ze_tranca.tres" id="2"]
+[ext_resource type="Script" path="res://scripts/components/health_component.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/components/posture_component.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_detection.gd" id="5"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_movement.gd" id="6"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_state_machine.gd" id="7"]
+[ext_resource type="Script" path="res://scripts/combat/hurtbox.gd" id="8"]
+
+[sub_resource type="RectangleShape2D" id="BodyShape"]
+size = Vector2(20, 32)
+
+[sub_resource type="RectangleShape2D" id="HurtShape"]
+size = Vector2(20, 32)
+
+[node name="ZeTranca" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1")
+data = ExtResource("2")
+
+[node name="BodyCollision" type="CollisionShape2D" parent="."]
+shape = SubResource("BodyShape")
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("3")
+
+[node name="PostureComponent" type="Node" parent="."]
+script = ExtResource("4")
+
+[node name="Detection" type="Node" parent="."]
+script = ExtResource("5")
+
+[node name="Movement" type="Node" parent="."]
+script = ExtResource("6")
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("7")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+script = ExtResource("8")
+team = "enemy"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("HurtShape")

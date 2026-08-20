@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"saqueador"
+display_name = "Saqueador"
+behavior = 0
+max_health = 3
+max_posture = 3.5
+move_speed = 48.0
+detection_range = 145.0
+attack_range = 25.0
+attack_damage = 1
+attack_cooldown = 0.9
+stagger_duration = 1.2
+
