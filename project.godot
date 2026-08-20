@@ -1,0 +1,60 @@
+; Engine configuration file.
+; Cangaco Encantado - Godot 4.x
+config_version=5
+
+[application]
+
+config/name="Cangaço Encantado"
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.3", "GL Compatibility")
+
+[autoload]
+
+InputBootstrap="*res://autoload/input_bootstrap.gd"
+EventBus="*res://autoload/event_bus.gd"
+GameState="*res://autoload/game_state.gd"
+WorldState="*res://autoload/world_state.gd"
+SaveManager="*res://autoload/save_manager.gd"
+
+[display]
+
+window/size/viewport_width=320
+window/size/viewport_height=180
+window/size/window_width_override=960
+window/size/window_height_override=540
+window/stretch/mode="canvas_items"
+
+[input]
+
+move_left={"deadzone": 0.3, "events": []}
+move_right={"deadzone": 0.3, "events": []}
+move_up={"deadzone": 0.3, "events": []}
+move_down={"deadzone": 0.3, "events": []}
+jump={"deadzone": 0.3, "events": []}
+crouch={"deadzone": 0.3, "events": []}
+melee={"deadzone": 0.3, "events": []}
+shoot_revolver={"deadzone": 0.3, "events": []}
+shoot_shotgun={"deadzone": 0.3, "events": []}
+aim={"deadzone": 0.3, "events": []}
+heal={"deadzone": 0.3, "events": []}
+interact={"deadzone": 0.3, "events": []}
+pause={"deadzone": 0.3, "events": []}
+debug_liberate={"deadzone": 0.3, "events": []}
+
+[layer_names]
+
+2d_physics/layer_1="World"
+2d_physics/layer_2="Actors"
+2d_physics/layer_3="Hurtboxes"
+2d_physics/layer_4="Hitboxes"
+2d_physics/layer_5="Interactables"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/canvas_textures/default_texture_filter=0
+2d/snap/snap_2d_transforms_to_pixel=true
+2d/snap/snap_2d_vertices_to_pixel=true
+environment/defaults/default_clear_color=Color(0.055, 0.039, 0.035, 1)
+
