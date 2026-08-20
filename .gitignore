@@ -32,3 +32,4 @@ screenshots/
 # Versioned copies live under assets/source/reference and docs/source.
 /*.png
 /*.pdf
+/*.png.import
