@@ -24,6 +24,8 @@ O projeto não exige plugins nem dependências externas. Ele foi importado e ini
 
 ## Controles
 
+Consulte também o [manual detalhado de teclado](docs/CONTROLS.md).
+
 | Ação | Teclado | Gamepad |
 |---|---|---|
 | Mover | A/D ou setas | Analógico esquerdo |
@@ -51,6 +53,7 @@ Os scripts de gameplay usam somente ações do `InputMap`; nenhum controle depen
 - Componentes reutilizáveis de vida, postura, hurtbox, hitbox, detecção, movimento e state machine.
 - Saqueador melee e Pistoleiro ranged funcionais em graybox.
 - Arquitetura inicial de Zé Tranca com tiro direto, tiro baixo, coronhada, reposicionamento, rajada e duas intensidades.
+- Sprites MVP para Nilo, Saqueador, Pistoleiro e Zé Tranca, com recorte por estado, animação simples e transparência por shader.
 - As 13 áreas da Vila do Umbuzeiro em um percurso contínuo de graybox.
 - Checkpoint na Igreja Velha, atalho Armazém-Praça, Poço parcialmente bloqueado e saída para Pedra Seca.
 - Estados `OCCUPIED` e `LIBERATED`, com incêndios/inimigos/barricadas e retorno seguro da Vila.
@@ -79,7 +82,7 @@ res://
 
 ## Material visual
 
-As 15 imagens encontradas no workspace foram copiadas byte a byte para `assets/source/reference/`. Elas são folhas conceituais RGB, com fundo incorporado e quadros irregulares; ainda precisam de limpeza e preparação antes de virar spritesheets de produção. O graybox usa placeholders desenhados em GDScript para não misturar arte conceitual com arte pronta.
+As 15 imagens encontradas no workspace foram copiadas byte a byte para `assets/source/reference/`. Quatro folhas selecionadas também possuem cópias de produção em `assets/characters`, `assets/enemies` e `assets/bosses`. O MVP recorta essas folhas em runtime e remove o fundo claro com shader, preservando os arquivos originais. Esse tratamento é provisório: spritesheets finais ainda precisarão de alpha, grade e pivôs consistentes.
 
 ## Validação
 
