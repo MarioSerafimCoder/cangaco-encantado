@@ -2,7 +2,7 @@
 
 Metroidvania 2D de ação e exploração inspirado no sertão brasileiro e no folclore nordestino. Nilo retorna à Vila do Umbuzeiro depois de um ataque da Companhia do Sol Negro e inicia uma jornada humana de vingança que, pouco a pouco, passa a envolver os Encantados e a restauração do mundo.
 
-Esta entrega é a fundação técnica e o primeiro graybox jogável. A prioridade é **gameplay > arquitetura > testabilidade > arte**.
+Esta entrega é um vertical slice jogável com graybox estilizado. A prioridade continua sendo **gameplay > arquitetura > testabilidade > arte**, agora com uma camada consistente de apresentação e game feel.
 
 ## Stack
 
@@ -38,7 +38,8 @@ Consulte também o [manual detalhado de teclado](docs/CONTROLS.md).
 | Curar | Q | B |
 | Interagir | E | Y |
 | Pausar | Esc | Start |
-| Alternar Vila liberada (debug) | F12 | - |
+| Mostrar/ocultar debug técnico | F3 | - |
+| Liberar a Vila (debug) | F12 | - |
 
 Os scripts de gameplay usam somente ações do `InputMap`; nenhum controle depende de leitura direta de tecla.
 
@@ -53,7 +54,11 @@ Os scripts de gameplay usam somente ações do `InputMap`; nenhum controle depen
 - Componentes reutilizáveis de vida, postura, hurtbox, hitbox, detecção, movimento e state machine.
 - Saqueador melee e Pistoleiro ranged funcionais em graybox.
 - Arquitetura inicial de Zé Tranca com tiro direto, tiro baixo, coronhada, reposicionamento, rajada e duas intensidades.
-- Sprites MVP para Nilo, Saqueador, Pistoleiro e Zé Tranca, com recorte por estado, animação simples e transparência por shader.
+- Nilo chibi provisório em grade real de 4x4, corrida de quatro frames sincronizada à velocidade e poses próprias por estado.
+- Poeira de corrida/pouso, muzzle flash, arco do facão, impacto, cura, recoil visual e micro shake de câmera.
+- HUD estilizado com vida, munições, Cabaça, barra de chefe e debug técnico opcional em F3.
+- Vila com céu tonal, serras, construções, cercas, chão tratado e landmarks procedurais para Igreja, Praça, Poço e Posto.
+- Sprites MVP para Saqueador, Pistoleiro e Zé Tranca, ainda recortados das folhas conceituais com transparência provisória por shader.
 - As 13 áreas da Vila do Umbuzeiro em um percurso contínuo de graybox.
 - Checkpoint na Igreja Velha, atalho Armazém-Praça, Poço parcialmente bloqueado e saída para Pedra Seca.
 - Estados `OCCUPIED` e `LIBERATED`, com incêndios/inimigos/barricadas e retorno seguro da Vila.
@@ -75,14 +80,16 @@ res://
     enemies/                 base reutilizável e componentes de IA
     bosses/                  comportamento de Zé Tranca
     world/                   graybox, salas, checkpoint, atalho e gates
-    ui/                      HUD de protótipo
+    ui/                      HUD de jogo e camada de debug opcional
   docs/                      decisões e fontes de design
   tools/                     validação estática local
 ```
 
 ## Material visual
 
-As 15 imagens encontradas no workspace foram copiadas byte a byte para `assets/source/reference/`. Quatro folhas selecionadas também possuem cópias de produção em `assets/characters`, `assets/enemies` e `assets/bosses`. O MVP recorta essas folhas em runtime e remove o fundo claro com shader, preservando os arquivos originais. Esse tratamento é provisório: spritesheets finais ainda precisarão de alpha, grade e pivôs consistentes.
+As 15 imagens encontradas no workspace foram copiadas byte a byte para `assets/source/reference/`. O MVP ainda recorta as folhas dos inimigos em runtime e remove o fundo claro com shader. Nilo usa um spritesheet chibi RGBA separado, com grade 4x4 e células de 64x64 px. O personagem é um placeholder visual; a versão narrativa definitiva ainda precisará preservar a identidade de Nilo.
+
+As decisões desta rodada estão resumidas em [Polimento visual e game feel](docs/VISUAL_POLISH.md).
 
 ## Validação
 
@@ -92,7 +99,9 @@ No PowerShell:
 powershell -ExecutionPolicy Bypass -File tools/validate_project.ps1
 ```
 
-Depois de abrir no Godot, siga a matriz de testes manuais em `docs/IMPLEMENTATION.md` antes de iniciar polimento.
+O teste automatizado específico de game feel também pode ser executado com a cena `res://tools/game_feel_validation.tscn`. Ele valida os quatro frames de corrida, o hurtbox agachado e o disparo semiautomático.
+
+As capturas atuais do jogo ficam em [`prints_do_jogo/`](prints_do_jogo/README.md). Depois de mudanças visuais grandes, execute `res://tools/mvp_visual_test.tscn` para sobrescrever os prints oficiais com o estado mais recente da build.
 
 ## Roadmap imediato
 

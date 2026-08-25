@@ -61,7 +61,7 @@ Soltar o botão reduz a velocidade ascendente, produzindo salto variável. Agach
 
 Todos os ataques geram `AttackHitbox` ou `CombatProjectile` com payload uniforme: time, dano, dano de postura, knockback, identificador e fonte.
 
-- Revólver: 6 tiros, 0,20 s, recarga de 0,85 s, 1 dano e 0,75 de postura.
+- Revólver: semiautomático, 6 tiros, intervalo mínimo de 0,20 s, recarga de 0,85 s, 1 dano e 0,75 de postura.
 - Espingarda: 2 tiros, 0,45 s, recarga de 1,20 s, 3 projéteis curtos, 2 de dano, 3,2 de postura e recoil.
 - Facão: combo de três passos; o terceiro ganha dano/postura/knockback. `UP` cria hitbox vertical; `DOWN` no ar cria hitbox descendente e confirma bounce.
 - Cura: 2 cargas, 2 HP, 1,10 s. A carga só é consumida ao completar a animação lógica.
@@ -99,7 +99,7 @@ O Poço contém uma descida visual parcial e bloqueio explícito. O atalho do Ar
 
 ## Arte e pixel-perfect
 
-O projeto usa viewport 320x180, `canvas_items`, filtro nearest e snap 2D. As imagens de referência foram copiadas sem alteração, porém não têm alpha e não formam grades regulares. Por isso nenhuma é importada automaticamente como animação do gameplay nesta etapa.
+O projeto usa viewport 320x180, `canvas_items`, filtro nearest e snap 2D. Nilo usa provisoriamente uma folha chibi RGBA de 256x256 px em grade 4x4; inimigos e chefe ainda dependem das folhas conceituais irregulares e do shader de remoção de branco. A ambientação e os VFX desta etapa são desenhados proceduralmente para enriquecer o graybox sem criar dependência de arte final.
 
 ## Matriz de teste de runtime
 
@@ -111,7 +111,7 @@ O projeto foi importado no Godot 4.7.1 e completou um smoke test headless de 180
 4. Pular 0,10 s depois de sair de uma borda e 0,12 s antes de aterrissar.
 5. Comparar salto curto e salto segurado; testar fast fall.
 6. Agachar e atravessar/encostar nos blocos sem atravessar o chão.
-7. Gastar 6 tiros, observar recarga de 0,85 s e munição infinita.
+7. Pressionar K seis vezes, observar um tiro por pressão, recarga de 0,85 s e munição infinita.
 8. Gastar 2 cartuchos, observar recarga de 1,20 s, dispersão e recoil.
 9. Executar combo 1-2-3, golpe para cima e golpe descendente com bounce.
 10. Receber dano durante a cura e confirmar que a carga não foi consumida.
@@ -126,6 +126,6 @@ O projeto foi importado no Godot 4.7.1 e completou um smoke test headless de 180
 
 - A importação, compilação e inicialização automatizada passaram; o playtest humano completo ainda está pendente.
 - O graybox ainda é uma faixa única, não um sistema de streaming de salas.
-- Não há animação, áudio, hitstop, partículas nem balanceamento final.
+- Ainda não há áudio, hitstop calibrado nem balanceamento final; animação e VFX permanecem provisórios.
 - Batedor, Incendiário e Jagunço de Preto possuem espaço na arquitetura, mas ainda não têm IA própria.
 - A arte conceitual precisa ser convertida em spritesheets transparentes antes do uso em produção.

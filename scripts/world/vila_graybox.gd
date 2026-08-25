@@ -25,6 +25,8 @@ var room_bounds: Dictionary = {}
 var solid_rects: Array[Rect2] = []
 var world_width := 0.0
 var player: NiloPlayer
+var _visual_time := 0.0
+var _visual_tick := 0.0
 
 
 func _ready() -> void:
@@ -34,7 +36,12 @@ func _ready() -> void:
 	queue_redraw()
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	_visual_time += delta
+	_visual_tick += delta
+	if _visual_tick >= 0.08:
+		_visual_tick = 0.0
+		queue_redraw()
 	if player == null:
 		player = get_tree().get_first_node_in_group("player") as NiloPlayer
 	if player != null and player.global_position.y > 280.0 and not player.is_dead:
@@ -152,33 +159,158 @@ func _draw() -> void:
 	for index in ROOMS.size():
 		var room: Dictionary = ROOMS[index]
 		var bounds: Rect2 = room_bounds[room.id]
-		var base_color := Color("3f332e") if index % 2 == 0 else Color("493a32")
-		if liberated:
-			base_color = Color("35483d") if index % 2 == 0 else Color("3d5145")
-		draw_rect(bounds, base_color, true)
-		draw_rect(bounds.grow(-2.0), Color(0.85, 0.7, 0.45, 0.22), false, 2.0)
-		draw_string(ThemeDB.fallback_font, bounds.position + Vector2(10.0, 15.0), room.name, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 9, Color("f6e7cb"))
-		draw_string(ThemeDB.fallback_font, bounds.position + Vector2(10.0, 27.0), room.function, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 7, Color("d0b79b"))
+		_draw_room_background(bounds, index, liberated)
 	for solid in solid_rects:
-		draw_rect(solid, Color("7a5c3e") if not liberated else Color("6f7750"), true)
+		_draw_styled_solid(solid, liberated)
 	_draw_landmarks(liberated)
+	_draw_world_state_atmosphere(liberated)
+
+
+func _draw_room_background(bounds: Rect2, index: int, liberated: bool) -> void:
+	var sky_top := Color("6e7d82") if liberated else Color("55464a")
+	var sky_bottom := Color("d7a25f") if liberated else Color("9a6047")
+	for band in 6:
+		var ratio := float(band) / 5.0
+		var band_rect := Rect2(bounds.position.x, ratio * 25.0, bounds.size.x, 26.0)
+		draw_rect(band_rect, sky_top.lerp(sky_bottom, ratio), true)
+	var sun_position := Vector2(bounds.position.x + bounds.size.x * (0.78 if index % 2 == 0 else 0.2), 38.0)
+	draw_circle(sun_position, 11.0, Color("f3c56d") if liberated else Color("b76849"))
+	draw_circle(sun_position, 7.0, Color("ffe09a") if liberated else Color("d28457"))
+
+	var far_color := Color("59635d") if liberated else Color("493d42")
+	var mountain_points := PackedVector2Array([Vector2(bounds.position.x, 126.0)])
+	var segment := bounds.size.x / 6.0
+	for ridge in 7:
+		var ridge_height := 72.0 + float((ridge * 17 + index * 11) % 33)
+		mountain_points.append(Vector2(bounds.position.x + ridge * segment, ridge_height))
+	mountain_points.append(Vector2(bounds.end.x, 150.0))
+	mountain_points.append(Vector2(bounds.position.x, 150.0))
+	draw_colored_polygon(mountain_points, far_color)
+
+	var near_color := Color("3f5147") if liberated else Color("3d3032")
+	var near_points := PackedVector2Array([Vector2(bounds.position.x, 150.0)])
+	for ridge in 7:
+		var near_height := 108.0 + float((ridge * 13 + index * 9) % 24)
+		near_points.append(Vector2(bounds.position.x + ridge * segment, near_height))
+	near_points.append(Vector2(bounds.end.x, 150.0))
+	draw_colored_polygon(near_points, near_color)
+
+	_draw_background_structures(bounds, index, liberated)
+	draw_line(Vector2(bounds.end.x, 20.0), Vector2(bounds.end.x, 150.0), Color(0.95, 0.75, 0.46, 0.08), 1.0)
+
+
+func _draw_background_structures(bounds: Rect2, index: int, liberated: bool) -> void:
+	var wall_color := Color("80634a") if liberated else Color("65483e")
+	var roof_color := Color("4b332b") if liberated else Color("38262a")
+	var window_color := Color("e7b85f") if liberated else Color("51292b")
+	var building_count := 2 if bounds.size.x <= 320.0 else 4
+	for building in building_count:
+		var x := bounds.position.x + 28.0 + building * (bounds.size.x - 56.0) / float(building_count)
+		var width := 48.0 + float((building + index) % 3) * 8.0
+		var height := 22.0 + float((building * 7 + index) % 16)
+		draw_rect(Rect2(x, 150.0 - height, width, height), wall_color, true)
+		var roof := PackedVector2Array([
+			Vector2(x - 5.0, 150.0 - height),
+			Vector2(x + width * 0.5, 142.0 - height),
+			Vector2(x + width + 5.0, 150.0 - height),
+		])
+		draw_colored_polygon(roof, roof_color)
+		draw_rect(Rect2(x + width * 0.18, 138.0 - height * 0.45, 6.0, 7.0), window_color, true)
+		draw_rect(Rect2(x + width * 0.68, 138.0 - height * 0.45, 6.0, 7.0), window_color, true)
+	for post in range(18, int(bounds.size.x), 42):
+		var post_x := bounds.position.x + float(post)
+		draw_line(Vector2(post_x, 134.0), Vector2(post_x, 150.0), Color("493629"), 2.0)
+		draw_line(Vector2(post_x, 138.0), Vector2(post_x + 42.0, 142.0), Color("6b4a31"), 1.0)
+
+
+func _draw_styled_solid(solid: Rect2, liberated: bool) -> void:
+	var dirt := Color("745239") if liberated else Color("684535")
+	var dark_dirt := Color("493527") if liberated else Color("3e2a29")
+	var cap := Color("b18a53") if liberated else Color("9c7046")
+	draw_rect(solid, dirt, true)
+	draw_rect(Rect2(solid.position, Vector2(solid.size.x, minf(4.0, solid.size.y))), cap, true)
+	draw_line(solid.position + Vector2(0.0, 4.0), Vector2(solid.end.x, solid.position.y + 4.0), dark_dirt, 1.0)
+	if solid.size.x >= 24.0:
+		for mark_x in range(10, int(solid.size.x), 24):
+			var y_offset := 8.0 + float((mark_x * 7) % maxi(8, int(maxf(solid.size.y - 10.0, 8.0))))
+			draw_line(solid.position + Vector2(mark_x, y_offset), solid.position + Vector2(mark_x + 5.0, y_offset + 1.0), dark_dirt, 1.0)
 
 
 func _draw_landmarks(liberated: bool) -> void:
+	var home: Rect2 = room_bounds[&"casa_nilo"]
+	_draw_doorway(Vector2(home.position.x + 64.0, 150.0), liberated)
+	var church: Rect2 = room_bounds[&"igreja_velha"]
+	_draw_church(Vector2(church.get_center().x, 150.0), liberated)
 	var square: Rect2 = room_bounds[&"praca_umbu"]
 	var tree_position := Vector2(square.get_center().x, 113.0)
-	draw_line(tree_position, tree_position + Vector2(0.0, 32.0), Color("6b4028"), 5.0)
-	draw_circle(tree_position + Vector2(0.0, -8.0), 18.0, Color("4f7c4c") if liberated else Color("55513a"))
+	draw_line(tree_position, tree_position + Vector2(0.0, 37.0), Color("6b4028"), 6.0)
+	draw_circle(tree_position + Vector2(-9.0, -8.0), 14.0, Color("5a874e") if liberated else Color("55513a"))
+	draw_circle(tree_position + Vector2(8.0, -11.0), 16.0, Color("4f7c4c") if liberated else Color("494538"))
+	draw_circle(tree_position + Vector2(0.0, -19.0), 13.0, Color("659755") if liberated else Color("5b563d"))
+	draw_rect(Rect2(tree_position.x - 23.0, 145.0, 46.0, 5.0), Color("8e714a"), true)
 	var well: Rect2 = room_bounds[&"poco"]
-	draw_circle(Vector2(well.get_center().x, 139.0), 24.0, Color("1e2329"), true)
-	draw_string(ThemeDB.fallback_font, Vector2(well.position.x + 78.0, 76.0), "DESCIDA PARCIAL", HORIZONTAL_ALIGNMENT_LEFT, -1.0, 8, Color("8fc8d8"))
-	draw_string(ThemeDB.fallback_font, Vector2(well.position.x + 84.0, 88.0), "ROTA BLOQUEADA", HORIZONTAL_ALIGNMENT_LEFT, -1.0, 7, Color("e6a15c"))
+	var well_center := Vector2(well.get_center().x, 139.0)
+	draw_circle(well_center, 25.0, Color("5a4939"), true)
+	draw_circle(well_center, 19.0, Color("171c22"), true)
+	draw_line(well_center + Vector2(-23.0, -9.0), well_center + Vector2(-23.0, -39.0), Color("5b402b"), 3.0)
+	draw_line(well_center + Vector2(23.0, -9.0), well_center + Vector2(23.0, -39.0), Color("5b402b"), 3.0)
+	draw_line(well_center + Vector2(-25.0, -38.0), well_center + Vector2(25.0, -38.0), Color("76553a"), 3.0)
+	var command: Rect2 = room_bounds[&"posto"]
+	_draw_watchtower(Vector2(command.get_center().x, 150.0), liberated)
+	var arena: Rect2 = room_bounds[&"arena"]
+	for stake_x in [42.0, 598.0]:
+		var x: float = arena.position.x + float(stake_x)
+		draw_line(Vector2(x, 116.0), Vector2(x, 150.0), Color("4a2c27"), 4.0)
+		draw_line(Vector2(x - 7.0, 121.0), Vector2(x + 7.0, 121.0), Color("7f3b32"), 2.0)
+
+
+func _draw_doorway(base: Vector2, liberated: bool) -> void:
+	var wall := Color("9b744e") if liberated else Color("694b3f")
+	draw_rect(Rect2(base.x - 30.0, base.y - 42.0, 60.0, 42.0), wall, true)
+	draw_colored_polygon(PackedVector2Array([Vector2(base.x - 36.0, base.y - 42.0), Vector2(base.x, base.y - 55.0), Vector2(base.x + 36.0, base.y - 42.0)]), Color("493229"))
+	draw_rect(Rect2(base.x - 8.0, base.y - 26.0, 16.0, 26.0), Color("2b2422"), true)
+	draw_circle(base + Vector2(4.0, -13.0), 1.0, Color("d8a74f"))
+
+
+func _draw_church(base: Vector2, liberated: bool) -> void:
+	var wall := Color("a88360") if liberated else Color("73554d")
+	draw_rect(Rect2(base.x - 42.0, base.y - 58.0, 84.0, 58.0), wall, true)
+	draw_colored_polygon(PackedVector2Array([Vector2(base.x - 48.0, base.y - 58.0), Vector2(base.x, base.y - 83.0), Vector2(base.x + 48.0, base.y - 58.0)]), Color("49332f"))
+	draw_rect(Rect2(base.x - 9.0, base.y - 31.0, 18.0, 31.0), Color("31272a"), true)
+	draw_line(Vector2(base.x, base.y - 83.0), Vector2(base.x, base.y - 96.0), Color("d1b075"), 2.0)
+	draw_line(Vector2(base.x - 5.0, base.y - 90.0), Vector2(base.x + 5.0, base.y - 90.0), Color("d1b075"), 2.0)
+
+
+func _draw_watchtower(base: Vector2, liberated: bool) -> void:
+	var wood := Color("74583b") if liberated else Color("523631")
+	draw_line(base + Vector2(-19.0, 0.0), base + Vector2(-12.0, -48.0), wood, 4.0)
+	draw_line(base + Vector2(19.0, 0.0), base + Vector2(12.0, -48.0), wood, 4.0)
+	draw_rect(Rect2(base.x - 23.0, base.y - 53.0, 46.0, 9.0), wood, true)
+	draw_line(base + Vector2(0.0, -53.0), base + Vector2(0.0, -72.0), wood, 2.0)
+	draw_colored_polygon(PackedVector2Array([base + Vector2(0.0, -72.0), base + Vector2(18.0, -66.0), base + Vector2(0.0, -61.0)]), Color("c66b44") if liberated else Color("7e3030"))
+
+
+func _draw_world_state_atmosphere(liberated: bool) -> void:
 	if not liberated:
-		for room_id in [&"rua_cinzas", &"barracos", &"armazem"]:
+		for room_id in [&"rua_cinzas", &"barracos", &"armazem", &"patio"]:
 			var bounds: Rect2 = room_bounds[room_id]
-			var fire_position := Vector2(bounds.position.x + bounds.size.x * 0.72, 140.0)
-			draw_circle(fire_position, 8.0, Color("e4572e"))
-			draw_circle(fire_position + Vector2(0.0, -8.0), 5.0, Color("f4d35e"))
+			var fire_position := Vector2(bounds.position.x + bounds.size.x * 0.72, 143.0)
+			var flicker := sin(_visual_time * 11.0 + bounds.position.x) * 2.0
+			draw_circle(fire_position, 8.0, Color("d84a2d"))
+			draw_colored_polygon(PackedVector2Array([fire_position + Vector2(-5.0, 0.0), fire_position + Vector2(flicker, -17.0), fire_position + Vector2(5.0, 0.0)]), Color("f0a13b"))
+			draw_circle(fire_position + Vector2(0.0, -5.0), 3.0, Color("ffe184"))
+			for smoke in 3:
+				var drift := fmod(_visual_time * (5.0 + smoke) + smoke * 8.0, 24.0)
+				draw_circle(fire_position + Vector2(smoke * 3.0 + drift * 0.35, -20.0 - drift), 5.0 + smoke, Color(0.18, 0.16, 0.17, 0.34 - smoke * 0.07))
+		draw_rect(Rect2(0.0, 0.0, world_width, 150.0), Color(0.18, 0.07, 0.08, 0.08), true)
 	else:
-		for x_offset in [230.0, 310.0, 390.0]:
-			draw_circle(Vector2(square.position.x + x_offset, 136.0), 5.0, Color("d7b58c"))
+		var square: Rect2 = room_bounds[&"praca_umbu"]
+		for resident in 5:
+			var x := square.position.x + 205.0 + resident * 48.0
+			var shirt := Color("d59a5b") if resident % 2 == 0 else Color("789363")
+			draw_circle(Vector2(x, 133.0), 4.0, Color("c9895b"))
+			draw_rect(Rect2(x - 4.0, 137.0, 8.0, 11.0), shirt, true)
+		for bird in 4:
+			var bird_x := square.position.x + 120.0 + bird * 34.0
+			var bird_y := 45.0 + sin(_visual_time * 1.4 + bird) * 3.0
+			draw_arc(Vector2(bird_x, bird_y), 4.0, PI + 0.2, TAU - 0.2, 5, Color("473b32"), 1.0)

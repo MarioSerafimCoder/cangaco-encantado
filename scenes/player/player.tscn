@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Resource" path="res://resources/player/player_config.tres" id="2"]
@@ -10,20 +10,14 @@
 [ext_resource type="Resource" path="res://resources/weapons/revolver.tres" id="8"]
 [ext_resource type="Resource" path="res://resources/weapons/shotgun.tres" id="9"]
 [ext_resource type="Resource" path="res://resources/weapons/machete.tres" id="10"]
-[ext_resource type="Texture2D" path="res://assets/characters/nilo_concept_sheet.png" id="11"]
+[ext_resource type="Texture2D" path="res://assets/sprite_guides/generic_sertanejo_chibi_4x4_64px.png" id="11"]
 [ext_resource type="Script" path="res://scripts/fx/mvp_sprite_animator.gd" id="12"]
-[ext_resource type="Shader" path="res://scripts/fx/white_key.gdshader" id="13"]
 
 [sub_resource type="RectangleShape2D" id="PlayerShape"]
 size = Vector2(12, 24)
 
 [sub_resource type="RectangleShape2D" id="HurtShape"]
 size = Vector2(12, 24)
-
-[sub_resource type="ShaderMaterial" id="SpriteMaterial"]
-shader = ExtResource("13")
-shader_parameter/white_threshold = 0.9
-shader_parameter/feather = 0.09
 
 [node name="Nilo" type="CharacterBody2D"]
 collision_layer = 2
@@ -32,16 +26,15 @@ script = ExtResource("1")
 config = ExtResource("2")
 
 [node name="Visual" type="Sprite2D" parent="."]
-material = SubResource("SpriteMaterial")
 position = Vector2(0, -10)
-scale = Vector2(0.12, 0.12)
+scale = Vector2(0.68, 0.68)
 texture = ExtResource("11")
 region_enabled = true
-region_rect = Rect2(0, 0, 362, 362)
+region_rect = Rect2(0, 0, 64, 64)
 script = ExtResource("12")
 actor_kind = 0
 columns = 4
-rows = 3
+rows = 4
 
 [node name="BodyCollision" type="CollisionShape2D" parent="."]
 shape = SubResource("PlayerShape")
@@ -74,7 +67,7 @@ shape = SubResource("HurtShape")
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(0, -12)
 position_smoothing_enabled = true
-position_smoothing_speed = 8.0
+position_smoothing_speed = 10.0
 drag_horizontal_enabled = true
 drag_vertical_enabled = true
 drag_left_margin = 0.18

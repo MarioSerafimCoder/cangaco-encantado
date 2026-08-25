@@ -14,6 +14,7 @@ const KEYBOARD_BINDINGS := {
 	"heal": [KEY_Q],
 	"interact": [KEY_E],
 	"pause": [KEY_ESCAPE],
+	"toggle_debug": [KEY_F3],
 	"debug_liberate": [KEY_F12],
 }
 

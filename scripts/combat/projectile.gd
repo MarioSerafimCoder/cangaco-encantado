@@ -16,5 +16,6 @@ func _physics_process(delta: float) -> void:
 
 
 func _draw() -> void:
-	draw_rect(Rect2(-3.0, -1.0, 6.0, 2.0), projectile_color, true)
-
+	draw_circle(Vector2.ZERO, 2.2, Color(projectile_color, 0.22))
+	draw_rect(Rect2(-5.0, -1.0, 8.0, 2.0), Color(projectile_color, 0.62), true)
+	draw_rect(Rect2(-2.0, -1.0, 5.0, 2.0), projectile_color, true)

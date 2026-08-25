@@ -45,7 +45,7 @@ func update(delta: float) -> void:
 		_use_machete()
 	elif Input.is_action_just_pressed("shoot_shotgun"):
 		_fire_shotgun()
-	elif Input.is_action_pressed("shoot_revolver"):
+	elif Input.is_action_just_pressed("shoot_revolver"):
 		_fire_revolver()
 
 
@@ -74,6 +74,7 @@ func _fire_revolver() -> void:
 	cooldown = revolver_data.fire_interval
 	player.state_machine.request(PlayerStateMachine.State.SHOOT, 0.08)
 	player.spawn_projectile(revolver_data, player.get_aim_direction(), &"revolver")
+	player.play_weapon_feedback(&"revolver")
 	EventBus.player_ammo_changed.emit(&"revolver", revolver_ammo, revolver_data.magazine_size)
 	if revolver_ammo == 0:
 		_start_reload(revolver_data)
@@ -92,6 +93,7 @@ func _fire_shotgun() -> void:
 	for angle in [-0.10, 0.0, 0.10]:
 		player.spawn_projectile(shotgun_data, direction.rotated(angle), &"shotgun")
 	player.velocity.x -= direction.x * shotgun_data.recoil
+	player.play_weapon_feedback(&"shotgun")
 	EventBus.player_ammo_changed.emit(&"shotgun", shotgun_ammo, shotgun_data.magazine_size)
 	if shotgun_ammo == 0:
 		_start_reload(shotgun_data)
@@ -110,6 +112,7 @@ func _use_machete() -> void:
 	elif not player.is_on_floor() and Input.is_action_pressed("move_down"):
 		variant = &"machete_down"
 	player.spawn_melee(machete_data, combo_step, variant)
+	player.play_weapon_feedback(&"machete")
 	if combo_step == 2:
 		player.velocity.x = player.facing * 75.0
 
@@ -121,6 +124,7 @@ func _start_heal() -> void:
 	heal_timer = player.config.heal_duration
 	player.velocity.x = 0.0
 	player.state_machine.request(PlayerStateMachine.State.HEAL, player.config.heal_duration, true)
+	player.play_heal_feedback()
 
 
 func _update_heal(delta: float) -> void:

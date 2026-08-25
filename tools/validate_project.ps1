@@ -25,7 +25,7 @@ $projectText = Get-Content -Raw -LiteralPath (Join-Path $projectRoot 'project.go
 $requiredActions = @(
     'move_left', 'move_right', 'move_up', 'move_down', 'jump', 'crouch',
     'melee', 'shoot_revolver', 'shoot_shotgun', 'aim', 'heal',
-    'interact', 'pause'
+    'interact', 'pause', 'toggle_debug'
 )
 foreach ($action in $requiredActions) {
     if ($projectText -notmatch [regex]::Escape("$action=")) {
@@ -77,4 +77,3 @@ Write-Host "Arquivos Godot verificados: $($textFiles.Count)"
 Write-Host "Ações de input verificadas: $($requiredActions.Count)"
 Write-Host "Imagens de referência preservadas: $($referenceImages.Count)"
 Write-Host "PDFs de design preservados: $($sourcePdfs.Count)"
-

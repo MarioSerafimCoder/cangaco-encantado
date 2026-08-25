@@ -92,6 +92,10 @@ debug_liberate={
 "deadzone": 0.3,
 "events": []
 }
+toggle_debug={
+"deadzone": 0.3,
+"events": []
+}
 
 [layer_names]
 

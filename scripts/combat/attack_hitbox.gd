@@ -32,7 +32,7 @@ func setup_shape(extents: Vector2) -> void:
 
 
 func _draw() -> void:
-	if not OS.is_debug_build():
+	if not GameState.debug_overlay_enabled:
 		return
 	var shape_node := get_node_or_null("CollisionShape2D") as CollisionShape2D
 	if shape_node and shape_node.shape is RectangleShape2D:
@@ -54,5 +54,5 @@ func _on_area_entered(area: Area2D) -> void:
 	}
 	if hurtbox.receive_hit(payload):
 		hit_targets.append(area)
+		GameFeelFX.spawn(get_tree().current_scene, hurtbox.global_position, GameFeelFX.Kind.HIT, signf(knockback.x))
 		connected.emit(hurtbox.get_parent())
-

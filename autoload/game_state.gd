@@ -7,6 +7,7 @@ var checkpoint_id: StringName = DEFAULT_CHECKPOINT
 var checkpoint_position := DEFAULT_SPAWN
 var player_health := 5
 var heal_charges := 2
+var debug_overlay_enabled := false
 var abilities := {
 	"wall_jump": false,
 	"dash": false,
@@ -32,6 +33,7 @@ func reset_new_game() -> void:
 	checkpoint_position = DEFAULT_SPAWN
 	player_health = 5
 	heal_charges = 2
+	debug_overlay_enabled = false
 	defeated_bosses.clear()
 	opened_shortcuts.clear()
 	discovered_secrets.clear()
@@ -82,4 +84,3 @@ func _on_boss_defeated(boss_id: StringName) -> void:
 func _on_shortcut_opened(shortcut_id: StringName) -> void:
 	opened_shortcuts[String(shortcut_id)] = true
 	EventBus.request_autosave.emit(&"shortcut")
-
