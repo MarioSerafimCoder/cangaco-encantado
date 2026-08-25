@@ -10,14 +10,16 @@ extends CharacterBody2D
 @onready var body_collision: CollisionShape2D = $BodyCollision
 @onready var hurt_collision: CollisionShape2D = $Hurtbox/CollisionShape2D
 @onready var camera: Camera2D = $Camera2D
+@onready var visual: NiloVisualController = $Visual
 
 var facing := 1.0
 var invulnerability_remaining := 0.0
 var is_dead := false
 var _crouch_applied := false
-var _run_dust_remaining := 0.0
 var _camera_shake_remaining := 0.0
 var _camera_shake_strength := 0.0
+var _camera_shake_offset := Vector2.ZERO
+var _camera_look_ahead := Vector2.ZERO
 
 
 func _ready() -> void:
@@ -39,8 +41,8 @@ func _physics_process(delta: float) -> void:
 	if is_dead:
 		return
 	invulnerability_remaining = maxf(0.0, invulnerability_remaining - delta)
-	_run_dust_remaining = maxf(0.0, _run_dust_remaining - delta)
 	var grounded_before_move := is_on_floor()
+	var vertical_speed_before_move := velocity.y
 	state_machine.tick(delta)
 	combat.update(delta)
 	movement.physics_step(self, delta, state_machine.is_movement_locked())
@@ -49,7 +51,8 @@ func _physics_process(delta: float) -> void:
 		facing = signf(velocity.x)
 	_set_crouched(movement.crouching)
 	state_machine.update_locomotion(self, movement.crouching)
-	_update_locomotion_fx(landed)
+	_update_locomotion_fx(landed, vertical_speed_before_move)
+	_update_camera_framing(delta)
 	queue_redraw()
 
 
@@ -63,7 +66,7 @@ func get_aim_direction() -> Vector2:
 	return Vector2(facing, 0.0)
 
 
-func spawn_projectile(data: WeaponData, direction: Vector2, attack_id: StringName) -> void:
+func spawn_projectile(data: WeaponData, direction: Vector2, attack_id: StringName, hitstop_duration := 0.0) -> void:
 	var projectile := CombatProjectile.new()
 	projectile.team = "player"
 	projectile.damage = data.damage
@@ -71,6 +74,7 @@ func spawn_projectile(data: WeaponData, direction: Vector2, attack_id: StringNam
 	projectile.knockback = direction * data.knockback
 	projectile.attack_id = attack_id
 	projectile.owner_actor = self
+	projectile.hitstop_duration = hitstop_duration
 	projectile.velocity = direction.normalized() * data.projectile_speed
 	projectile.max_distance = data.range
 	projectile.lifetime = data.range / maxf(1.0, data.projectile_speed) + 0.1
@@ -79,14 +83,15 @@ func spawn_projectile(data: WeaponData, direction: Vector2, attack_id: StringNam
 	projectile.global_position = global_position + direction * 12.0 + Vector2(0.0, -5.0)
 
 
-func spawn_melee(data: WeaponData, combo_step: int, variant: StringName) -> void:
+func spawn_melee(data: WeaponData, combo_step: int, variant: StringName, hitstop_duration := 0.0) -> void:
 	var hitbox := AttackHitbox.new()
 	hitbox.team = "player"
 	hitbox.damage = data.damage + (1 if combo_step == 3 else 0)
 	hitbox.posture_damage = data.posture_damage + (1.0 if combo_step == 3 else 0.0)
 	hitbox.knockback = Vector2(facing * data.knockback * (1.35 if combo_step == 3 else 1.0), -24.0)
-	hitbox.attack_id = variant
+	hitbox.attack_id = StringName("%s_%d" % [variant, combo_step])
 	hitbox.owner_actor = self
+	hitbox.hitstop_duration = hitstop_duration
 	hitbox.lifetime = 0.13
 	var extents := Vector2(15.0 + combo_step * 2.0, 11.0)
 	var offset := Vector2(facing * 18.0, -4.0)
@@ -112,6 +117,7 @@ func receive_hit(hit: Dictionary) -> bool:
 	invulnerability_remaining = config.invulnerability_time
 	velocity = hit.get("knockback", Vector2.ZERO)
 	state_machine.request(PlayerStateMachine.State.HURT, config.hurt_lock_time, true)
+	visual.notify_hurt()
 	add_camera_shake(2.0, 0.12)
 	return true
 
@@ -144,15 +150,32 @@ func play_weapon_feedback(weapon_id: StringName) -> void:
 		&"revolver":
 			GameFeelFX.spawn(get_tree().current_scene, global_position + Vector2(facing * 18.0, -8.0), GameFeelFX.Kind.MUZZLE, facing)
 			add_camera_shake(0.7, 0.05)
+			visual.notify_weapon_recoil(0.65, 0.08)
 		&"shotgun":
 			GameFeelFX.spawn(get_tree().current_scene, global_position + Vector2(facing * 20.0, -7.0), GameFeelFX.Kind.MUZZLE, facing)
 			add_camera_shake(2.2, 0.13)
-		&"machete":
-			GameFeelFX.spawn(get_tree().current_scene, global_position + Vector2(facing * 7.0, -7.0), GameFeelFX.Kind.SLASH, facing)
+			visual.notify_weapon_recoil(2.0, 0.2)
 
 
-func play_heal_feedback() -> void:
-	GameFeelFX.spawn(get_tree().current_scene, global_position + Vector2(0.0, -10.0), GameFeelFX.Kind.HEAL, facing)
+func play_machete_feedback(variant: StringName, combo_step: int) -> void:
+	var effect_kind := GameFeelFX.Kind.SLASH_HORIZONTAL
+	var effect_position := global_position + Vector2(facing * 7.0, -7.0)
+	if variant == &"machete_up":
+		effect_kind = GameFeelFX.Kind.SLASH_UP
+		effect_position = global_position + Vector2(0.0, -17.0)
+	elif variant == &"machete_down":
+		effect_kind = GameFeelFX.Kind.SLASH_DOWN
+		effect_position = global_position + Vector2(0.0, 6.0)
+	GameFeelFX.spawn(get_tree().current_scene, effect_position, effect_kind, facing, 0.9 + combo_step * 0.12)
+	visual.notify_weapon_recoil(0.35 + combo_step * 0.22, 0.1 + combo_step * 0.025)
+
+
+func play_heal_channel_feedback() -> void:
+	GameFeelFX.spawn(get_tree().current_scene, global_position + Vector2(0.0, -10.0), GameFeelFX.Kind.HEAL_CHANNEL, facing)
+
+
+func play_heal_complete_feedback() -> void:
+	GameFeelFX.spawn(get_tree().current_scene, global_position + Vector2(0.0, -10.0), GameFeelFX.Kind.HEAL_COMPLETE, facing)
 
 
 func add_camera_shake(strength: float, duration: float) -> void:
@@ -163,21 +186,40 @@ func add_camera_shake(strength: float, duration: float) -> void:
 func _update_camera_shake(delta: float) -> void:
 	_camera_shake_remaining = maxf(0.0, _camera_shake_remaining - delta)
 	if _camera_shake_remaining <= 0.0:
-		camera.offset = Vector2.ZERO
+		_camera_shake_offset = Vector2.ZERO
 		_camera_shake_strength = 0.0
 		return
 	var phase := Time.get_ticks_msec() * 0.045
 	var fade := clampf(_camera_shake_remaining / 0.14, 0.0, 1.0)
-	camera.offset = Vector2(sin(phase * 1.7), cos(phase * 2.3)) * _camera_shake_strength * fade
+	_camera_shake_offset = Vector2(sin(phase * 1.7), cos(phase * 2.3)) * _camera_shake_strength * fade
 
 
-func _update_locomotion_fx(landed: bool) -> void:
-	if landed:
-		GameFeelFX.spawn(get_tree().current_scene, global_position + Vector2(0.0, 11.0), GameFeelFX.Kind.LAND_DUST, facing)
-		add_camera_shake(0.75, 0.07)
-	if is_on_floor() and absf(velocity.x) > config.move_speed * 0.58 and _run_dust_remaining <= 0.0:
-		_run_dust_remaining = 0.16
-		GameFeelFX.spawn(get_tree().current_scene, global_position + Vector2(-facing * 5.0, 11.0), GameFeelFX.Kind.RUN_DUST, -facing)
+func _update_camera_framing(delta: float) -> void:
+	var speed_ratio := clampf(absf(velocity.x) / maxf(config.move_speed, 1.0), 0.0, 1.0)
+	var horizontal_target := facing * lerpf(8.0, 20.0, smoothstep(0.0, 1.0, speed_ratio)) if speed_ratio > 0.08 else 0.0
+	var vertical_target := 0.0
+	if not is_on_floor() and velocity.y > 100.0:
+		vertical_target = lerpf(2.0, 11.0, clampf((velocity.y - 100.0) / 340.0, 0.0, 1.0))
+		if Input.is_action_pressed("move_down"):
+			vertical_target += 4.0
+	elif not is_on_floor() and velocity.y < -170.0:
+		vertical_target = -2.0
+	var target := Vector2(horizontal_target, vertical_target)
+	var responsiveness := 1.0 - exp(-delta * 4.6)
+	_camera_look_ahead = _camera_look_ahead.lerp(target, responsiveness)
+	camera.offset = Vector2(round(_camera_look_ahead.x), round(_camera_look_ahead.y)) + _camera_shake_offset
+
+
+func _update_locomotion_fx(landed: bool, vertical_speed: float) -> void:
+	if not landed:
+		return
+	visual.notify_landed(vertical_speed)
+	var intensity := smoothstep(105.0, 470.0, absf(vertical_speed))
+	if intensity < 0.08:
+		return
+	GameFeelFX.spawn(get_tree().current_scene, global_position + Vector2(0.0, 11.0), GameFeelFX.Kind.LAND_DUST, facing, lerpf(0.5, 1.35, intensity))
+	if intensity > 0.42:
+		add_camera_shake(lerpf(0.45, 1.35, intensity), lerpf(0.05, 0.1, intensity))
 
 
 func _on_health_changed(current: int, maximum: int) -> void:
@@ -186,7 +228,7 @@ func _on_health_changed(current: int, maximum: int) -> void:
 
 
 func _on_healed(_amount: int) -> void:
-	play_heal_feedback()
+	play_heal_complete_feedback()
 
 
 func _on_melee_connected(_target: Node, variant: StringName) -> void:

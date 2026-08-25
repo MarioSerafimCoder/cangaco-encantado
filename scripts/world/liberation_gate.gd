@@ -5,6 +5,7 @@ extends StaticBody2D
 @export var blocked_label := "BLOQUEADA"
 @export var open_label := "PEDRA SECA >"
 @export var gate_size := Vector2(12.0, 34.0)
+@export var show_indicator := true
 var opened := false
 var collision: CollisionShape2D
 
@@ -34,6 +35,8 @@ func _on_world_state_changed(changed_region: StringName, state: StringName) -> v
 
 
 func _draw() -> void:
+	if not show_indicator:
+		return
 	if opened:
 		draw_string(ThemeDB.fallback_font, Vector2(-24.0, -18.0), open_label, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 8, Color("9ad1a3"))
 	else:

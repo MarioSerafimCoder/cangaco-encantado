@@ -25,23 +25,18 @@ var room_bounds: Dictionary = {}
 var solid_rects: Array[Rect2] = []
 var world_width := 0.0
 var player: NiloPlayer
-var _visual_time := 0.0
-var _visual_tick := 0.0
 
 
 func _ready() -> void:
 	_build_rooms()
+	_build_art_decorator()
 	_build_gameplay()
+	_build_quality_target()
 	EventBus.world_state_changed.connect(_on_world_state_changed)
 	queue_redraw()
 
 
-func _process(delta: float) -> void:
-	_visual_time += delta
-	_visual_tick += delta
-	if _visual_tick >= 0.08:
-		_visual_tick = 0.0
-		queue_redraw()
+func _process(_delta: float) -> void:
 	if player == null:
 		player = get_tree().get_first_node_in_group("player") as NiloPlayer
 	if player != null and player.global_position.y > 280.0 and not player.is_dead:
@@ -108,11 +103,24 @@ func _build_gameplay() -> void:
 	var barricade_gate := LiberationGate.new()
 	barricade_gate.blocked_label = "BARRICADA"
 	barricade_gate.open_label = "ABERTA"
+	barricade_gate.show_indicator = false
 	add_child(barricade_gate)
 	barricade_gate.position = Vector2(barricade.position.x + 286.0, 133.0)
 
 	if not WorldState.is_vila_liberated():
 		_spawn_occupied_encounters()
+
+
+func _build_quality_target() -> void:
+	var quality_target := RoomQualityTarget.new()
+	add_child(quality_target)
+	quality_target.configure(room_bounds[&"rua_cinzas"])
+
+
+func _build_art_decorator() -> void:
+	var decorator := VilaArtDecorator.new()
+	add_child(decorator)
+	decorator.configure(room_bounds)
 
 
 func _spawn_occupied_encounters() -> void:
@@ -159,10 +167,10 @@ func _draw() -> void:
 	for index in ROOMS.size():
 		var room: Dictionary = ROOMS[index]
 		var bounds: Rect2 = room_bounds[room.id]
-		_draw_room_background(bounds, index, liberated)
+		if room.id != &"rua_cinzas":
+			_draw_room_background(bounds, index, liberated)
 	for solid in solid_rects:
 		_draw_styled_solid(solid, liberated)
-	_draw_landmarks(liberated)
 	_draw_world_state_atmosphere(liberated)
 
 
@@ -173,11 +181,12 @@ func _draw_room_background(bounds: Rect2, index: int, liberated: bool) -> void:
 		var ratio := float(band) / 5.0
 		var band_rect := Rect2(bounds.position.x, ratio * 25.0, bounds.size.x, 26.0)
 		draw_rect(band_rect, sky_top.lerp(sky_bottom, ratio), true)
-	var sun_position := Vector2(bounds.position.x + bounds.size.x * (0.78 if index % 2 == 0 else 0.2), 38.0)
-	draw_circle(sun_position, 11.0, Color("f3c56d") if liberated else Color("b76849"))
-	draw_circle(sun_position, 7.0, Color("ffe09a") if liberated else Color("d28457"))
+	if index == 0:
+		var sun_position := Vector2(bounds.position.x + bounds.size.x * 0.78, 38.0)
+		draw_circle(sun_position, 11.0, Color("f3c56d") if liberated else Color("c87850"))
+		draw_circle(sun_position, 7.0, Color("ffe09a") if liberated else Color("e0a060"))
 
-	var far_color := Color("59635d") if liberated else Color("493d42")
+	var far_color := Color("59635d") if liberated else Color("695755")
 	var mountain_points := PackedVector2Array([Vector2(bounds.position.x, 126.0)])
 	var segment := bounds.size.x / 6.0
 	for ridge in 7:
@@ -187,7 +196,7 @@ func _draw_room_background(bounds: Rect2, index: int, liberated: bool) -> void:
 	mountain_points.append(Vector2(bounds.position.x, 150.0))
 	draw_colored_polygon(mountain_points, far_color)
 
-	var near_color := Color("3f5147") if liberated else Color("3d3032")
+	var near_color := Color("3f5147") if liberated else Color("584441")
 	var near_points := PackedVector2Array([Vector2(bounds.position.x, 150.0)])
 	for ridge in 7:
 		var near_height := 108.0 + float((ridge * 13 + index * 9) % 24)
@@ -195,8 +204,6 @@ func _draw_room_background(bounds: Rect2, index: int, liberated: bool) -> void:
 	near_points.append(Vector2(bounds.end.x, 150.0))
 	draw_colored_polygon(near_points, near_color)
 
-	_draw_background_structures(bounds, index, liberated)
-	draw_line(Vector2(bounds.end.x, 20.0), Vector2(bounds.end.x, 150.0), Color(0.95, 0.75, 0.46, 0.08), 1.0)
 
 
 func _draw_background_structures(bounds: Rect2, index: int, liberated: bool) -> void:
@@ -262,6 +269,21 @@ func _draw_landmarks(liberated: bool) -> void:
 		var x: float = arena.position.x + float(stake_x)
 		draw_line(Vector2(x, 116.0), Vector2(x, 150.0), Color("4a2c27"), 4.0)
 		draw_line(Vector2(x - 7.0, 121.0), Vector2(x + 7.0, 121.0), Color("7f3b32"), 2.0)
+		var flag_direction := 1.0 if stake_x < 300.0 else -1.0
+		draw_colored_polygon(PackedVector2Array([
+			Vector2(x, 118.0), Vector2(x + flag_direction * 22.0, 123.0),
+			Vector2(x + flag_direction * 14.0, 132.0), Vector2(x, 128.0),
+		]), Color("8f382f"))
+		var fire_x := x + flag_direction * 28.0
+		draw_rect(Rect2(fire_x - 6.0, 143.0, 12.0, 4.0), Color("402820"), true)
+		draw_circle(Vector2(fire_x, 140.0), 5.0, Color("d9572d"))
+		draw_colored_polygon(PackedVector2Array([
+			Vector2(fire_x - 3.0, 142.0), Vector2(fire_x + 1.0, 130.0), Vector2(fire_x + 4.0, 142.0),
+		]), Color("f4a13c"))
+	for barricade_x in [120.0, 488.0]:
+		var bx: float = arena.position.x + barricade_x
+		draw_line(Vector2(bx - 18.0, 147.0), Vector2(bx + 18.0, 134.0), Color("5a3828"), 4.0)
+		draw_line(Vector2(bx - 18.0, 134.0), Vector2(bx + 18.0, 147.0), Color("70452f"), 4.0)
 
 
 func _draw_doorway(base: Vector2, liberated: bool) -> void:
@@ -295,12 +317,12 @@ func _draw_world_state_atmosphere(liberated: bool) -> void:
 		for room_id in [&"rua_cinzas", &"barracos", &"armazem", &"patio"]:
 			var bounds: Rect2 = room_bounds[room_id]
 			var fire_position := Vector2(bounds.position.x + bounds.size.x * 0.72, 143.0)
-			var flicker := sin(_visual_time * 11.0 + bounds.position.x) * 2.0
+			var flicker := sin(bounds.position.x) * 2.0
 			draw_circle(fire_position, 8.0, Color("d84a2d"))
 			draw_colored_polygon(PackedVector2Array([fire_position + Vector2(-5.0, 0.0), fire_position + Vector2(flicker, -17.0), fire_position + Vector2(5.0, 0.0)]), Color("f0a13b"))
 			draw_circle(fire_position + Vector2(0.0, -5.0), 3.0, Color("ffe184"))
 			for smoke in 3:
-				var drift := fmod(_visual_time * (5.0 + smoke) + smoke * 8.0, 24.0)
+				var drift := fmod(smoke * 8.0, 24.0)
 				draw_circle(fire_position + Vector2(smoke * 3.0 + drift * 0.35, -20.0 - drift), 5.0 + smoke, Color(0.18, 0.16, 0.17, 0.34 - smoke * 0.07))
 		draw_rect(Rect2(0.0, 0.0, world_width, 150.0), Color(0.18, 0.07, 0.08, 0.08), true)
 	else:
@@ -308,9 +330,19 @@ func _draw_world_state_atmosphere(liberated: bool) -> void:
 		for resident in 5:
 			var x := square.position.x + 205.0 + resident * 48.0
 			var shirt := Color("d59a5b") if resident % 2 == 0 else Color("789363")
-			draw_circle(Vector2(x, 133.0), 4.0, Color("c9895b"))
-			draw_rect(Rect2(x - 4.0, 137.0, 8.0, 11.0), shirt, true)
+			_draw_pixel_resident(Vector2(x, 133.0), shirt, resident % 2 == 0)
 		for bird in 4:
 			var bird_x := square.position.x + 120.0 + bird * 34.0
-			var bird_y := 45.0 + sin(_visual_time * 1.4 + bird) * 3.0
+			var bird_y := 45.0 + sin(float(bird)) * 3.0
 			draw_arc(Vector2(bird_x, bird_y), 4.0, PI + 0.2, TAU - 0.2, 5, Color("473b32"), 1.0)
+
+
+func _draw_pixel_resident(position: Vector2, shirt: Color, alternate: bool) -> void:
+	var outline := Color("302621")
+	draw_rect(Rect2(position.x - 3.0, position.y - 4.0, 6.0, 6.0), outline, true)
+	draw_rect(Rect2(position.x - 2.0, position.y - 3.0, 4.0, 4.0), Color("c9895b"), true)
+	draw_rect(Rect2(position.x - 4.0, position.y + 2.0, 8.0, 9.0), outline, true)
+	draw_rect(Rect2(position.x - 3.0, position.y + 3.0, 6.0, 7.0), shirt, true)
+	var stance := 1.0 if alternate else 0.0
+	draw_rect(Rect2(position.x - 3.0 - stance, position.y + 11.0, 3.0, 5.0), outline, true)
+	draw_rect(Rect2(position.x + stance, position.y + 11.0, 3.0, 5.0), outline, true)

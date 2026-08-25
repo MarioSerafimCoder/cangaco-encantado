@@ -17,6 +17,8 @@ var boss_fill: ColorRect
 var help_panel: Panel
 var player: NiloPlayer
 var room_fade := 0.0
+var world_fade := 0.0
+var help_fade := 6.0
 var debug_visible := false
 
 
@@ -56,35 +58,44 @@ func _process(delta: float) -> void:
 			]
 		_update_boss_bar()
 	room_fade = maxf(0.0, room_fade - delta)
-	room_panel.modulate.a = clampf(minf(room_fade, 1.0), 0.0, 1.0)
+	world_fade = maxf(0.0, world_fade - delta)
+	help_fade = maxf(0.0, help_fade - delta)
+	_apply_temporary_visibility(room_panel, room_fade)
+	_apply_temporary_visibility(world_panel, world_fade)
+	_apply_temporary_visibility(help_panel, help_fade)
+
+
+func _apply_temporary_visibility(control: Control, remaining: float) -> void:
+	control.visible = remaining > 0.0
+	control.modulate.a = clampf(minf(remaining * 2.0, 1.0), 0.0, 1.0)
 
 
 func _build_hud() -> void:
-	var status_panel := _make_panel(Rect2(5.0, 5.0, 116.0, 48.0), Color("241d1acc"), Color("b88042"))
-	health_label = _make_label(status_panel, Vector2(7.0, 4.0), Vector2(104.0, 11.0), 9, Color("ffe2a8"))
-	revolver_label = _make_label(status_panel, Vector2(7.0, 17.0), Vector2(104.0, 9.0), 7, Color("e9d5aa"))
-	shotgun_label = _make_label(status_panel, Vector2(7.0, 27.0), Vector2(104.0, 9.0), 7, Color("e9d5aa"))
-	heal_label = _make_label(status_panel, Vector2(7.0, 37.0), Vector2(104.0, 9.0), 7, Color("8fe3b4"))
+	var status_panel := _make_panel(Rect2(4.0, 4.0, 94.0, 40.0), Color("241d1acc"), Color("b88042"))
+	health_label = _make_label(status_panel, Vector2(5.0, 3.0), Vector2(84.0, 9.0), 7, Color("ffe2a8"))
+	revolver_label = _make_label(status_panel, Vector2(5.0, 12.0), Vector2(84.0, 8.0), 6, Color("e9d5aa"))
+	shotgun_label = _make_label(status_panel, Vector2(5.0, 21.0), Vector2(84.0, 8.0), 6, Color("e9d5aa"))
+	heal_label = _make_label(status_panel, Vector2(5.0, 30.0), Vector2(84.0, 8.0), 6, Color("8fe3b4"))
 
-	world_panel = _make_panel(Rect2(219.0, 5.0, 96.0, 20.0), Color("241d1acc"), Color("b88042"))
-	world_label = _make_label(world_panel, Vector2(3.0, 4.0), Vector2(90.0, 11.0), 7, Color("f2d49a"))
+	world_panel = _make_panel(Rect2(222.0, 4.0, 94.0, 16.0), Color("241d1acc"), Color("b88042"))
+	world_label = _make_label(world_panel, Vector2(3.0, 3.0), Vector2(88.0, 10.0), 6, Color("f2d49a"))
 	world_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
-	debug_panel = _make_panel(Rect2(203.0, 29.0, 112.0, 31.0), Color("101417df"), Color("5a8290"))
+	debug_panel = _make_panel(Rect2(204.0, 23.0, 112.0, 31.0), Color("101417df"), Color("5a8290"))
 	debug_label = _make_label(debug_panel, Vector2(5.0, 3.0), Vector2(103.0, 25.0), 6, Color("bce8ee"))
 	debug_panel.visible = false
 
-	room_panel = _make_panel(Rect2(67.0, 52.0, 186.0, 22.0), Color("241d1ae6"), Color("d59a4a"))
-	room_label = _make_label(room_panel, Vector2(4.0, 5.0), Vector2(178.0, 13.0), 9, Color("fff0ca"))
+	room_panel = _make_panel(Rect2(84.0, 38.0, 152.0, 17.0), Color("241d1ae6"), Color("d59a4a"))
+	room_label = _make_label(room_panel, Vector2(3.0, 3.0), Vector2(146.0, 10.0), 7, Color("fff0ca"))
 	room_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	room_panel.modulate.a = 0.0
+	room_panel.visible = false
 
-	boss_panel = _make_panel(Rect2(124.0, 29.0, 191.0, 20.0), Color("1b1115e8"), Color("9f3c38"))
-	boss_label = _make_label(boss_panel, Vector2(5.0, 2.0), Vector2(181.0, 8.0), 7, Color("f4d8bd"))
+	boss_panel = _make_panel(Rect2(125.0, 22.0, 191.0, 16.0), Color("1b1115e8"), Color("9f3c38"))
+	boss_label = _make_label(boss_panel, Vector2(5.0, 1.0), Vector2(181.0, 7.0), 6, Color("f4d8bd"))
 	boss_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var boss_track := ColorRect.new()
-	boss_track.position = Vector2(8.0, 12.0)
-	boss_track.size = Vector2(175.0, 4.0)
+	boss_track.position = Vector2(8.0, 9.0)
+	boss_track.size = Vector2(175.0, 3.0)
 	boss_track.color = Color("3a2528")
 	boss_panel.add_child(boss_track)
 	boss_fill = ColorRect.new()
@@ -93,9 +104,9 @@ func _build_hud() -> void:
 	boss_track.add_child(boss_fill)
 	boss_panel.visible = false
 
-	help_panel = _make_panel(Rect2(4.0, 162.0, 312.0, 14.0), Color("171311c9"), Color("6e5337"))
-	var help_label := _make_label(help_panel, Vector2(4.0, 2.0), Vector2(304.0, 9.0), 6, Color("d8c39e"))
-	help_label.text = "A/D MOVER   ESPAÇO PULAR   J FACÃO   K TIRO   L ESPINGARDA   F3 DEBUG"
+	help_panel = _make_panel(Rect2(32.0, 163.0, 256.0, 12.0), Color("171311c9"), Color("6e5337"))
+	var help_label := _make_label(help_panel, Vector2(3.0, 1.0), Vector2(250.0, 9.0), 5, Color("d8c39e"))
+	help_label.text = "A/D MOVER  ESPAÇO PULAR  J FACÃO  K/L TIROS  F3 DEBUG"
 	help_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 
@@ -143,23 +154,25 @@ func _make_label(parent: Control, position_value: Vector2, size_value: Vector2, 
 
 
 func _on_health_changed(current: int, maximum: int) -> void:
-	health_label.text = "VIDA  %s%s" % ["◆".repeat(current), "◇".repeat(maximum - current)]
+	health_label.text = "VIDA %s%s" % ["◆".repeat(current), "◇".repeat(maximum - current)]
 
 
 func _on_ammo_changed(weapon_id: StringName, current: int, maximum: int) -> void:
 	if weapon_id == &"revolver":
-		revolver_label.text = "REVÓLVER   %s%s  %d/%d" % ["●".repeat(current), "·".repeat(maximum - current), current, maximum]
+		revolver_label.text = "REV %s%s %d/%d" % ["●".repeat(current), "·".repeat(maximum - current), current, maximum]
 	elif weapon_id == &"shotgun":
-		shotgun_label.text = "ESPINGARDA %s%s  %d/%d" % ["▮".repeat(current), "·".repeat(maximum - current), current, maximum]
+		shotgun_label.text = "ESP %s%s %d/%d" % ["▮".repeat(current), "·".repeat(maximum - current), current, maximum]
 
 
 func _on_heals_changed(current: int, maximum: int) -> void:
-	heal_label.text = "CABAÇA     %s%s  %d/%d" % ["✦".repeat(current), "·".repeat(maximum - current), current, maximum]
+	heal_label.text = "CABAÇA %s%s %d/%d" % ["✦".repeat(current), "·".repeat(maximum - current), current, maximum]
 
 
-func _on_room_entered(_room_id: StringName, display_name: String) -> void:
+func _on_room_entered(room_id: StringName, display_name: String) -> void:
 	room_label.text = display_name
-	room_fade = 2.4
+	room_fade = 2.0
+	if room_id != &"casa_nilo":
+		help_fade = 0.0
 
 
 func _on_world_changed(region_id: StringName, state: StringName) -> void:
@@ -168,3 +181,4 @@ func _on_world_changed(region_id: StringName, state: StringName) -> void:
 	var liberated := state == WorldState.LIBERATED
 	world_label.text = "VILA LIBERTADA" if liberated else "VILA OCUPADA"
 	world_label.add_theme_color_override("font_color", Color("9ee39b") if liberated else Color("f2b36f"))
+	world_fade = 3.2 if liberated else 2.2

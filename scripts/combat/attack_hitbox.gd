@@ -10,6 +10,7 @@ var knockback := Vector2.ZERO
 var attack_id: StringName = &"attack"
 var owner_actor: Node
 var lifetime := 0.12
+var hitstop_duration := 0.0
 var hit_targets: Array[Node] = []
 
 
@@ -55,4 +56,5 @@ func _on_area_entered(area: Area2D) -> void:
 	if hurtbox.receive_hit(payload):
 		hit_targets.append(area)
 		GameFeelFX.spawn(get_tree().current_scene, hurtbox.global_position, GameFeelFX.Kind.HIT, signf(knockback.x))
+		HitStop.apply([owner_actor, hurtbox.get_parent()], hitstop_duration)
 		connected.emit(hurtbox.get_parent())

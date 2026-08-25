@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CombatFeedbackConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/combat_feedback_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+machete_hitstop_1 = 0.03
+machete_hitstop_2 = 0.035
+machete_hitstop_3 = 0.055
+revolver_hitstop = 0.02
+shotgun_hitstop = 0.045
+posture_break_hitstop = 0.07
+combo_input_buffer = 0.14
+combo_reset_time = 0.9

@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Resource" path="res://resources/player/player_config.tres" id="2"]
@@ -11,7 +11,8 @@
 [ext_resource type="Resource" path="res://resources/weapons/shotgun.tres" id="9"]
 [ext_resource type="Resource" path="res://resources/weapons/machete.tres" id="10"]
 [ext_resource type="Texture2D" path="res://assets/sprite_guides/generic_sertanejo_chibi_4x4_64px.png" id="11"]
-[ext_resource type="Script" path="res://scripts/fx/mvp_sprite_animator.gd" id="12"]
+[ext_resource type="Script" path="res://scripts/player/nilo_visual_controller.gd" id="12"]
+[ext_resource type="Resource" path="res://resources/combat/feedback.tres" id="14"]
 
 [sub_resource type="RectangleShape2D" id="PlayerShape"]
 size = Vector2(12, 24)
@@ -32,7 +33,6 @@ texture = ExtResource("11")
 region_enabled = true
 region_rect = Rect2(0, 0, 64, 64)
 script = ExtResource("12")
-actor_kind = 0
 columns = 4
 rows = 4
 
@@ -53,6 +53,7 @@ script = ExtResource("5")
 revolver_data = ExtResource("8")
 shotgun_data = ExtResource("9")
 machete_data = ExtResource("10")
+feedback_config = ExtResource("14")
 
 [node name="PlayerStateMachine" type="Node" parent="."]
 script = ExtResource("6")

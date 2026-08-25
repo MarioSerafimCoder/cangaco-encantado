@@ -2,7 +2,7 @@
 
 Metroidvania 2D de ação e exploração inspirado no sertão brasileiro e no folclore nordestino. Nilo retorna à Vila do Umbuzeiro depois de um ataque da Companhia do Sol Negro e inicia uma jornada humana de vingança que, pouco a pouco, passa a envolver os Encantados e a restauração do mundo.
 
-Esta entrega é um vertical slice jogável com graybox estilizado. A prioridade continua sendo **gameplay > arquitetura > testabilidade > arte**, agora com uma camada consistente de apresentação e game feel.
+Esta entrega é o vertical slice jogável **0.2.1 — Fluid Movement & Visual Cohesion**. A prioridade continua sendo **gameplay > arquitetura > testabilidade > arte**, agora com movimento contínuo, combate faseado e a Rua das Cinzas como primeiro alvo visual de qualidade.
 
 ## Stack
 
@@ -54,11 +54,13 @@ Os scripts de gameplay usam somente ações do `InputMap`; nenhum controle depen
 - Componentes reutilizáveis de vida, postura, hurtbox, hitbox, detecção, movimento e state machine.
 - Saqueador melee e Pistoleiro ranged funcionais em graybox.
 - Arquitetura inicial de Zé Tranca com tiro direto, tiro baixo, coronhada, reposicionamento, rajada e duas intensidades.
-- Nilo chibi provisório em grade real de 4x4, corrida de quatro frames sincronizada à velocidade e poses próprias por estado.
-- Poeira de corrida/pouso, muzzle flash, arco do facão, impacto, cura, recoil visual e micro shake de câmera.
-- HUD estilizado com vida, munições, Cabaça, barra de chefe e debug técnico opcional em F3.
-- Vila com céu tonal, serras, construções, cercas, chão tratado e landmarks procedurais para Igreja, Praça, Poço e Posto.
-- Sprites MVP para Saqueador, Pistoleiro e Zé Tranca, ainda recortados das folhas conceituais com transparência provisória por shader.
+- Nilo chibi provisório em grade real de 4x4, `run_phase` contínuo, contatos de pé e transições de movimento.
+- Facão faseado com buffer, hitstop localizado, cortes direcionais, projéteis orientados e feedbacks distintos de cura.
+- Câmera com look-ahead suave e leitura vertical de quedas.
+- HUD compacto com vida, munições, Cabaça, barra de chefe, avisos temporários e debug técnico opcional em F3.
+- Rua das Cinzas com três camadas rasterizadas independentes e paralaxe real.
+- Vila com céu tonal, serras e um kit rasterizado de ambientes, estruturas e obstáculos cobrindo as 13 áreas.
+- Sprites MVP para Saqueador, Pistoleiro e Zé Tranca com transparência PNG RGBA real, sem shader de recorte de fundo.
 - As 13 áreas da Vila do Umbuzeiro em um percurso contínuo de graybox.
 - Checkpoint na Igreja Velha, atalho Armazém-Praça, Poço parcialmente bloqueado e saída para Pedra Seca.
 - Estados `OCCUPIED` e `LIBERATED`, com incêndios/inimigos/barricadas e retorno seguro da Vila.
@@ -82,14 +84,16 @@ res://
     world/                   graybox, salas, checkpoint, atalho e gates
     ui/                      HUD de jogo e camada de debug opcional
   docs/                      decisões e fontes de design
-  tools/                     validação estática local
+  tools/                     validação automatizada, capturas e movement lab
 ```
 
 ## Material visual
 
-As 15 imagens encontradas no workspace foram copiadas byte a byte para `assets/source/reference/`. O MVP ainda recorta as folhas dos inimigos em runtime e remove o fundo claro com shader. Nilo usa um spritesheet chibi RGBA separado, com grade 4x4 e células de 64x64 px. O personagem é um placeholder visual; a versão narrativa definitiva ainda precisará preservar a identidade de Nilo.
+As 15 imagens encontradas no workspace foram copiadas byte a byte para `assets/source/reference/`. Saqueador, Pistoleiro, Zé Tranca e as camadas rasterizadas da Rua das Cinzas usam transparência RGBA real. Nilo usa um spritesheet chibi RGBA separado, com grade 4x4 e células de 64x64 px.
 
-As decisões desta rodada estão resumidas em [Polimento visual e game feel](docs/VISUAL_POLISH.md).
+Os oito atlas ambientais corrigidos também usam transparência RGBA real e estão integrados em `assets/environments/vila_umbuzeiro/atlases/`. Eles fornecem fachadas, landmarks, plataformas visuais, obstáculos e adereços para todas as 13 salas sem alterar a geometria de colisão do graybox.
+
+As decisões desta rodada estão resumidas em [Iteração 0.2.1](docs/ITERATION_0_2_1.md) e no [changelog](CHANGELOG.md).
 
 ## Validação
 
@@ -99,7 +103,9 @@ No PowerShell:
 powershell -ExecutionPolicy Bypass -File tools/validate_project.ps1
 ```
 
-O teste automatizado específico de game feel também pode ser executado com a cena `res://tools/game_feel_validation.tscn`. Ele valida os quatro frames de corrida, o hurtbox agachado e o disparo semiautomático.
+O teste automatizado específico de game feel também pode ser executado com a cena `res://tools/game_feel_validation.tscn`. Ele valida fase da corrida, bob, contatos de pé, virada, fases do salto, pouso, hurtbox agachado, disparo semiautomático, buffer/variante do facão, orientação do projétil, configuração de hitstop e HUD temporário.
+
+Para teste manual isolado, abra `res://tools/movement_lab.tscn`. A cena contém pista de corrida, inversão, vão, plataformas e boneco de combate.
 
 As capturas atuais do jogo ficam em [`prints_do_jogo/`](prints_do_jogo/README.md). Depois de mudanças visuais grandes, execute `res://tools/mvp_visual_test.tscn` para sobrescrever os prints oficiais com o estado mais recente da build.
 

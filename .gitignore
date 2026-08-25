@@ -27,6 +27,8 @@ secrets/
 # Local save/debug artifacts
 save_data/
 screenshots/
+/prints_do_jogo/*.png.import
+/assets/environments/**/source/*.png.import
 
 # Original source material remains untouched in the workspace root.
 # Versioned copies live under assets/source/reference and docs/source.

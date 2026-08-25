@@ -10,7 +10,7 @@
 [ext_resource type="Script" path="res://scripts/combat/hurtbox.gd" id="8"]
 [ext_resource type="Texture2D" path="res://assets/bosses/ze_tranca_concept_sheet.png" id="9"]
 [ext_resource type="Script" path="res://scripts/fx/mvp_sprite_animator.gd" id="10"]
-[ext_resource type="Shader" path="res://scripts/fx/white_key.gdshader" id="11"]
+[ext_resource type="Shader" path="res://shaders/alpha_outline.gdshader" id="11"]
 
 [sub_resource type="RectangleShape2D" id="BodyShape"]
 size = Vector2(20, 32)
@@ -20,8 +20,8 @@ size = Vector2(20, 32)
 
 [sub_resource type="ShaderMaterial" id="SpriteMaterial"]
 shader = ExtResource("11")
-shader_parameter/white_threshold = 0.9
-shader_parameter/feather = 0.09
+shader_parameter/outline_width = 11.0
+shader_parameter/outline_color = Color(1, 0.56, 0.18, 1)
 
 [node name="ZeTranca" type="CharacterBody2D"]
 collision_layer = 2

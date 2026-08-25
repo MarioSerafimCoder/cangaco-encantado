@@ -1,6 +1,8 @@
 class_name EnemyBase
 extends CharacterBody2D
 
+const COMBAT_FEEDBACK := preload("res://resources/combat/feedback.tres")
+
 @export var data: EnemyData
 @export var hostile_in_liberated_state := false
 
@@ -105,7 +107,10 @@ func receive_hit(hit: Dictionary) -> bool:
 	var accepted := health.take_damage(int(hit.get("damage", 1)), source)
 	if not accepted:
 		return false
+	var posture_was_broken := posture.broken
 	posture.apply_posture_damage(float(hit.get("posture_damage", 0.0)))
+	if not posture_was_broken and posture.broken:
+		HitStop.apply([self, source as Node], COMBAT_FEEDBACK.posture_break_hitstop)
 	velocity = hit.get("knockback", Vector2.ZERO)
 	if state_machine.current != EnemyStateMachine.State.STAGGER:
 		state_machine.transition(EnemyStateMachine.State.HURT, 0.12, true)
