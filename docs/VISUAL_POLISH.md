@@ -17,7 +17,7 @@ O HUD principal foi separado do diagnóstico técnico. Vida, revólver, espingar
 
 ## Vila e estados do mundo
 
-O cenário continua procedural e modular por limites de sala, mas agora desenha céu em faixas tonais, serras distantes, morros próximos, casas, cercas, textura de terra e landmarks. Igreja, Praça do Umbu, Poço e Posto de Comando têm silhuetas próprias.
+O cenário permanece modular por limites de sala. A Rua das Cinzas usa uma cena própria com layers, colisão e spawns editáveis; as demais áreas continuam no sistema híbrido de atlas rasterizados e geometria do graybox.
 
 - `OCCUPIED`: paleta pesada, janelas apagadas, incêndios, fumaça e filtro avermelhado discreto.
 - `LIBERATED`: céu mais quente, serras verdes, janelas acesas, árvore viva, moradores e pássaros na Praça.

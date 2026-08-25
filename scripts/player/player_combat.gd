@@ -92,13 +92,16 @@ func _fire_revolver() -> void:
 		_start_reload(revolver_data)
 		return
 	revolver_ammo -= 1
-	cooldown = revolver_data.fire_interval
-	player.state_machine.request(PlayerStateMachine.State.SHOOT, 0.08)
-	player.spawn_projectile(revolver_data, player.get_aim_direction(), &"revolver", feedback_config.revolver_hitstop)
-	player.play_weapon_feedback(&"revolver")
+	cooldown = maxf(revolver_data.fire_interval, 0.24)
+	player.state_machine.request(PlayerStateMachine.State.SHOOT, 0.24)
 	EventBus.player_ammo_changed.emit(&"revolver", revolver_ammo, revolver_data.magazine_size)
 	if revolver_ammo == 0:
 		_start_reload(revolver_data)
+	await get_tree().create_timer(0.06).timeout
+	if player == null or player.is_dead or player.state_machine.current_state in [PlayerStateMachine.State.HURT, PlayerStateMachine.State.DEAD]:
+		return
+	player.spawn_projectile(revolver_data, player.get_aim_direction(), &"revolver", feedback_config.revolver_hitstop)
+	player.play_weapon_feedback(&"revolver")
 
 
 func _fire_shotgun() -> void:
@@ -109,15 +112,18 @@ func _fire_shotgun() -> void:
 		return
 	shotgun_ammo -= 1
 	cooldown = shotgun_data.fire_interval
-	player.state_machine.request(PlayerStateMachine.State.SHOTGUN, 0.22)
+	player.state_machine.request(PlayerStateMachine.State.SHOTGUN, 0.36)
+	EventBus.player_ammo_changed.emit(&"shotgun", shotgun_ammo, shotgun_data.magazine_size)
+	if shotgun_ammo == 0:
+		_start_reload(shotgun_data)
+	await get_tree().create_timer(0.08).timeout
+	if player == null or player.is_dead or player.state_machine.current_state in [PlayerStateMachine.State.HURT, PlayerStateMachine.State.DEAD]:
+		return
 	var direction: Vector2 = player.get_aim_direction()
 	for angle in [-0.10, 0.0, 0.10]:
 		player.spawn_projectile(shotgun_data, direction.rotated(angle), &"shotgun", feedback_config.shotgun_hitstop)
 	player.velocity.x -= direction.x * shotgun_data.recoil
 	player.play_weapon_feedback(&"shotgun")
-	EventBus.player_ammo_changed.emit(&"shotgun", shotgun_ammo, shotgun_data.magazine_size)
-	if shotgun_ammo == 0:
-		_start_reload(shotgun_data)
 
 
 func _begin_machete_sequence() -> void:

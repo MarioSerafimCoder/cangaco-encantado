@@ -4,6 +4,7 @@ extends Node2D
 const SAQUEADOR_SCENE := preload("res://scenes/enemies/saqueador.tscn")
 const PISTOLEIRO_SCENE := preload("res://scenes/enemies/pistoleiro.tscn")
 const ZE_TRANCA_SCENE := preload("res://scenes/bosses/ze_tranca.tscn")
+const RUA_DAS_CINZAS_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/rua_das_cinzas.tscn")
 
 const ROOMS := [
 	{"id": &"casa_nilo", "name": "01 CASA DE NILO", "width": 320.0, "function": "Origem e controles"},
@@ -31,7 +32,6 @@ func _ready() -> void:
 	_build_rooms()
 	_build_art_decorator()
 	_build_gameplay()
-	_build_quality_target()
 	EventBus.world_state_changed.connect(_on_world_state_changed)
 	queue_redraw()
 
@@ -53,15 +53,24 @@ func _build_rooms() -> void:
 	for room in ROOMS:
 		var bounds := Rect2(cursor_x, 0.0, room.width, 180.0)
 		room_bounds[room.id] = bounds
-		_add_solid(Rect2(cursor_x, 150.0, room.width, 30.0))
-		var trigger := RoomTrigger.new()
-		add_child(trigger)
-		trigger.configure(room.id, room.name, bounds)
+		if room.id == &"rua_cinzas":
+			_add_production_room(bounds)
+		else:
+			_add_solid(Rect2(cursor_x, 150.0, room.width, 30.0))
+			var trigger := RoomTrigger.new()
+			add_child(trigger)
+			trigger.configure(room.id, room.name, bounds)
 		cursor_x += room.width
 	world_width = cursor_x
 	_add_solid(Rect2(-24.0, -40.0, 24.0, 240.0))
 	_add_solid(Rect2(world_width, -40.0, 24.0, 240.0))
 	_add_room_platforms()
+
+
+func _add_production_room(bounds: Rect2) -> void:
+	var room := RUA_DAS_CINZAS_SCENE.instantiate() as RoomController
+	room.position = bounds.position
+	add_child(room)
 
 
 func _add_room_platforms() -> void:
@@ -111,12 +120,6 @@ func _build_gameplay() -> void:
 		_spawn_occupied_encounters()
 
 
-func _build_quality_target() -> void:
-	var quality_target := RoomQualityTarget.new()
-	add_child(quality_target)
-	quality_target.configure(room_bounds[&"rua_cinzas"])
-
-
 func _build_art_decorator() -> void:
 	var decorator := VilaArtDecorator.new()
 	add_child(decorator)
@@ -124,8 +127,6 @@ func _build_art_decorator() -> void:
 
 
 func _spawn_occupied_encounters() -> void:
-	_spawn_enemy(SAQUEADOR_SCENE, &"rua_cinzas", 210.0)
-	_spawn_enemy(PISTOLEIRO_SCENE, &"rua_cinzas", 430.0)
 	_spawn_enemy(SAQUEADOR_SCENE, &"barracos", 170.0)
 	_spawn_enemy(SAQUEADOR_SCENE, &"armazem", 180.0)
 	_spawn_enemy(PISTOLEIRO_SCENE, &"armazem", 430.0)
@@ -314,7 +315,7 @@ func _draw_watchtower(base: Vector2, liberated: bool) -> void:
 
 func _draw_world_state_atmosphere(liberated: bool) -> void:
 	if not liberated:
-		for room_id in [&"rua_cinzas", &"barracos", &"armazem", &"patio"]:
+		for room_id in [&"barracos", &"armazem", &"patio"]:
 			var bounds: Rect2 = room_bounds[room_id]
 			var fire_position := Vector2(bounds.position.x + bounds.size.x * 0.72, 143.0)
 			var flicker := sin(bounds.position.x) * 2.0
@@ -324,7 +325,8 @@ func _draw_world_state_atmosphere(liberated: bool) -> void:
 			for smoke in 3:
 				var drift := fmod(smoke * 8.0, 24.0)
 				draw_circle(fire_position + Vector2(smoke * 3.0 + drift * 0.35, -20.0 - drift), 5.0 + smoke, Color(0.18, 0.16, 0.17, 0.34 - smoke * 0.07))
-		draw_rect(Rect2(0.0, 0.0, world_width, 150.0), Color(0.18, 0.07, 0.08, 0.08), true)
+		draw_rect(Rect2(0.0, 0.0, 320.0, 150.0), Color(0.18, 0.07, 0.08, 0.08), true)
+		draw_rect(Rect2(960.0, 0.0, world_width - 960.0, 150.0), Color(0.18, 0.07, 0.08, 0.08), true)
 	else:
 		var square: Rect2 = room_bounds[&"praca_umbu"]
 		for resident in 5:

@@ -99,7 +99,7 @@ O Poço contém uma descida visual parcial e bloqueio explícito. O atalho do Ar
 
 ## Arte e pixel-perfect
 
-O projeto usa viewport 320x180, `canvas_items`, filtro nearest e snap 2D. Nilo usa provisoriamente uma folha chibi RGBA de 256x256 px em grade 4x4; inimigos e chefe ainda dependem das folhas conceituais irregulares e do shader de remoção de branco. A ambientação e os VFX desta etapa são desenhados proceduralmente para enriquecer o graybox sem criar dependência de arte final.
+O projeto usa viewport 320x180, `canvas_items`, filtro nearest e snap 2D. Nilo usa provisoriamente uma folha chibi RGBA de 256x256 px em grade 4x4; inimigos e chefe ainda são recortes de folhas conceituais, mas todos usam transparência RGBA real. A Rua das Cinzas possui cena de produção própria e props por `AtlasTexture`; as outras salas continuam no compositor híbrido sobre o graybox.
 
 ## Matriz de teste de runtime
 
@@ -125,7 +125,7 @@ O projeto foi importado no Godot 4.7.1 e completou um smoke test headless de 180
 ## Limitações conhecidas
 
 - A importação, compilação e inicialização automatizada passaram; o playtest humano completo ainda está pendente.
-- O graybox ainda é uma faixa única, não um sistema de streaming de salas.
-- Ainda não há áudio, hitstop calibrado nem balanceamento final; animação e VFX permanecem provisórios.
+- O mundo ainda é uma faixa única, não um sistema de streaming de salas; somente a Rua das Cinzas foi migrada para o novo pipeline.
+- Ainda não há áudio nem balanceamento final; animação, recortes de inimigos e parte dos VFX permanecem provisórios.
 - Batedor, Incendiário e Jagunço de Preto possuem espaço na arquitetura, mas ainda não têm IA própria.
-- A arte conceitual precisa ser convertida em spritesheets transparentes antes do uso em produção.
+- Os inimigos precisam de spritesheets desenhados com poses e pivôs consistentes antes do uso final.

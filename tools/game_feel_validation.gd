@@ -45,7 +45,8 @@ func _validate_continuous_run(nilo: NiloPlayer) -> void:
 			phase_advanced = true
 		previous_phase = visual.run_phase
 		if visual.smoothed_speed_ratio > 0.2 and nilo.is_on_floor():
-			var expected := -absf(sin(visual.run_phase * TAU)) * lerpf(0.2, 0.85, visual.smoothed_speed_ratio)
+			var contact_amount := absf(cos(visual.run_phase * TAU))
+			var expected := -(1.0 - contact_amount) * lerpf(0.08, 0.46, visual.smoothed_speed_ratio)
 			if absf(visual.bob_offset - expected) > 0.035:
 				bob_matches_phase = false
 	Input.action_release("move_right")
@@ -110,12 +111,18 @@ func _validate_crouch_hurtbox(nilo: NiloPlayer) -> void:
 
 func _validate_revolver_is_semi_automatic(nilo: NiloPlayer) -> void:
 	var ammo_before := nilo.combat.revolver_ammo
+	var shooting_frames: Dictionary = {}
 	Input.action_press("shoot_revolver")
-	await _wait_physics_frames(60)
+	for frame in 60:
+		await get_tree().physics_frame
+		if frame < 18 and nilo.state_machine.current_state == PlayerStateMachine.State.SHOOT:
+			shooting_frames[nilo.visual.shooting_frame] = true
 	Input.action_release("shoot_revolver")
 	var spent := ammo_before - nilo.combat.revolver_ammo
 	if spent != 1:
 		failures.append("Revólver semiautomático deveria gastar 1 bala ao segurar; gastou %d." % spent)
+	if not shooting_frames.has(2) or not shooting_frames.has(3) or not shooting_frames.has(5):
+		failures.append("Disparo do revólver não percorreu mira, clarão e recuperação da folha dedicada: %s." % shooting_frames.keys())
 
 
 func _validate_machete_buffer_and_variants(nilo: NiloPlayer) -> void:

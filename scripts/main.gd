@@ -18,6 +18,7 @@ func _ready() -> void:
 	camera.limit_right = int(world.world_width)
 	camera.limit_top = -40
 	camera.limit_bottom = 220
+	camera.limit_smoothed = true
 	EventBus.boss_defeated.connect(_on_boss_defeated)
 
 

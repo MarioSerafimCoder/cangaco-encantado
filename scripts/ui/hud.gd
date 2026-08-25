@@ -1,6 +1,12 @@
 class_name GameHUD
 extends CanvasLayer
 
+const STATUS_PANEL_TEXTURE := preload("res://assets/ui/hud/status_panel.tres")
+const BOSS_PANEL_TEXTURE := preload("res://assets/ui/hud/boss_bar_panel.tres")
+const ROOM_PANEL_TEXTURE := preload("res://assets/ui/hud/room_banner.tres")
+const WORLD_PANEL_TEXTURE := preload("res://assets/ui/hud/world_plaque.tres")
+const HELP_PANEL_TEXTURE := preload("res://assets/ui/hud/help_banner.tres")
+
 var health_label: Label
 var revolver_label: Label
 var shotgun_label: Label
@@ -71,13 +77,13 @@ func _apply_temporary_visibility(control: Control, remaining: float) -> void:
 
 
 func _build_hud() -> void:
-	var status_panel := _make_panel(Rect2(4.0, 4.0, 94.0, 40.0), Color("241d1acc"), Color("b88042"))
-	health_label = _make_label(status_panel, Vector2(5.0, 3.0), Vector2(84.0, 9.0), 7, Color("ffe2a8"))
-	revolver_label = _make_label(status_panel, Vector2(5.0, 12.0), Vector2(84.0, 8.0), 6, Color("e9d5aa"))
-	shotgun_label = _make_label(status_panel, Vector2(5.0, 21.0), Vector2(84.0, 8.0), 6, Color("e9d5aa"))
-	heal_label = _make_label(status_panel, Vector2(5.0, 30.0), Vector2(84.0, 8.0), 6, Color("8fe3b4"))
+	var status_panel := _make_panel(Rect2(4.0, 4.0, 94.0, 46.0), Color("241d1acc"), Color("b88042"), STATUS_PANEL_TEXTURE)
+	health_label = _make_label(status_panel, Vector2(11.0, 4.0), Vector2(78.0, 8.0), 7, Color("ffe2a8"))
+	revolver_label = _make_label(status_panel, Vector2(11.0, 12.0), Vector2(78.0, 8.0), 6, Color("e9d5aa"))
+	shotgun_label = _make_label(status_panel, Vector2(11.0, 20.0), Vector2(78.0, 8.0), 6, Color("e9d5aa"))
+	heal_label = _make_label(status_panel, Vector2(11.0, 28.0), Vector2(78.0, 8.0), 6, Color("8fe3b4"))
 
-	world_panel = _make_panel(Rect2(222.0, 4.0, 94.0, 16.0), Color("241d1acc"), Color("b88042"))
+	world_panel = _make_panel(Rect2(222.0, 4.0, 94.0, 16.0), Color("241d1acc"), Color("b88042"), WORLD_PANEL_TEXTURE)
 	world_label = _make_label(world_panel, Vector2(3.0, 3.0), Vector2(88.0, 10.0), 6, Color("f2d49a"))
 	world_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
@@ -85,12 +91,12 @@ func _build_hud() -> void:
 	debug_label = _make_label(debug_panel, Vector2(5.0, 3.0), Vector2(103.0, 25.0), 6, Color("bce8ee"))
 	debug_panel.visible = false
 
-	room_panel = _make_panel(Rect2(84.0, 38.0, 152.0, 17.0), Color("241d1ae6"), Color("d59a4a"))
+	room_panel = _make_panel(Rect2(84.0, 48.0, 152.0, 17.0), Color("241d1ae6"), Color("d59a4a"), ROOM_PANEL_TEXTURE)
 	room_label = _make_label(room_panel, Vector2(3.0, 3.0), Vector2(146.0, 10.0), 7, Color("fff0ca"))
 	room_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	room_panel.visible = false
 
-	boss_panel = _make_panel(Rect2(125.0, 22.0, 191.0, 16.0), Color("1b1115e8"), Color("9f3c38"))
+	boss_panel = _make_panel(Rect2(125.0, 22.0, 191.0, 16.0), Color("1b1115e8"), Color("9f3c38"), BOSS_PANEL_TEXTURE)
 	boss_label = _make_label(boss_panel, Vector2(5.0, 1.0), Vector2(181.0, 7.0), 6, Color("f4d8bd"))
 	boss_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var boss_track := ColorRect.new()
@@ -104,7 +110,7 @@ func _build_hud() -> void:
 	boss_track.add_child(boss_fill)
 	boss_panel.visible = false
 
-	help_panel = _make_panel(Rect2(32.0, 163.0, 256.0, 12.0), Color("171311c9"), Color("6e5337"))
+	help_panel = _make_panel(Rect2(32.0, 163.0, 256.0, 12.0), Color("171311c9"), Color("6e5337"), HELP_PANEL_TEXTURE)
 	var help_label := _make_label(help_panel, Vector2(3.0, 1.0), Vector2(250.0, 9.0), 5, Color("d8c39e"))
 	help_label.text = "A/D MOVER  ESPAÇO PULAR  J FACÃO  K/L TIROS  F3 DEBUG"
 	help_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -121,22 +127,33 @@ func _update_boss_bar() -> void:
 	boss_fill.size.x = 175.0 * clampf(ratio, 0.0, 1.0)
 
 
-func _make_panel(rect: Rect2, background: Color, border: Color) -> Panel:
+func _make_panel(rect: Rect2, background: Color, border: Color, panel_texture: Texture2D = null) -> Panel:
 	var panel := Panel.new()
 	panel.position = rect.position
 	panel.size = rect.size
 	var style := StyleBoxFlat.new()
-	style.bg_color = background
-	style.border_color = border
-	style.set_border_width_all(1)
+	style.bg_color = Color.TRANSPARENT if panel_texture != null else background
+	style.border_color = Color.TRANSPARENT if panel_texture != null else border
+	style.set_border_width_all(0 if panel_texture != null else 1)
 	style.corner_radius_top_left = 2
 	style.corner_radius_top_right = 2
 	style.corner_radius_bottom_left = 2
 	style.corner_radius_bottom_right = 2
-	style.shadow_color = Color(0.0, 0.0, 0.0, 0.45)
-	style.shadow_size = 2
+	style.shadow_color = Color.TRANSPARENT if panel_texture != null else Color(0.0, 0.0, 0.0, 0.45)
+	style.shadow_size = 0 if panel_texture != null else 2
 	panel.add_theme_stylebox_override("panel", style)
 	add_child(panel)
+	if panel_texture != null:
+		var frame := NinePatchRect.new()
+		frame.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		frame.texture = panel_texture
+		frame.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		frame.patch_margin_left = 8
+		frame.patch_margin_top = 6
+		frame.patch_margin_right = 8
+		frame.patch_margin_bottom = 6
+		frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		panel.add_child(frame)
 	return panel
 
 

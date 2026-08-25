@@ -148,11 +148,11 @@ func _set_crouched(value: bool) -> void:
 func play_weapon_feedback(weapon_id: StringName) -> void:
 	match weapon_id:
 		&"revolver":
-			GameFeelFX.spawn(get_tree().current_scene, global_position + Vector2(facing * 18.0, -8.0), GameFeelFX.Kind.MUZZLE, facing)
+			# A folha dedicada já contém o flash no frame ativo; evite duplicá-lo.
 			add_camera_shake(0.7, 0.05)
 			visual.notify_weapon_recoil(0.65, 0.08)
 		&"shotgun":
-			GameFeelFX.spawn(get_tree().current_scene, global_position + Vector2(facing * 20.0, -7.0), GameFeelFX.Kind.MUZZLE, facing)
+			# O clarão largo faz parte da pose ativa da espingarda.
 			add_camera_shake(2.2, 0.13)
 			visual.notify_weapon_recoil(2.0, 0.2)
 

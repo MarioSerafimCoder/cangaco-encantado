@@ -31,9 +31,6 @@ func configure(bounds_by_room: Dictionary) -> void:
 
 func _build_casa_e_rua() -> void:
 	_add(CASA_ATLAS, Rect2(65, 50, 590, 465), _x(&"casa_nilo", 0.5), 150.0, 250.0)
-	_add(CASA_ATLAS, Rect2(420, 565, 330, 320), _x(&"rua_cinzas", 0.22), 150.0, 74.0)
-	_add(CASA_ATLAS, Rect2(770, 600, 360, 285), _x(&"rua_cinzas", 0.76), 150.0, 92.0)
-	_add(CASA_ATLAS, Rect2(1150, 600, 500, 285), _x(&"rua_cinzas", 0.94), 150.0, 105.0, true)
 
 
 func _build_igreja() -> void:

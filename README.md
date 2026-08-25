@@ -2,7 +2,7 @@
 
 Metroidvania 2D de ação e exploração inspirado no sertão brasileiro e no folclore nordestino. Nilo retorna à Vila do Umbuzeiro depois de um ataque da Companhia do Sol Negro e inicia uma jornada humana de vingança que, pouco a pouco, passa a envolver os Encantados e a restauração do mundo.
 
-Esta entrega é o vertical slice jogável **0.2.1 — Fluid Movement & Visual Cohesion**. A prioridade continua sendo **gameplay > arquitetura > testabilidade > arte**, agora com movimento contínuo, combate faseado e a Rua das Cinzas como primeiro alvo visual de qualidade.
+Esta entrega é o vertical slice jogável **0.2.2 — Production Pipeline & Rua das Cinzas Final Slice**. A Rua das Cinzas é a primeira sala construída como unidade de produção: cena, arte, colisão, gameplay, câmera e estado do mundo compartilham uma estrutura editável no Godot.
 
 ## Stack
 
@@ -59,6 +59,7 @@ Os scripts de gameplay usam somente ações do `InputMap`; nenhum controle depen
 - Câmera com look-ahead suave e leitura vertical de quedas.
 - HUD compacto com vida, munições, Cabaça, barra de chefe, avisos temporários e debug técnico opcional em F3.
 - Rua das Cinzas com três camadas rasterizadas independentes e paralaxe real.
+- Rua das Cinzas em cena própria, com baseline física/visual, entradas, spawns, camera bounds e composição editável.
 - Vila com céu tonal, serras e um kit rasterizado de ambientes, estruturas e obstáculos cobrindo as 13 áreas.
 - Sprites MVP para Saqueador, Pistoleiro e Zé Tranca com transparência PNG RGBA real, sem shader de recorte de fundo.
 - As 13 áreas da Vila do Umbuzeiro em um percurso contínuo de graybox.
@@ -91,9 +92,15 @@ res://
 
 As 15 imagens encontradas no workspace foram copiadas byte a byte para `assets/source/reference/`. Saqueador, Pistoleiro, Zé Tranca e as camadas rasterizadas da Rua das Cinzas usam transparência RGBA real. Nilo usa um spritesheet chibi RGBA separado, com grade 4x4 e células de 64x64 px.
 
-Os oito atlas ambientais corrigidos também usam transparência RGBA real e estão integrados em `assets/environments/vila_umbuzeiro/atlases/`. Eles fornecem fachadas, landmarks, plataformas visuais, obstáculos e adereços para todas as 13 salas sem alterar a geometria de colisão do graybox.
+Os oito atlas ambientais corrigidos também usam transparência RGBA real e estão integrados em `assets/environments/vila_umbuzeiro/atlases/`. Na Rua das Cinzas, os props derivados desses atlas ficam em `AtlasTexture` editáveis e compartilham uma cena com a colisão; as outras 12 salas ainda preservam a geometria do graybox.
 
-As decisões desta rodada estão resumidas em [Iteração 0.2.1](docs/ITERATION_0_2_1.md) e no [changelog](CHANGELOG.md).
+O kit visual 0.2.3 permanece arquivado em `imagens_para_remover_fundo_0_2_3/`, junto do registro de prompts. As cinco folhas corrigidas já estão integradas ao runtime: molduras da HUD, preenchimentos e transições da Rua das Cinzas, fogo/fumaça animados e as poses dedicadas de revólver e espingarda de Nilo.
+
+O histórico da base está em [Iteração 0.2.1](docs/ITERATION_0_2_1.md), e as mudanças atuais estão no [changelog](CHANGELOG.md).
+
+O padrão para converter as próximas salas está em [Pipeline de produção](docs/ROOM_PRODUCTION_PIPELINE.md). A próxima folha de Nilo deve seguir [NILO_ANIMATION_SPEC](docs/NILO_ANIMATION_SPEC.md).
+
+O resultado técnico da sala-base está em [Iteração 0.2.2](docs/ITERATION_0_2_2.md), e a integração dos novos atlas está em [Iteração 0.2.3](docs/ITERATION_0_2_3.md).
 
 ## Validação
 
@@ -105,9 +112,13 @@ powershell -ExecutionPolicy Bypass -File tools/validate_project.ps1
 
 O teste automatizado específico de game feel também pode ser executado com a cena `res://tools/game_feel_validation.tscn`. Ele valida fase da corrida, bob, contatos de pé, virada, fases do salto, pouso, hurtbox agachado, disparo semiautomático, buffer/variante do facão, orientação do projétil, configuração de hitstop e HUD temporário.
 
+A estrutura da primeira sala de produção é validada por `res://tools/room_production_validation.tscn`. O teste cobre identidade, bounds, entradas, spawns, chão, baseline, paralaxe e estados visuais. O checklist estético e de gameplay está em [RUA_DAS_CINZAS_TEST_CHECKLIST](docs/RUA_DAS_CINZAS_TEST_CHECKLIST.md).
+
 Para teste manual isolado, abra `res://tools/movement_lab.tscn`. A cena contém pista de corrida, inversão, vão, plataformas e boneco de combate.
 
 As capturas atuais do jogo ficam em [`prints_do_jogo/`](prints_do_jogo/README.md). Depois de mudanças visuais grandes, execute `res://tools/mvp_visual_test.tscn` para sobrescrever os prints oficiais com o estado mais recente da build.
+
+As seis comparações da Rua das Cinzas são atualizadas por `res://tools/rua_das_cinzas_visual_test.tscn`.
 
 ## Roadmap imediato
 

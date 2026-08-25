@@ -10,8 +10,16 @@ $requiredFiles = @(
     'scenes/enemies/pistoleiro.tscn',
     'scenes/bosses/ze_tranca.tscn',
     'scenes/world/vila_do_umbuzeiro/vila_do_umbuzeiro.tscn',
+    'scenes/world/vila_umbuzeiro/rooms/rua_das_cinzas.tscn',
+    'scripts/world/room_controller.gd',
+    'scripts/world/enemy_spawn.gd',
+    'scripts/world/camera_parallax_layer.gd',
+    'tools/room_production_validation.tscn',
     'README.md',
-    'docs/IMPLEMENTATION.md'
+    'docs/IMPLEMENTATION.md',
+    'docs/ROOM_PRODUCTION_PIPELINE.md',
+    'docs/NILO_ANIMATION_SPEC.md',
+    'docs/ITERATION_0_2_2.md'
 )
 
 foreach ($relativePath in $requiredFiles) {

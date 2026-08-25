@@ -18,7 +18,7 @@ func _ready() -> void:
 	hud.help_fade = 0.0
 	Input.action_press("move_right")
 	await _wait_frames(18)
-	_capture(output_directory.path_join("andando_no_mapa_01.png"))
+	await _capture(output_directory.path_join("andando_no_mapa_01.png"))
 	Input.action_release("move_right")
 
 	nilo.global_position = Vector2(720.0, 126.0)
@@ -30,10 +30,27 @@ func _ready() -> void:
 	nilo.receive_hit({"damage": 1, "knockback": Vector2(55.0, -28.0), "source": world})
 	GameFeelFX.spawn(get_tree().current_scene, nilo.global_position + Vector2(0.0, -8.0), GameFeelFX.Kind.HIT, -1.0)
 	await _wait_frames(2)
-	_capture(output_directory.path_join("dano_de_personagem.png"))
+	await _capture(output_directory.path_join("dano_de_personagem.png"))
 
 	for enemy in get_tree().get_nodes_in_group("enemies"):
 		enemy.process_mode = Node.PROCESS_MODE_DISABLED
+	nilo.global_position = Vector2(640.0, 138.0)
+	nilo.velocity = Vector2.ZERO
+	nilo.state_machine.request(PlayerStateMachine.State.IDLE, 0.0, true)
+	camera.reset_smoothing()
+	await _wait_frames(12)
+	Input.action_press("shoot_revolver")
+	await get_tree().physics_frame
+	Input.action_release("shoot_revolver")
+	await _wait_for_shooting_frame(nilo.visual, 3, 20)
+	await _capture(output_directory.path_join("tiro_de_revolver.png"))
+	await _wait_physics_frames(20)
+	Input.action_press("shoot_shotgun")
+	await get_tree().physics_frame
+	Input.action_release("shoot_shotgun")
+	await _wait_for_shooting_frame(nilo.visual, 3, 24)
+	await _capture(output_directory.path_join("tiro_de_espingarda.png"))
+	await _wait_frames(20)
 	var visual_tour := [
 		[&"casa_nilo", "ambiente_01_casa_de_nilo.png"],
 		[&"igreja_velha", "ambiente_03_igreja_velha.png"],
@@ -58,7 +75,7 @@ func _ready() -> void:
 	nilo.velocity = Vector2.ZERO
 	camera.reset_smoothing()
 	await _wait_frames(30)
-	_capture(output_directory.path_join("combate_com_ze_tranca.png"))
+	await _capture(output_directory.path_join("combate_com_ze_tranca.png"))
 
 	WorldState.region_states["vila_umbuzeiro"] = WorldState.LIBERATED
 	EventBus.world_state_changed.emit(&"vila_umbuzeiro", WorldState.LIBERATED)
@@ -67,13 +84,25 @@ func _ready() -> void:
 	nilo.velocity = Vector2.ZERO
 	camera.reset_smoothing()
 	await _wait_frames(30)
-	_capture(output_directory.path_join("vila_libertada_praca_do_umbu.png"))
+	await _capture(output_directory.path_join("vila_libertada_praca_do_umbu.png"))
 	get_tree().quit()
 
 
 func _wait_frames(count: int) -> void:
 	for _frame in count:
 		await get_tree().process_frame
+
+
+func _wait_physics_frames(count: int) -> void:
+	for _frame in count:
+		await get_tree().physics_frame
+
+
+func _wait_for_shooting_frame(visual: NiloVisualController, frame_index: int, maximum_frames: int) -> void:
+	for _frame in maximum_frames:
+		await get_tree().process_frame
+		if visual.shooting_frame == frame_index:
+			return
 
 
 func _capture_room(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: GameHUD, room_id: StringName, path: String) -> void:
@@ -88,9 +117,15 @@ func _capture_room(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: 
 	hud.world_fade = 0.0
 	hud.help_fade = 0.0
 	await _wait_frames(2)
-	_capture(path)
+	await _capture(path)
 
 
 func _capture(path: String) -> void:
-	var image := get_viewport().get_texture().get_image()
-	image.save_png(path)
+	for attempt in 3:
+		var image := get_viewport().get_texture().get_image()
+		var error := image.save_png(path)
+		if error == OK:
+			return
+		if attempt < 2:
+			await get_tree().create_timer(0.12).timeout
+	push_error("Não foi possível atualizar a captura após 3 tentativas: %s" % path)

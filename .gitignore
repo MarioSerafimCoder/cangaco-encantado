@@ -28,6 +28,7 @@ secrets/
 save_data/
 screenshots/
 /prints_do_jogo/*.png.import
+/prints_do_jogo/**/*.png.import
 /assets/environments/**/source/*.png.import
 
 # Original source material remains untouched in the workspace root.
