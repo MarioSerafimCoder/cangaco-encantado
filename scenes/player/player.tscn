@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Resource" path="res://resources/player/player_config.tres" id="2"]
@@ -14,6 +14,7 @@
 [ext_resource type="Script" path="res://scripts/player/nilo_visual_controller.gd" id="12"]
 [ext_resource type="Resource" path="res://resources/combat/feedback.tres" id="14"]
 [ext_resource type="Texture2D" path="res://assets/player/nilo_animacoes_de_tiro.png" id="15_shooting"]
+[ext_resource type="Script" path="res://scripts/fx/contact_shadow.gd" id="16_shadow"]
 
 [sub_resource type="RectangleShape2D" id="PlayerShape"]
 size = Vector2(12, 24)
@@ -22,6 +23,7 @@ size = Vector2(12, 24)
 size = Vector2(12, 24)
 
 [node name="Nilo" type="CharacterBody2D"]
+z_index = 10
 collision_layer = 2
 collision_mask = 1
 script = ExtResource("1")
@@ -37,6 +39,11 @@ script = ExtResource("12")
 columns = 4
 rows = 4
 shooting_texture = ExtResource("15_shooting")
+
+[node name="ContactShadow" type="Node2D" parent="."]
+script = ExtResource("16_shadow")
+ground_offset = 12.0
+half_width = 7.5
 
 [node name="BodyCollision" type="CollisionShape2D" parent="."]
 shape = SubResource("PlayerShape")

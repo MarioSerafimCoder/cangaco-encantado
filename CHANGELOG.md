@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.2.4 — Environmental Composition Pass
+
+### Escala e personagens
+
+- A escala de idle, corrida, revólver e espingarda de Nilo agora deriva da altura útil medida em cada frame e preserva uma baseline canônica.
+- O multiplicador fixo usado durante o tiro foi removido.
+- Nilo, Saqueador, Pistoleiro e Zé Tranca receberam proporções calibradas e sombras de contato pixeladas.
+
+### Ambientes
+
+- Telhados da Vila, Praça do Umbu, Barracos Queimados, Posto de Comando e Arena de Zé Tranca foram migrados para cenas editáveis de produção.
+- As novas cenas combinam arquitetura completa, fundo contínuo em três planos, chão em camadas, colisões alinhadas e containers ocupado/libertado.
+- A Praça ganhou Umbuzeiro central integrado à base de pedra; Barracos ganhou ruínas, entulho e VFX; Posto e Arena ganharam estruturas monumentais sem recorte involuntário.
+- Arte e encontros duplicados dessas cinco salas foram removidos do decorador e do graybox procedural.
+
+### Pipeline e validação
+
+- Criados módulos compartilhados de paralaxe e chão para salas de 320 e 640 px.
+- Validação de produção ampliada de uma para seis salas, incluindo registro, colisões, estado do mundo e exclusão de decoração duplicada.
+- Adicionados guia de composição ambiental, especificação de escala visual e capturas de aceitação da iteração.
+- A validação de game feel agora mede altura e baseline de Nilo nas quatro famílias de animação.
+
 ## 0.2.3 — Visual Gap Kit & Shooting Readability
 
 ### Assets integrados

@@ -40,20 +40,11 @@ func _build_igreja() -> void:
 
 
 func _build_telhados_e_praca() -> void:
-	_add(PRACA_ATLAS, Rect2(40, 45, 985, 150), _x(&"telhados", 0.28), 122.0, 245.0)
-	_add(PRACA_ATLAS, Rect2(40, 245, 825, 150), _x(&"telhados", 0.72), 98.0, 225.0)
-	_add(PRACA_ATLAS, Rect2(45, 455, 510, 155), _x(&"telhados", 0.52), 148.0, 128.0)
-	_add(PRACA_ATLAS, Rect2(650, 425, 165, 225), _x(&"telhados", 0.47), 92.0, 36.0)
-	_add(PRACA_ATLAS, Rect2(880, 260, 610, 570), _x(&"praca_umbu", 0.5), 150.0, 180.0)
-	_add(PRACA_ATLAS, Rect2(35, 665, 415, 310), _x(&"praca_umbu", 0.18), 150.0, 125.0)
-	_add(PRACA_ATLAS, Rect2(485, 680, 230, 300), _x(&"praca_umbu", 0.86), 150.0, 45.0)
+	pass
 
 
 func _build_barracos() -> void:
-	_add(BARRACOS_ATLAS, Rect2(70, 75, 860, 390), _x(&"barracos", 0.35), 150.0, 285.0)
-	_add(BARRACOS_ATLAS, Rect2(985, 120, 475, 350), _x(&"barracos", 0.79), 150.0, 150.0)
-	_add(BARRACOS_ATLAS, Rect2(475, 525, 480, 225), _x(&"barracos", 0.57), 150.0, 110.0)
-	_add(BARRACOS_ATLAS, Rect2(935, 770, 525, 205), _x(&"barracos", 0.91), 150.0, 115.0)
+	pass
 
 
 func _build_armazem_e_patio() -> void:
@@ -79,19 +70,10 @@ func _build_barricada_e_posto() -> void:
 	_add(POSTO_ATLAS, Rect2(20, 45, 690, 410), _x(&"barricada", 0.5), 150.0, 280.0, true)
 	_add(POSTO_ATLAS, Rect2(735, 55, 285, 410), _x(&"barricada", 0.13), 150.0, 82.0, true)
 	_add(POSTO_ATLAS, Rect2(1060, 55, 290, 410), _x(&"barricada", 0.87), 150.0, 82.0, true)
-	_add(POSTO_ATLAS, Rect2(1340, 120, 360, 350), _x(&"posto", 0.57), 150.0, 180.0)
-	_add(POSTO_ATLAS, Rect2(55, 480, 285, 380), _x(&"posto", 0.2), 150.0, 92.0)
-	_add(POSTO_ATLAS, Rect2(1200, 600, 310, 240), _x(&"posto", 0.84), 150.0, 86.0, true)
 
 
 func _build_arena() -> void:
-	_add(ARENA_ATLAS, Rect2(430, 35, 690, 420), _x(&"arena", 0.5), 150.0, 260.0)
-	_add(ARENA_ATLAS, Rect2(45, 25, 300, 430), _x(&"arena", 0.1), 150.0, 88.0)
-	_add(ARENA_ATLAS, Rect2(1180, 25, 310, 430), _x(&"arena", 0.9), 150.0, 88.0)
-	_add(ARENA_ATLAS, Rect2(20, 480, 600, 235), _x(&"arena", 0.25), 150.0, 145.0)
-	_add(ARENA_ATLAS, Rect2(635, 470, 245, 235), _x(&"arena", 0.55), 150.0, 58.0)
-	_add(ARENA_ATLAS, Rect2(890, 470, 200, 225), _x(&"arena", 0.68), 150.0, 48.0)
-	_add(ARENA_ATLAS, Rect2(1090, 455, 410, 255), _x(&"arena", 0.8), 150.0, 100.0)
+	pass
 
 
 func _add(texture: Texture2D, region: Rect2, world_x: float, baseline: float, target_width: float, occupied_only := false) -> void:

@@ -15,7 +15,7 @@ var spawned_enemy: EnemyBase
 func _ready() -> void:
 	add_to_group("enemy_spawn_points")
 	EventBus.world_state_changed.connect(_on_world_state_changed)
-	_refresh_spawn()
+	_refresh_spawn.call_deferred()
 
 
 func has_live_enemy() -> bool:

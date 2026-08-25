@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/enemy_base.gd" id="1"]
 [ext_resource type="Resource" path="res://resources/enemies/saqueador.tres" id="2"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" path="res://scripts/combat/hurtbox.gd" id="8"]
 [ext_resource type="Texture2D" path="res://assets/enemies/saqueador_concept_sheet.png" id="9"]
 [ext_resource type="Script" path="res://scripts/fx/mvp_sprite_animator.gd" id="10"]
+[ext_resource type="Script" path="res://scripts/fx/contact_shadow.gd" id="11_shadow"]
 
 [sub_resource type="RectangleShape2D" id="BodyShape"]
 size = Vector2(14, 26)
@@ -18,14 +19,15 @@ size = Vector2(14, 26)
 size = Vector2(14, 26)
 
 [node name="Saqueador" type="CharacterBody2D"]
+z_index = 10
 collision_layer = 2
 collision_mask = 1
 script = ExtResource("1")
 data = ExtResource("2")
 
 [node name="Visual" type="Sprite2D" parent="."]
-position = Vector2(0, -3)
-scale = Vector2(0.115, 0.115)
+position = Vector2(0, -11)
+scale = Vector2(0.132, 0.132)
 texture = ExtResource("9")
 region_enabled = true
 region_rect = Rect2(0, 0, 362, 362)
@@ -33,6 +35,11 @@ script = ExtResource("10")
 actor_kind = 1
 columns = 4
 rows = 3
+
+[node name="ContactShadow" type="Node2D" parent="."]
+script = ExtResource("11_shadow")
+ground_offset = 13.0
+half_width = 8.5
 
 [node name="BodyCollision" type="CollisionShape2D" parent="."]
 shape = SubResource("BodyShape")

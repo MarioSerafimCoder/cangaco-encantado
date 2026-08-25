@@ -9,24 +9,50 @@ func _ready() -> void:
 	EventBus.world_state_changed.emit(&"vila_umbuzeiro", WorldState.OCCUPIED)
 	await get_tree().process_frame
 	var rooms := get_tree().get_nodes_in_group("production_rooms")
-	if rooms.size() != 1:
-		failures.append("A iteração deve possuir exatamente uma sala no pipeline de produção; encontradas: %d." % rooms.size())
+	var expected_rooms := {
+		&"rua_cinzas": 640.0,
+		&"telhados": 640.0,
+		&"praca_umbu": 640.0,
+		&"barracos": 640.0,
+		&"posto": 320.0,
+		&"arena": 640.0,
+	}
+	if rooms.size() != expected_rooms.size():
+		failures.append("A iteração deve possuir seis salas no pipeline de produção; encontradas: %d." % rooms.size())
 		_finish()
 		return
-	var room := rooms[0] as RoomController
-	_validate_identity_and_bounds(room)
-	_validate_entrances(room)
-	_validate_spawns(room)
-	_validate_geometry(room)
-	_validate_parallax(room)
-	_validate_world_state(room)
-	await _validate_player_baseline(room)
+	var by_id: Dictionary = {}
+	for candidate in rooms:
+		var room := candidate as RoomController
+		by_id[room.room_id] = room
+		_validate_identity_and_bounds(room, expected_rooms)
+		_validate_entrances(room)
+		_validate_geometry(room)
+		_validate_parallax(room)
+		_validate_world_state(room)
+	for room_id in expected_rooms:
+		if not by_id.has(room_id):
+			failures.append("Sala de produção ausente: %s." % room_id)
+	if by_id.has(&"rua_cinzas"):
+		_validate_spawns(by_id[&"rua_cinzas"], 2)
+		await _validate_player_baseline(by_id[&"rua_cinzas"])
+	if by_id.has(&"telhados"):
+		_validate_roof_collisions(by_id[&"telhados"])
+	if by_id.has(&"barracos"):
+		_validate_spawns(by_id[&"barracos"], 1)
+	if by_id.has(&"arena"):
+		_validate_spawns(by_id[&"arena"], 1)
+	_validate_decorator_exclusions()
+	_validate_character_shadows()
+	_validate_save_payload_roundtrip()
 	_finish()
 
 
-func _validate_identity_and_bounds(room: RoomController) -> void:
-	if room.room_id != &"rua_cinzas":
-		failures.append("RoomController não registrou room_id rua_cinzas.")
+func _validate_identity_and_bounds(room: RoomController, expected_rooms: Dictionary) -> void:
+	if not expected_rooms.has(room.room_id):
+		failures.append("RoomController registrou ID inesperado: %s." % room.room_id)
+	elif not is_equal_approx(room.local_bounds.size.x, float(expected_rooms[room.room_id])):
+		failures.append("Largura inesperada na sala %s." % room.room_id)
 	if room.local_bounds.size.x <= 0.0 or room.local_bounds.size.y <= 0.0:
 		failures.append("Bounds da sala são inválidos.")
 	if room.camera_bounds.size.x < 320.0 or room.camera_bounds.size.y < 180.0:
@@ -44,10 +70,10 @@ func _validate_entrances(room: RoomController) -> void:
 			failures.append("Entrada %s está fora dos bounds." % entrance_id)
 
 
-func _validate_spawns(room: RoomController) -> void:
+func _validate_spawns(room: RoomController, minimum_count: int) -> void:
 	var spawn_root := room.get_node_or_null("Gameplay/EnemySpawns")
-	if spawn_root == null or spawn_root.get_child_count() < 2:
-		failures.append("Rua das Cinzas precisa de spawns visuais para Saqueador e Pistoleiro.")
+	if spawn_root == null or spawn_root.get_child_count() < minimum_count:
+		failures.append("Sala %s precisa de ao menos %d EnemySpawn(s)." % [room.room_id, minimum_count])
 		return
 	var ids: Dictionary = {}
 	for child in spawn_root.get_children():
@@ -79,12 +105,22 @@ func _validate_geometry(room: RoomController) -> void:
 
 
 func _validate_parallax(room: RoomController) -> void:
-	var expected := {
-		"Environment/Sky": Vector2(0.03, 1.0),
-		"Environment/FarBackground": Vector2(0.14, 1.0),
-		"Environment/MidBackground": Vector2(0.5, 1.0),
-		"Environment/Foreground": Vector2(1.1, 1.0),
-	}
+	if room.room_id == &"rua_cinzas":
+		_validate_parallax_paths(room, {
+			"Environment/Sky": Vector2(0.03, 1.0),
+			"Environment/FarBackground": Vector2(0.14, 1.0),
+			"Environment/MidBackground": Vector2(0.5, 1.0),
+			"Environment/Foreground": Vector2(1.1, 1.0),
+		})
+		return
+	_validate_parallax_paths(room, {
+		"Environment/Parallax/Sky": Vector2(0.03, 1.0),
+		"Environment/Parallax/FarMountains": Vector2(0.16, 1.0),
+		"Environment/Parallax/Village": Vector2(0.48, 1.0),
+	})
+
+
+func _validate_parallax_paths(room: RoomController, expected: Dictionary) -> void:
 	for path in expected:
 		var layer := room.get_node_or_null(path) as CameraParallaxLayer
 		if layer == null:
@@ -106,6 +142,70 @@ func _validate_world_state(room: RoomController) -> void:
 	EventBus.world_state_changed.emit(&"vila_umbuzeiro", WorldState.OCCUPIED)
 
 
+func _validate_roof_collisions(room: RoomController) -> void:
+	var expected_tops := {
+		"Geometry/Roof1": 112.0,
+		"Geometry/Roof2": 88.0,
+		"Geometry/Roof3": 116.0,
+		"Geometry/Roof4": 82.0,
+	}
+	for path in expected_tops:
+		var body := room.get_node_or_null(path) as StaticBody2D
+		if body == null:
+			failures.append("Telhado sem corpo físico: %s." % path)
+			continue
+		var collision := body.get_node_or_null("CollisionShape2D") as CollisionShape2D
+		var shape := collision.shape as RectangleShape2D if collision != null else null
+		if shape == null:
+			failures.append("Telhado sem RectangleShape2D: %s." % path)
+			continue
+		var top := body.position.y - shape.size.y * 0.5
+		if absf(top - float(expected_tops[path])) > 0.1:
+			failures.append("Colisão desalinhada no telhado %s: %.2f." % [path, top])
+
+
+func _validate_decorator_exclusions() -> void:
+	var world := $Main/VilaDoUmbuzeiro as VilaGraybox
+	var decorator := world.get_node_or_null("VilaArtDecorator") as VilaArtDecorator
+	if decorator == null:
+		failures.append("VilaArtDecorator não foi encontrado para auditar exclusões.")
+		return
+	for sprite in decorator.art_sprites:
+		for room_id in [&"telhados", &"praca_umbu", &"barracos", &"posto", &"arena"]:
+			var bounds: Rect2 = world.room_bounds[room_id]
+			if bounds.has_point(sprite.position):
+				failures.append("VilaArtDecorator ainda posiciona arte na sala migrada %s." % room_id)
+
+
+func _validate_character_shadows() -> void:
+	for scene_path in [
+		"res://scenes/player/player.tscn",
+		"res://scenes/enemies/saqueador.tscn",
+		"res://scenes/enemies/pistoleiro.tscn",
+		"res://scenes/bosses/ze_tranca.tscn",
+	]:
+		var packed := load(scene_path) as PackedScene
+		var actor := packed.instantiate()
+		if actor.get_node_or_null("ContactShadow") == null:
+			failures.append("Personagem sem sombra de contato: %s." % scene_path)
+		actor.free()
+
+
+func _validate_save_payload_roundtrip() -> void:
+	var payload := {
+		"game_state": GameState.to_dictionary(),
+		"world_state": WorldState.to_dictionary(),
+	}
+	var parsed = JSON.parse_string(JSON.stringify(payload))
+	if parsed is not Dictionary:
+		failures.append("Payload do save não completa roundtrip JSON.")
+		return
+	if not parsed.has("game_state") or not parsed.has("world_state"):
+		failures.append("Payload do save perdeu os blocos de estado obrigatórios.")
+	elif not parsed["world_state"].has("region_states"):
+		failures.append("WorldState não preserva region_states no save.")
+
+
 func _validate_player_baseline(room: RoomController) -> void:
 	var player := get_tree().get_first_node_in_group("player") as NiloPlayer
 	var entrance := room.get_entrance(&"LEFT_ENTRANCE")
@@ -117,7 +217,7 @@ func _validate_player_baseline(room: RoomController) -> void:
 		failures.append("Player spawn da entrada esquerda não repousa no chão.")
 	if absf((player.global_position.y + 12.0) - 150.0) > 0.6:
 		failures.append("Collider de Nilo não fecha na baseline y=150.")
-	var visual_foot := player.global_position.y + player.visual.position.y + 32.0 * player.visual.scale.y
+	var visual_foot := player.global_position.y + player.visual.normalized_baseline_offset
 	if absf(visual_foot - 150.0) > 0.8:
 		failures.append("Pé visual de Nilo não coincide com a baseline: %.2f." % visual_foot)
 	var expected_camera := room.get_global_camera_bounds()

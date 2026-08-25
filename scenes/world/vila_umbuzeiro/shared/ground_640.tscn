@@ -1,0 +1,50 @@
+[gd_scene load_steps=2 format=3]
+
+[sub_resource type="RectangleShape2D" id="GroundShape"]
+size = Vector2(640, 30)
+
+[node name="Ground" type="Node2D"]
+
+[node name="Body" type="Polygon2D" parent="."]
+z_index = 0
+polygon = PackedVector2Array(0, 150, 640, 150, 640, 180, 0, 180)
+color = Color(0.275, 0.184, 0.142, 1)
+
+[node name="SubsoilBand" type="Polygon2D" parent="."]
+z_index = 1
+polygon = PackedVector2Array(0, 158, 640, 158, 640, 164, 0, 164)
+color = Color(0.34, 0.222, 0.16, 0.68)
+
+[node name="Surface" type="Polygon2D" parent="."]
+z_index = 2
+polygon = PackedVector2Array(0, 146, 36, 147, 74, 145, 112, 147, 154, 146, 201, 148, 244, 145, 292, 147, 337, 146, 386, 148, 430, 145, 478, 147, 526, 146, 576, 148, 640, 146, 640, 152, 0, 152)
+color = Color(0.58, 0.405, 0.245, 1)
+
+[node name="Edge" type="Polygon2D" parent="."]
+z_index = 3
+polygon = PackedVector2Array(0, 150, 48, 151, 90, 149, 136, 151, 184, 150, 232, 152, 282, 149, 330, 151, 382, 150, 432, 152, 484, 149, 536, 151, 588, 150, 640, 151, 640, 155, 0, 155)
+color = Color(0.39, 0.266, 0.184, 1)
+
+[node name="StoneWest" type="Polygon2D" parent="."]
+z_index = 4
+polygon = PackedVector2Array(22, 148, 28, 143, 37, 144, 42, 149)
+color = Color(0.43, 0.37, 0.29, 1)
+
+[node name="StoneCenter" type="Polygon2D" parent="."]
+z_index = 4
+polygon = PackedVector2Array(302, 149, 308, 144, 318, 145, 323, 150)
+color = Color(0.5, 0.42, 0.31, 1)
+
+[node name="CrackEast" type="Line2D" parent="."]
+z_index = 4
+points = PackedVector2Array(515, 150, 522, 154, 530, 153, 537, 157)
+width = 1.0
+default_color = Color(0.22, 0.145, 0.12, 0.8)
+
+[node name="GroundCollision" type="StaticBody2D" parent="."]
+position = Vector2(320, 165)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GroundCollision"]
+shape = SubResource("GroundShape")

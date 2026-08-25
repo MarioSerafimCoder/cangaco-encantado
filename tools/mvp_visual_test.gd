@@ -113,6 +113,13 @@ func _capture_room(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: 
 	nilo.velocity = Vector2.ZERO
 	camera.reset_smoothing()
 	await _wait_frames(16)
+	var bounds: Rect2 = world.room_bounds[room_id]
+	camera.limit_left = roundi(bounds.position.x)
+	camera.limit_right = roundi(bounds.end.x)
+	camera.limit_top = -40
+	camera.limit_bottom = 220
+	camera.reset_smoothing()
+	await _wait_frames(2)
 	hud.room_fade = 0.0
 	hud.world_fade = 0.0
 	hud.help_fade = 0.0

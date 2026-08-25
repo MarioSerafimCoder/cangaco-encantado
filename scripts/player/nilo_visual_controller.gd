@@ -1,6 +1,13 @@
 class_name NiloVisualController
 extends Sprite2D
 
+const BASE_USEFUL_HEIGHTS := [53.0, 53.0, 53.0, 51.0, 51.0, 50.0, 48.0, 49.0, 57.0, 61.0, 48.0, 45.0, 49.0, 49.0, 29.0, 23.0]
+const BASE_USEFUL_BOTTOMS := [64.0, 64.0, 64.0, 64.0, 60.0, 61.0, 59.0, 60.0, 57.0, 64.0, 55.0, 55.0, 49.0, 49.0, 49.0, 50.0]
+const REVOLVER_USEFUL_HEIGHTS := [271.0, 290.0, 271.0, 270.0, 290.0, 270.0]
+const REVOLVER_USEFUL_BOTTOMS := [356.0, 356.0, 356.0, 356.0, 356.0, 356.0]
+const SHOTGUN_USEFUL_HEIGHTS := [277.0, 286.0, 271.0, 271.0, 281.0, 271.0]
+const SHOTGUN_USEFUL_BOTTOMS := [344.0, 345.0, 345.0, 345.0, 345.0, 345.0]
+
 enum VisualTransition { NONE, RUN_START, RUN_STOP, TURN, TAKEOFF, LAND }
 
 signal foot_contact(side: int)
@@ -13,8 +20,9 @@ signal transition_started(transition: VisualTransition)
 @export var shooting_row_height := 380.0
 @export var revolver_row_y := 30.0
 @export var shotgun_row_y := 440.0
-@export_range(0.05, 1.0) var shooting_scale_multiplier := 0.105
-@export var shooting_vertical_offset := 11.0
+@export var base_reference_useful_height := 53.0
+@export var base_reference_useful_bottom := 64.0
+@export var target_visual_height := 0.0
 @export var minimum_run_cycles_per_second := 1.65
 @export var maximum_run_cycles_per_second := 3.05
 @export var moving_speed_threshold := 5.0
@@ -32,6 +40,8 @@ var run_contact_amount := 1.0
 var moving_active := false
 var running_active := false
 var shooting_frame := -1
+var normalized_visual_height := 0.0
+var normalized_baseline_offset := 0.0
 
 var _player: NiloPlayer
 var _base_position := Vector2.ZERO
@@ -53,6 +63,10 @@ var _recoil_duration := 0.0
 var _hurt_flash_remaining := 0.0
 var _base_texture: Texture2D
 var _using_shooting_sheet := false
+var _current_useful_height := 53.0
+var _current_useful_bottom := 64.0
+var _current_region_height := 64.0
+var _canonical_baseline_offset := 0.0
 
 
 func _ready() -> void:
@@ -61,6 +75,9 @@ func _ready() -> void:
 	_base_scale = scale
 	_base_rotation = rotation
 	_base_texture = texture
+	if target_visual_height <= 0.0:
+		target_visual_height = base_reference_useful_height * absf(_base_scale.y)
+	_canonical_baseline_offset = _base_position.y + (base_reference_useful_bottom - 32.0) * absf(_base_scale.y)
 	region_enabled = true
 	region_filter_clip_enabled = true
 	_previous_grounded = _player.is_on_floor()
@@ -203,13 +220,14 @@ func _select_frame() -> int:
 
 func _apply_visual_transform() -> void:
 	position = _base_position
-	scale = _base_scale
+	var normalized_scale := target_visual_height / maxf(_current_useful_height, 1.0)
+	scale = Vector2(normalized_scale, normalized_scale)
+	position.y = _canonical_baseline_offset - (_current_useful_bottom - _current_region_height * 0.5) * normalized_scale
 	rotation = _base_rotation
 	self_modulate = Color.WHITE
 	flip_h = _player.facing < 0.0
-	if _using_shooting_sheet:
-		scale *= shooting_scale_multiplier
-		position.y += shooting_vertical_offset
+	normalized_visual_height = _current_useful_height * absf(scale.y)
+	normalized_baseline_offset = position.y + (_current_useful_bottom - _current_region_height * 0.5) * absf(scale.y)
 
 	match _player.state_machine.current_state:
 		PlayerStateMachine.State.IDLE:
@@ -377,6 +395,9 @@ func _apply_frame(frame_index: int) -> void:
 	_last_frame = frame_index
 	var cell_size := Vector2(float(texture.get_width()) / float(maxi(columns, 1)), float(texture.get_height()) / float(maxi(rows, 1)))
 	region_rect = Rect2(Vector2(frame_index % columns, frame_index / columns) * cell_size, cell_size)
+	_current_useful_height = BASE_USEFUL_HEIGHTS[clampi(frame_index, 0, BASE_USEFUL_HEIGHTS.size() - 1)]
+	_current_useful_bottom = BASE_USEFUL_BOTTOMS[clampi(frame_index, 0, BASE_USEFUL_BOTTOMS.size() - 1)]
+	_current_region_height = cell_size.y
 
 
 func _apply_current_frame() -> void:
@@ -401,6 +422,11 @@ func _apply_shooting_frame(is_shotgun: bool) -> void:
 	var cell_width := float(shooting_texture.get_width()) / float(maxi(shooting_columns, 1))
 	var row_y := shotgun_row_y if is_shotgun else revolver_row_y
 	region_rect = Rect2(frame_index * cell_width, row_y, cell_width, shooting_row_height)
+	var heights := SHOTGUN_USEFUL_HEIGHTS if is_shotgun else REVOLVER_USEFUL_HEIGHTS
+	var bottoms := SHOTGUN_USEFUL_BOTTOMS if is_shotgun else REVOLVER_USEFUL_BOTTOMS
+	_current_useful_height = heights[frame_index]
+	_current_useful_bottom = bottoms[frame_index]
+	_current_region_height = shooting_row_height
 
 
 func _shooting_frame_at_time(is_shotgun: bool) -> int:

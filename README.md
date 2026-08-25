@@ -2,7 +2,7 @@
 
 Metroidvania 2D de ação e exploração inspirado no sertão brasileiro e no folclore nordestino. Nilo retorna à Vila do Umbuzeiro depois de um ataque da Companhia do Sol Negro e inicia uma jornada humana de vingança que, pouco a pouco, passa a envolver os Encantados e a restauração do mundo.
 
-Esta entrega é o vertical slice jogável **0.2.2 — Production Pipeline & Rua das Cinzas Final Slice**. A Rua das Cinzas é a primeira sala construída como unidade de produção: cena, arte, colisão, gameplay, câmera e estado do mundo compartilham uma estrutura editável no Godot.
+Esta entrega é o vertical slice jogável **0.2.4 — Environmental Composition Pass**. Seis salas agora são unidades de produção editáveis: cena, arte, colisão, gameplay, câmera e estado do mundo compartilham a mesma estrutura no Godot.
 
 ## Stack
 
@@ -60,6 +60,9 @@ Os scripts de gameplay usam somente ações do `InputMap`; nenhum controle depen
 - HUD compacto com vida, munições, Cabaça, barra de chefe, avisos temporários e debug técnico opcional em F3.
 - Rua das Cinzas com três camadas rasterizadas independentes e paralaxe real.
 - Rua das Cinzas em cena própria, com baseline física/visual, entradas, spawns, camera bounds e composição editável.
+- Telhados da Vila, Praça do Umbu, Barracos Queimados, Posto de Comando e Arena de Zé Tranca também usam cenas ambientais próprias, com arquitetura completa, paralaxe contínuo e chão em camadas.
+- Escala visual de Nilo normalizada por altura útil medida entre idle, corrida, revólver e espingarda, sem multiplicador fixo de tiro.
+- Sombras de contato pixeladas para Nilo, Saqueador, Pistoleiro e Zé Tranca.
 - Vila com céu tonal, serras e um kit rasterizado de ambientes, estruturas e obstáculos cobrindo as 13 áreas.
 - Sprites MVP para Saqueador, Pistoleiro e Zé Tranca com transparência PNG RGBA real, sem shader de recorte de fundo.
 - As 13 áreas da Vila do Umbuzeiro em um percurso contínuo de graybox.
@@ -92,7 +95,7 @@ res://
 
 As 15 imagens encontradas no workspace foram copiadas byte a byte para `assets/source/reference/`. Saqueador, Pistoleiro, Zé Tranca e as camadas rasterizadas da Rua das Cinzas usam transparência RGBA real. Nilo usa um spritesheet chibi RGBA separado, com grade 4x4 e células de 64x64 px.
 
-Os oito atlas ambientais corrigidos também usam transparência RGBA real e estão integrados em `assets/environments/vila_umbuzeiro/atlases/`. Na Rua das Cinzas, os props derivados desses atlas ficam em `AtlasTexture` editáveis e compartilham uma cena com a colisão; as outras 12 salas ainda preservam a geometria do graybox.
+Os oito atlas ambientais corrigidos também usam transparência RGBA real e estão integrados em `assets/environments/vila_umbuzeiro/atlases/`. Seis salas já compartilham arte, colisão e gameplay em cenas editáveis; as sete restantes preservam a geometria do graybox enquanto aguardam migração.
 
 O kit visual 0.2.3 permanece arquivado em `imagens_para_remover_fundo_0_2_3/`, junto do registro de prompts. As cinco folhas corrigidas já estão integradas ao runtime: molduras da HUD, preenchimentos e transições da Rua das Cinzas, fogo/fumaça animados e as poses dedicadas de revólver e espingarda de Nilo.
 
@@ -100,7 +103,7 @@ O histórico da base está em [Iteração 0.2.1](docs/ITERATION_0_2_1.md), e as 
 
 O padrão para converter as próximas salas está em [Pipeline de produção](docs/ROOM_PRODUCTION_PIPELINE.md). A próxima folha de Nilo deve seguir [NILO_ANIMATION_SPEC](docs/NILO_ANIMATION_SPEC.md).
 
-O resultado técnico da sala-base está em [Iteração 0.2.2](docs/ITERATION_0_2_2.md), e a integração dos novos atlas está em [Iteração 0.2.3](docs/ITERATION_0_2_3.md).
+O resultado técnico da sala-base está em [Iteração 0.2.2](docs/ITERATION_0_2_2.md), a integração dos novos atlas em [Iteração 0.2.3](docs/ITERATION_0_2_3.md) e o passe ambiental em [Iteração 0.2.4](docs/ITERATION_0_2_4.md). As regras novas estão em [Composição ambiental](docs/ENVIRONMENT_COMPOSITION_GUIDE.md) e [Escala visual de personagens](docs/CHARACTER_VISUAL_SCALE.md).
 
 ## Validação
 
@@ -112,13 +115,15 @@ powershell -ExecutionPolicy Bypass -File tools/validate_project.ps1
 
 O teste automatizado específico de game feel também pode ser executado com a cena `res://tools/game_feel_validation.tscn`. Ele valida fase da corrida, bob, contatos de pé, virada, fases do salto, pouso, hurtbox agachado, disparo semiautomático, buffer/variante do facão, orientação do projétil, configuração de hitstop e HUD temporário.
 
-A estrutura da primeira sala de produção é validada por `res://tools/room_production_validation.tscn`. O teste cobre identidade, bounds, entradas, spawns, chão, baseline, paralaxe e estados visuais. O checklist estético e de gameplay está em [RUA_DAS_CINZAS_TEST_CHECKLIST](docs/RUA_DAS_CINZAS_TEST_CHECKLIST.md).
+A estrutura das seis salas de produção é validada por `res://tools/room_production_validation.tscn`. O teste cobre identidade, bounds, entradas, spawns, chão, baseline, paralaxe, colisões e estados visuais. O checklist estético e de gameplay está em [RUA_DAS_CINZAS_TEST_CHECKLIST](docs/RUA_DAS_CINZAS_TEST_CHECKLIST.md).
 
 Para teste manual isolado, abra `res://tools/movement_lab.tscn`. A cena contém pista de corrida, inversão, vão, plataformas e boneco de combate.
 
 As capturas atuais do jogo ficam em [`prints_do_jogo/`](prints_do_jogo/README.md). Depois de mudanças visuais grandes, execute `res://tools/mvp_visual_test.tscn` para sobrescrever os prints oficiais com o estado mais recente da build.
 
 As seis comparações da Rua das Cinzas são atualizadas por `res://tools/rua_das_cinzas_visual_test.tscn`.
+
+As capturas de aceitação da 0.2.4 são geradas por `res://tools/environment_visual_test.tscn`; a comparação de escala de Nilo usa `res://tools/nilo_scale_comparison.tscn`.
 
 ## Roadmap imediato
 

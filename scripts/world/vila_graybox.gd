@@ -5,6 +5,11 @@ const SAQUEADOR_SCENE := preload("res://scenes/enemies/saqueador.tscn")
 const PISTOLEIRO_SCENE := preload("res://scenes/enemies/pistoleiro.tscn")
 const ZE_TRANCA_SCENE := preload("res://scenes/bosses/ze_tranca.tscn")
 const RUA_DAS_CINZAS_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/rua_das_cinzas.tscn")
+const TELHADOS_DA_VILA_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/telhados_da_vila.tscn")
+const PRACA_DO_UMBU_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/praca_do_umbu.tscn")
+const BARRACOS_QUEIMADOS_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/barracos_queimados.tscn")
+const POSTO_DE_COMANDO_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/posto_de_comando.tscn")
+const ARENA_ZE_TRANCA_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/arena_ze_tranca.tscn")
 
 const ROOMS := [
 	{"id": &"casa_nilo", "name": "01 CASA DE NILO", "width": 320.0, "function": "Origem e controles"},
@@ -53,8 +58,9 @@ func _build_rooms() -> void:
 	for room in ROOMS:
 		var bounds := Rect2(cursor_x, 0.0, room.width, 180.0)
 		room_bounds[room.id] = bounds
-		if room.id == &"rua_cinzas":
-			_add_production_room(bounds)
+		var production_scene := _production_scene_for(room.id)
+		if production_scene != null:
+			_add_production_room(bounds, production_scene)
 		else:
 			_add_solid(Rect2(cursor_x, 150.0, room.width, 30.0))
 			var trigger := RoomTrigger.new()
@@ -67,20 +73,31 @@ func _build_rooms() -> void:
 	_add_room_platforms()
 
 
-func _add_production_room(bounds: Rect2) -> void:
-	var room := RUA_DAS_CINZAS_SCENE.instantiate() as RoomController
+func _add_production_room(bounds: Rect2, scene: PackedScene) -> void:
+	var room := scene.instantiate() as RoomController
 	room.position = bounds.position
 	add_child(room)
 
 
+func _production_scene_for(room_id: StringName) -> PackedScene:
+	match room_id:
+		&"rua_cinzas":
+			return RUA_DAS_CINZAS_SCENE
+		&"telhados":
+			return TELHADOS_DA_VILA_SCENE
+		&"praca_umbu":
+			return PRACA_DO_UMBU_SCENE
+		&"barracos":
+			return BARRACOS_QUEIMADOS_SCENE
+		&"posto":
+			return POSTO_DE_COMANDO_SCENE
+		&"arena":
+			return ARENA_ZE_TRANCA_SCENE
+		_:
+			return null
+
+
 func _add_room_platforms() -> void:
-	var roofs: Rect2 = room_bounds[&"telhados"]
-	_add_solid(Rect2(roofs.position.x + 70.0, 112.0, 86.0, 10.0))
-	_add_solid(Rect2(roofs.position.x + 198.0, 88.0, 104.0, 10.0))
-	_add_solid(Rect2(roofs.position.x + 350.0, 116.0, 92.0, 10.0))
-	_add_solid(Rect2(roofs.position.x + 492.0, 82.0, 110.0, 10.0))
-	var square: Rect2 = room_bounds[&"praca_umbu"]
-	_add_solid(Rect2(square.position.x + 248.0, 126.0, 144.0, 24.0))
 	var warehouse: Rect2 = room_bounds[&"armazem"]
 	_add_solid(Rect2(warehouse.position.x + 130.0, 106.0, 86.0, 8.0))
 	_add_solid(Rect2(warehouse.position.x + 344.0, 92.0, 96.0, 8.0))
@@ -122,19 +139,17 @@ func _build_gameplay() -> void:
 
 func _build_art_decorator() -> void:
 	var decorator := VilaArtDecorator.new()
+	decorator.name = "VilaArtDecorator"
 	add_child(decorator)
 	decorator.configure(room_bounds)
 
 
 func _spawn_occupied_encounters() -> void:
-	_spawn_enemy(SAQUEADOR_SCENE, &"barracos", 170.0)
 	_spawn_enemy(SAQUEADOR_SCENE, &"armazem", 180.0)
 	_spawn_enemy(PISTOLEIRO_SCENE, &"armazem", 430.0)
 	_spawn_enemy(SAQUEADOR_SCENE, &"patio", 190.0)
 	_spawn_enemy(SAQUEADOR_SCENE, &"patio", 390.0)
 	_spawn_enemy(PISTOLEIRO_SCENE, &"beco", 180.0)
-	if not GameState.defeated_bosses.get("ze_tranca", false):
-		_spawn_enemy(ZE_TRANCA_SCENE, &"arena", 390.0)
 
 
 func _spawn_enemy(scene: PackedScene, room_id: StringName, local_x: float) -> void:
@@ -168,7 +183,7 @@ func _draw() -> void:
 	for index in ROOMS.size():
 		var room: Dictionary = ROOMS[index]
 		var bounds: Rect2 = room_bounds[room.id]
-		if room.id != &"rua_cinzas":
+		if _production_scene_for(room.id) == null:
 			_draw_room_background(bounds, index, liberated)
 	for solid in solid_rects:
 		_draw_styled_solid(solid, liberated)
@@ -315,7 +330,7 @@ func _draw_watchtower(base: Vector2, liberated: bool) -> void:
 
 func _draw_world_state_atmosphere(liberated: bool) -> void:
 	if not liberated:
-		for room_id in [&"barracos", &"armazem", &"patio"]:
+		for room_id in [&"armazem", &"patio"]:
 			var bounds: Rect2 = room_bounds[room_id]
 			var fire_position := Vector2(bounds.position.x + bounds.size.x * 0.72, 143.0)
 			var flicker := sin(bounds.position.x) * 2.0
@@ -328,15 +343,7 @@ func _draw_world_state_atmosphere(liberated: bool) -> void:
 		draw_rect(Rect2(0.0, 0.0, 320.0, 150.0), Color(0.18, 0.07, 0.08, 0.08), true)
 		draw_rect(Rect2(960.0, 0.0, world_width - 960.0, 150.0), Color(0.18, 0.07, 0.08, 0.08), true)
 	else:
-		var square: Rect2 = room_bounds[&"praca_umbu"]
-		for resident in 5:
-			var x := square.position.x + 205.0 + resident * 48.0
-			var shirt := Color("d59a5b") if resident % 2 == 0 else Color("789363")
-			_draw_pixel_resident(Vector2(x, 133.0), shirt, resident % 2 == 0)
-		for bird in 4:
-			var bird_x := square.position.x + 120.0 + bird * 34.0
-			var bird_y := 45.0 + sin(float(bird)) * 3.0
-			draw_arc(Vector2(bird_x, bird_y), 4.0, PI + 0.2, TAU - 0.2, 5, Color("473b32"), 1.0)
+		pass
 
 
 func _draw_pixel_resident(position: Vector2, shirt: Color, alternate: bool) -> void:

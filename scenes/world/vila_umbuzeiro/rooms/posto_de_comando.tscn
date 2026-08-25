@@ -1,0 +1,163 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/room_controller.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_320.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/ground_320.tscn" id="3"]
+[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/atlases/07_barricada_e_posto_comando.png" id="4"]
+[ext_resource type="Texture2D" path="res://assets/fx/vfx_ocupacao_e_tiros.png" id="5"]
+[ext_resource type="Script" path="res://scripts/fx/atlas_strip_animator.gd" id="6"]
+[ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/fillers/madeira_quebrada_01.tres" id="7"]
+
+[sub_resource type="RectangleShape2D" id="RoomShape"]
+size = Vector2(320, 180)
+
+[node name="PostoDeComando" type="Node2D"]
+script = ExtResource("1")
+room_id = &"posto"
+display_name = "12 POSTO DE COMANDO"
+local_bounds = Rect2(0, 0, 320, 180)
+camera_bounds = Rect2(0, -40, 320, 260)
+
+[node name="Environment" type="Node2D" parent="."]
+
+[node name="Parallax" parent="Environment" instance=ExtResource("2")]
+
+[node name="FortificationBack" type="Node2D" parent="Environment"]
+z_index = -30
+
+[node name="Wall" type="Polygon2D" parent="Environment/FortificationBack"]
+polygon = PackedVector2Array(0, 112, 320, 112, 320, 150, 0, 150)
+color = Color(0.2, 0.16, 0.15, 0.92)
+
+[node name="Battlements" type="Polygon2D" parent="Environment/FortificationBack"]
+z_index = 1
+polygon = PackedVector2Array(0, 112, 0, 102, 18, 102, 18, 112, 48, 112, 48, 100, 66, 100, 66, 112, 96, 112, 96, 103, 114, 103, 114, 112, 320, 112, 320, 124, 0, 124)
+color = Color(0.28, 0.21, 0.18, 0.95)
+
+[node name="CommandArchitecture" type="Node2D" parent="Environment"]
+z_index = -10
+
+[node name="WatchtowerShadow" type="Polygon2D" parent="Environment/CommandArchitecture"]
+polygon = PackedVector2Array(12, 146, 91, 146, 84, 151, 18, 151)
+color = Color(0.08, 0.06, 0.055, 0.55)
+
+[node name="Watchtower" type="Sprite2D" parent="Environment/CommandArchitecture"]
+position = Vector2(49, 101.9)
+scale = Vector2(0.253, 0.253)
+z_index = 2
+texture_filter = 1
+texture = ExtResource("4")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(55, 480, 285, 380)
+
+[node name="MainBuildingShadow" type="Polygon2D" parent="Environment/CommandArchitecture"]
+polygon = PackedVector2Array(96, 146, 264, 146, 255, 152, 105, 152)
+color = Color(0.08, 0.06, 0.055, 0.62)
+
+[node name="MainBuilding" type="Sprite2D" parent="Environment/CommandArchitecture"]
+position = Vector2(181, 81.9)
+scale = Vector2(0.389, 0.389)
+z_index = 3
+texture_filter = 1
+texture = ExtResource("4")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(1340, 120, 360, 350)
+
+[node name="RightPalisade" type="Sprite2D" parent="Environment/CommandArchitecture"]
+position = Vector2(307, 100.5)
+scale = Vector2(0.241, 0.241)
+z_index = 1
+texture_filter = 1
+texture = ExtResource("4")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(1060, 55, 290, 410)
+
+[node name="Supplies" type="Sprite2D" parent="Environment/CommandArchitecture"]
+position = Vector2(278, 123.7)
+scale = Vector2(0.219, 0.219)
+z_index = 5
+texture_filter = 1
+texture = ExtResource("4")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(1200, 600, 310, 240)
+
+[node name="BrokenWood" type="Sprite2D" parent="Environment/CommandArchitecture"]
+position = Vector2(101, 139)
+scale = Vector2(0.13, 0.13)
+z_index = 4
+texture_filter = 1
+texture = ExtResource("7")
+
+[node name="OccupiedOnly" type="Node2D" parent="Environment" groups=["room_occupied_only"]]
+
+[node name="RedControlLight" type="Polygon2D" parent="Environment/OccupiedOnly"]
+z_index = -5
+polygon = PackedVector2Array(0, 0, 320, 0, 320, 150, 0, 150)
+color = Color(0.35, 0.035, 0.025, 0.1)
+
+[node name="CommandBanner" type="Polygon2D" parent="Environment/OccupiedOnly"]
+position = Vector2(80, 73)
+z_index = 4
+polygon = PackedVector2Array(0, 0, 17, 3, 14, 29, 8, 24, 2, 29)
+color = Color(0.35, 0.06, 0.055, 0.92)
+
+[node name="Brazier" type="Sprite2D" parent="Environment/OccupiedOnly"]
+position = Vector2(278, 133)
+scale = Vector2(0.18, 0.18)
+z_index = 40
+texture_filter = 1
+texture = ExtResource("5")
+script = ExtResource("6")
+frame_rect = Rect2(672, 0, 112, 200)
+frame_count = 6
+frames_per_second = 8.0
+
+[node name="LiberatedOnly" type="Node2D" parent="Environment" groups=["room_liberated_only"]]
+visible = false
+
+[node name="QuietLight" type="Polygon2D" parent="Environment/LiberatedOnly"]
+z_index = -5
+polygon = PackedVector2Array(0, 0, 320, 0, 320, 150, 0, 150)
+color = Color(0.84, 0.66, 0.37, 0.045)
+
+[node name="Foreground" type="Node2D" parent="Environment"]
+z_index = 30
+
+[node name="Rope" type="Line2D" parent="Environment/Foreground"]
+points = PackedVector2Array(0, 84, 48, 91, 96, 86)
+width = 1.0
+default_color = Color(0.22, 0.15, 0.11, 0.72)
+
+[node name="Geometry" type="Node2D" parent="."]
+
+[node name="Ground" parent="Geometry" instance=ExtResource("3")]
+
+[node name="Gameplay" type="Node2D" parent="."]
+
+[node name="Actors" type="Node2D" parent="Gameplay"]
+
+[node name="Entrances" type="Node2D" parent="Gameplay"]
+
+[node name="LEFT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances"]
+position = Vector2(18, 138)
+
+[node name="RIGHT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances"]
+position = Vector2(302, 138)
+
+[node name="EnemySpawns" type="Node2D" parent="Gameplay"]
+
+[node name="Triggers" type="Node2D" parent="Gameplay"]
+
+[node name="RoomArea" type="Area2D" parent="Gameplay/Triggers"]
+position = Vector2(160, 90)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Triggers/RoomArea"]
+shape = SubResource("RoomShape")
+
+[node name="Camera" type="Node2D" parent="."]

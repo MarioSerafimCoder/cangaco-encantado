@@ -12,6 +12,7 @@ func _ready() -> void:
 	await _validate_turn_transition(nilo)
 	await _validate_jump_phases(nilo)
 	await _validate_crouch_hurtbox(nilo)
+	await _validate_visual_scale_consistency(nilo)
 	await _validate_revolver_is_semi_automatic(nilo)
 	await _validate_machete_buffer_and_variants(nilo)
 	await _validate_projectile_orientation()
@@ -107,6 +108,34 @@ func _validate_crouch_hurtbox(nilo: NiloPlayer) -> void:
 		failures.append("Collider e hurtbox ficaram desalinhados no agachamento.")
 	Input.action_release("crouch")
 	await _wait_physics_frames(2)
+
+
+func _validate_visual_scale_consistency(nilo: NiloPlayer) -> void:
+	var samples: Dictionary = {}
+	nilo.state_machine.request(PlayerStateMachine.State.IDLE, 0.0, true)
+	await _wait_physics_frames(2)
+	samples[&"idle"] = Vector2(nilo.visual.normalized_visual_height, nilo.visual.normalized_baseline_offset)
+	nilo.velocity.x = nilo.config.move_speed
+	nilo.state_machine.request(PlayerStateMachine.State.RUN, 0.12, true)
+	await _wait_physics_frames(2)
+	samples[&"run"] = Vector2(nilo.visual.normalized_visual_height, nilo.visual.normalized_baseline_offset)
+	nilo.velocity.x = 0.0
+	nilo.state_machine.request(PlayerStateMachine.State.SHOOT, 0.24, true)
+	await _wait_physics_frames(5)
+	samples[&"revolver"] = Vector2(nilo.visual.normalized_visual_height, nilo.visual.normalized_baseline_offset)
+	nilo.state_machine.request(PlayerStateMachine.State.SHOTGUN, 0.36, true)
+	await _wait_physics_frames(6)
+	samples[&"shotgun"] = Vector2(nilo.visual.normalized_visual_height, nilo.visual.normalized_baseline_offset)
+	nilo.state_machine.request(PlayerStateMachine.State.IDLE, 0.0, true)
+	var reference: Vector2 = samples[&"idle"]
+	for pose_id in samples:
+		var sample: Vector2 = samples[pose_id]
+		if absf(sample.x - reference.x) > 0.05:
+			failures.append("Altura visual de Nilo divergiu em %s: %.3f vs %.3f." % [pose_id, sample.x, reference.x])
+		if absf(sample.y - reference.y) > 0.05:
+			failures.append("Baseline visual de Nilo divergiu em %s: %.3f vs %.3f." % [pose_id, sample.y, reference.y])
+	if nilo.get_node_or_null("ContactShadow") == null:
+		failures.append("Nilo não possui ContactShadow reutilizável.")
 
 
 func _validate_revolver_is_semi_automatic(nilo: NiloPlayer) -> void:

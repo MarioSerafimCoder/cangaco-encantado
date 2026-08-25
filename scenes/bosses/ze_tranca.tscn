@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/bosses/ze_tranca.gd" id="1"]
 [ext_resource type="Resource" path="res://resources/bosses/ze_tranca.tres" id="2"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" path="res://assets/bosses/ze_tranca_concept_sheet.png" id="9"]
 [ext_resource type="Script" path="res://scripts/fx/mvp_sprite_animator.gd" id="10"]
 [ext_resource type="Shader" path="res://shaders/alpha_outline.gdshader" id="11"]
+[ext_resource type="Script" path="res://scripts/fx/contact_shadow.gd" id="12_shadow"]
 
 [sub_resource type="RectangleShape2D" id="BodyShape"]
 size = Vector2(20, 32)
@@ -24,6 +25,7 @@ shader_parameter/outline_width = 11.0
 shader_parameter/outline_color = Color(1, 0.56, 0.18, 1)
 
 [node name="ZeTranca" type="CharacterBody2D"]
+z_index = 10
 collision_layer = 2
 collision_mask = 1
 script = ExtResource("1")
@@ -31,8 +33,8 @@ data = ExtResource("2")
 
 [node name="Visual" type="Sprite2D" parent="."]
 material = SubResource("SpriteMaterial")
-position = Vector2(0, -8)
-scale = Vector2(0.115, 0.115)
+position = Vector2(0, -16)
+scale = Vector2(0.149, 0.149)
 texture = ExtResource("9")
 region_enabled = true
 region_rect = Rect2(0, 0, 384, 512)
@@ -40,6 +42,12 @@ script = ExtResource("10")
 actor_kind = 3
 columns = 4
 rows = 2
+
+[node name="ContactShadow" type="Node2D" parent="."]
+script = ExtResource("12_shadow")
+ground_offset = 16.0
+half_width = 12.0
+half_height = 2.5
 
 [node name="BodyCollision" type="CollisionShape2D" parent="."]
 shape = SubResource("BodyShape")

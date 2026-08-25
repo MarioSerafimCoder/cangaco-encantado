@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/enemy_base.gd" id="1"]
 [ext_resource type="Resource" path="res://resources/enemies/pistoleiro.tres" id="2"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" path="res://scripts/combat/hurtbox.gd" id="8"]
 [ext_resource type="Texture2D" path="res://assets/enemies/pistoleiro_concept_sheet.png" id="9"]
 [ext_resource type="Script" path="res://scripts/fx/mvp_sprite_animator.gd" id="10"]
+[ext_resource type="Script" path="res://scripts/fx/contact_shadow.gd" id="11_shadow"]
 
 [sub_resource type="RectangleShape2D" id="BodyShape"]
 size = Vector2(14, 24)
@@ -18,14 +19,15 @@ size = Vector2(14, 24)
 size = Vector2(14, 24)
 
 [node name="Pistoleiro" type="CharacterBody2D"]
+z_index = 10
 collision_layer = 2
 collision_mask = 1
 script = ExtResource("1")
 data = ExtResource("2")
 
 [node name="Visual" type="Sprite2D" parent="."]
-position = Vector2(0, -4)
-scale = Vector2(0.115, 0.115)
+position = Vector2(0, -12)
+scale = Vector2(0.169, 0.169)
 texture = ExtResource("9")
 region_enabled = true
 region_rect = Rect2(0, 0, 241.333, 362)
@@ -33,6 +35,11 @@ script = ExtResource("10")
 actor_kind = 2
 columns = 6
 rows = 3
+
+[node name="ContactShadow" type="Node2D" parent="."]
+script = ExtResource("11_shadow")
+ground_offset = 12.0
+half_width = 7.5
 
 [node name="BodyCollision" type="CollisionShape2D" parent="."]
 shape = SubResource("BodyShape")

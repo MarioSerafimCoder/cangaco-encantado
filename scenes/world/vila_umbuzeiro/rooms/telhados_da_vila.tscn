@@ -1,0 +1,316 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/room_controller.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_640.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/ground_640.tscn" id="3"]
+[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/atlases/03_telhados_e_praca_umbu.png" id="4"]
+[ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/fillers/parede_quebrada_esquerda.tres" id="5"]
+[ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/fillers/parede_quebrada_direita.tres" id="6"]
+
+[sub_resource type="RectangleShape2D" id="Roof1Shape"]
+size = Vector2(86, 10)
+
+[sub_resource type="RectangleShape2D" id="Roof2Shape"]
+size = Vector2(104, 10)
+
+[sub_resource type="RectangleShape2D" id="Roof3Shape"]
+size = Vector2(92, 10)
+
+[sub_resource type="RectangleShape2D" id="Roof4Shape"]
+size = Vector2(110, 10)
+
+[sub_resource type="RectangleShape2D" id="RoomShape"]
+size = Vector2(640, 180)
+
+[node name="TelhadosDaVila" type="Node2D"]
+script = ExtResource("1")
+room_id = &"telhados"
+display_name = "04 TELHADOS DA VILA"
+local_bounds = Rect2(0, 0, 640, 180)
+camera_bounds = Rect2(0, -40, 640, 260)
+
+[node name="Environment" type="Node2D" parent="."]
+
+[node name="Parallax" parent="Environment" instance=ExtResource("2")]
+
+[node name="Architecture" type="Node2D" parent="Environment"]
+z_index = -20
+
+[node name="TransitionLeft" type="Sprite2D" parent="Environment/Architecture"]
+position = Vector2(18, 115)
+scale = Vector2(0.3, 0.3)
+texture_filter = 1
+texture = ExtResource("5")
+
+[node name="TransitionRight" type="Sprite2D" parent="Environment/Architecture"]
+position = Vector2(622, 115)
+scale = Vector2(-0.3, 0.3)
+texture_filter = 1
+texture = ExtResource("6")
+
+[node name="House1Facade" type="Polygon2D" parent="Environment/Architecture"]
+polygon = PackedVector2Array(61, 106, 164, 106, 164, 150, 61, 150)
+color = Color(0.52, 0.37, 0.27, 1)
+
+[node name="House1Foundation" type="Polygon2D" parent="Environment/Architecture"]
+z_index = 1
+polygon = PackedVector2Array(61, 143, 164, 143, 164, 150, 61, 150)
+color = Color(0.31, 0.25, 0.21, 1)
+
+[node name="House1Door" type="Polygon2D" parent="Environment/Architecture"]
+z_index = 1
+polygon = PackedVector2Array(75, 126, 89, 126, 89, 150, 75, 150)
+color = Color(0.17, 0.13, 0.12, 1)
+
+[node name="House1Window" type="Polygon2D" parent="Environment/Architecture"]
+z_index = 1
+polygon = PackedVector2Array(130, 120, 142, 120, 142, 132, 130, 132)
+color = Color(0.16, 0.25, 0.25, 1)
+
+[node name="House1RoofShadow" type="Polygon2D" parent="Environment/Architecture"]
+z_index = 2
+polygon = PackedVector2Array(60, 109, 166, 109, 160, 116, 66, 116)
+color = Color(0.12, 0.08, 0.07, 0.62)
+
+[node name="House1Roof" type="Sprite2D" parent="Environment/Architecture"]
+position = Vector2(113, 104.4)
+scale = Vector2(0.1015, 0.1015)
+z_index = 3
+texture_filter = 1
+texture = ExtResource("4")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(40, 45, 985, 150)
+
+[node name="House2Facade" type="Polygon2D" parent="Environment/Architecture"]
+polygon = PackedVector2Array(188, 84, 312, 84, 312, 150, 188, 150)
+color = Color(0.6, 0.43, 0.29, 1)
+
+[node name="House2Balcony" type="Polygon2D" parent="Environment/Architecture"]
+z_index = 1
+polygon = PackedVector2Array(205, 111, 296, 111, 296, 117, 205, 117)
+color = Color(0.25, 0.16, 0.12, 1)
+
+[node name="House2PlasterPatch" type="Polygon2D" parent="Environment/Architecture"]
+z_index = 0
+polygon = PackedVector2Array(190, 88, 229, 86, 236, 111, 214, 120, 190, 116)
+color = Color(0.68, 0.51, 0.36, 0.42)
+
+[node name="House2Crack" type="Line2D" parent="Environment/Architecture"]
+z_index = 1
+points = PackedVector2Array(298, 88, 292, 101, 297, 112, 290, 121)
+width = 1.0
+default_color = Color(0.29, 0.2, 0.16, 0.62)
+
+[node name="House2Door" type="Polygon2D" parent="Environment/Architecture"]
+z_index = 1
+polygon = PackedVector2Array(236, 124, 253, 124, 253, 150, 236, 150)
+color = Color(0.19, 0.14, 0.12, 1)
+
+[node name="House2WindowLeft" type="Polygon2D" parent="Environment/Architecture"]
+z_index = 1
+polygon = PackedVector2Array(207, 94, 220, 94, 220, 106, 207, 106)
+color = Color(0.2, 0.29, 0.29, 1)
+
+[node name="House2WindowRight" type="Polygon2D" parent="Environment/Architecture"]
+z_index = 1
+polygon = PackedVector2Array(274, 94, 287, 94, 287, 106, 274, 106)
+color = Color(0.2, 0.29, 0.29, 1)
+
+[node name="House2RoofShadow" type="Polygon2D" parent="Environment/Architecture"]
+z_index = 2
+polygon = PackedVector2Array(186, 85, 314, 85, 307, 93, 193, 93)
+color = Color(0.12, 0.08, 0.07, 0.65)
+
+[node name="House2Roof" type="Sprite2D" parent="Environment/Architecture"]
+position = Vector2(250, 77.1)
+scale = Vector2(0.14545, 0.14545)
+z_index = 3
+texture_filter = 1
+texture = ExtResource("4")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(40, 245, 825, 150)
+
+[node name="House3Ruin" type="Polygon2D" parent="Environment/Architecture"]
+polygon = PackedVector2Array(343, 108, 449, 108, 449, 150, 343, 150)
+color = Color(0.43, 0.34, 0.27, 1)
+
+[node name="House3Breach" type="Polygon2D" parent="Environment/Architecture"]
+z_index = 1
+polygon = PackedVector2Array(405, 112, 449, 112, 449, 150, 432, 150, 425, 129)
+color = Color(0.13, 0.1, 0.09, 1)
+
+[node name="House3Window" type="Polygon2D" parent="Environment/Architecture"]
+z_index = 1
+polygon = PackedVector2Array(360, 125, 374, 125, 374, 138, 360, 138)
+color = Color(0.16, 0.22, 0.22, 1)
+
+[node name="House3Roof" type="Sprite2D" parent="Environment/Architecture"]
+position = Vector2(396, 99.3)
+scale = Vector2(0.2157, 0.2157)
+z_index = 3
+texture_filter = 1
+texture = ExtResource("4")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(45, 455, 510, 155)
+
+[node name="House4Facade" type="Polygon2D" parent="Environment/Architecture"]
+polygon = PackedVector2Array(482, 77, 612, 77, 612, 150, 482, 150)
+color = Color(0.56, 0.39, 0.27, 1)
+
+[node name="House4Door" type="Polygon2D" parent="Environment/Architecture"]
+z_index = 1
+polygon = PackedVector2Array(537, 119, 556, 119, 556, 150, 537, 150)
+color = Color(0.18, 0.13, 0.11, 1)
+
+[node name="House4PlasterPatch" type="Polygon2D" parent="Environment/Architecture"]
+z_index = 0
+polygon = PackedVector2Array(484, 82, 527, 80, 535, 111, 509, 117, 484, 108)
+color = Color(0.64, 0.47, 0.33, 0.42)
+
+[node name="House4Crack" type="Line2D" parent="Environment/Architecture"]
+z_index = 1
+points = PackedVector2Array(600, 82, 594, 96, 599, 106, 592, 118)
+width = 1.0
+default_color = Color(0.29, 0.2, 0.16, 0.62)
+
+[node name="House4WindowLeft" type="Polygon2D" parent="Environment/Architecture"]
+z_index = 1
+polygon = PackedVector2Array(501, 94, 515, 94, 515, 107, 501, 107)
+color = Color(0.19, 0.27, 0.27, 1)
+
+[node name="House4WindowRight" type="Polygon2D" parent="Environment/Architecture"]
+z_index = 1
+polygon = PackedVector2Array(579, 94, 593, 94, 593, 107, 579, 107)
+color = Color(0.19, 0.27, 0.27, 1)
+
+[node name="House4RoofShadow" type="Polygon2D" parent="Environment/Architecture"]
+z_index = 2
+polygon = PackedVector2Array(480, 79, 614, 79, 608, 87, 486, 87)
+color = Color(0.12, 0.08, 0.07, 0.65)
+
+[node name="House4Roof" type="Sprite2D" parent="Environment/Architecture"]
+position = Vector2(547, 72.4)
+scale = Vector2(0.128, 0.128)
+z_index = 3
+texture_filter = 1
+texture = ExtResource("4")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(40, 45, 985, 150)
+
+[node name="BellTower" type="Sprite2D" parent="Environment/Architecture"]
+position = Vector2(330, 128.2)
+scale = Vector2(0.194, 0.194)
+z_index = 2
+texture_filter = 1
+texture = ExtResource("4")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(650, 425, 165, 225)
+
+[node name="OccupiedOnly" type="Node2D" parent="Environment" groups=["room_occupied_only"]]
+
+[node name="OccupationTint" type="Polygon2D" parent="Environment/OccupiedOnly"]
+z_index = -10
+polygon = PackedVector2Array(0, 0, 640, 0, 640, 150, 0, 150)
+color = Color(0.25, 0.055, 0.04, 0.08)
+
+[node name="CompanyFlag" type="Polygon2D" parent="Environment/OccupiedOnly"]
+position = Vector2(574, 55)
+z_index = -5
+polygon = PackedVector2Array(0, 0, 34, 4, 25, 17, 0, 13)
+color = Color(0.28, 0.08, 0.07, 0.9)
+
+[node name="LiberatedOnly" type="Node2D" parent="Environment" groups=["room_liberated_only"]]
+visible = false
+
+[node name="WarmWindowHouse2" type="Polygon2D" parent="Environment/LiberatedOnly"]
+z_index = -18
+polygon = PackedVector2Array(207, 94, 220, 94, 220, 106, 207, 106)
+color = Color(0.92, 0.62, 0.24, 0.48)
+
+[node name="WarmWindowHouse4" type="Polygon2D" parent="Environment/LiberatedOnly"]
+z_index = -18
+polygon = PackedVector2Array(579, 94, 593, 94, 593, 107, 579, 107)
+color = Color(0.92, 0.62, 0.24, 0.48)
+
+[node name="Foreground" type="Node2D" parent="Environment"]
+z_index = 30
+
+[node name="Clothesline" type="Line2D" parent="Environment/Foreground"]
+points = PackedVector2Array(172, 58, 464, 67)
+width = 1.0
+default_color = Color(0.2, 0.15, 0.12, 0.75)
+
+[node name="Cloth1" type="Polygon2D" parent="Environment/Foreground"]
+polygon = PackedVector2Array(225, 60, 245, 61, 241, 76, 228, 74)
+color = Color(0.55, 0.19, 0.16, 0.85)
+
+[node name="Cloth2" type="Polygon2D" parent="Environment/Foreground"]
+polygon = PackedVector2Array(378, 64, 394, 65, 391, 78, 380, 76)
+color = Color(0.76, 0.64, 0.43, 0.82)
+
+[node name="Geometry" type="Node2D" parent="."]
+
+[node name="Ground" parent="Geometry" instance=ExtResource("3")]
+
+[node name="Roof1" type="StaticBody2D" parent="Geometry"]
+position = Vector2(113, 117)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/Roof1"]
+shape = SubResource("Roof1Shape")
+
+[node name="Roof2" type="StaticBody2D" parent="Geometry"]
+position = Vector2(250, 93)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/Roof2"]
+shape = SubResource("Roof2Shape")
+
+[node name="Roof3" type="StaticBody2D" parent="Geometry"]
+position = Vector2(396, 121)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/Roof3"]
+shape = SubResource("Roof3Shape")
+
+[node name="Roof4" type="StaticBody2D" parent="Geometry"]
+position = Vector2(547, 87)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/Roof4"]
+shape = SubResource("Roof4Shape")
+
+[node name="Gameplay" type="Node2D" parent="."]
+
+[node name="Actors" type="Node2D" parent="Gameplay"]
+
+[node name="Entrances" type="Node2D" parent="Gameplay"]
+
+[node name="LEFT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances"]
+position = Vector2(18, 138)
+
+[node name="RIGHT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances"]
+position = Vector2(622, 138)
+
+[node name="EnemySpawns" type="Node2D" parent="Gameplay"]
+
+[node name="Triggers" type="Node2D" parent="Gameplay"]
+
+[node name="RoomArea" type="Area2D" parent="Gameplay/Triggers"]
+position = Vector2(320, 90)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Triggers/RoomArea"]
+shape = SubResource("RoomShape")
+
+[node name="Camera" type="Node2D" parent="."]
