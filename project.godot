@@ -25,6 +25,7 @@ EventBus="*res://autoload/event_bus.gd"
 GameState="*res://autoload/game_state.gd"
 WorldState="*res://autoload/world_state.gd"
 SaveManager="*res://autoload/save_manager.gd"
+SettingsManager="*res://autoload/settings_manager.gd"
 HitStop="*res://autoload/hit_stop.gd"
 
 [display]
@@ -65,11 +66,15 @@ melee={
 "deadzone": 0.3,
 "events": []
 }
-shoot_revolver={
+shoot_pistol={
 "deadzone": 0.3,
 "events": []
 }
-shoot_shotgun={
+shoot_rifle={
+"deadzone": 0.3,
+"events": []
+}
+special_attack={
 "deadzone": 0.3,
 "events": []
 }

@@ -3,14 +3,15 @@ extends Node
 
 enum AttackPhase { NONE, ANTICIPATION, ACTIVE, FOLLOW_THROUGH, RECOVERY }
 
-@export var revolver_data: WeaponData
-@export var shotgun_data: WeaponData
+@export var pistol_data: WeaponData
+@export var rifle_data: WeaponData
 @export var machete_data: WeaponData
+@export var special_data: WeaponData
 @export var feedback_config: CombatFeedbackConfig
 
 var player: CharacterBody2D
-var revolver_ammo := 6
-var shotgun_ammo := 2
+var pistol_ammo := 8
+var rifle_ammo := 4
 var heal_charges := 2
 var cooldown := 0.0
 var reload_timer := 0.0
@@ -23,12 +24,15 @@ var attack_phase := AttackPhase.NONE
 var attack_phase_remaining := 0.0
 var buffered_melee_remaining := 0.0
 var current_melee_variant: StringName = &"machete"
+var special_cooldown_remaining := 0.0
+var special_remaining := 0.0
+var special_hit_triggered := false
 
 
 func initialize(owner_player: CharacterBody2D) -> void:
 	player = owner_player
-	revolver_ammo = revolver_data.magazine_size
-	shotgun_ammo = shotgun_data.magazine_size
+	pistol_ammo = pistol_data.magazine_size
+	rifle_ammo = rifle_data.magazine_size
 	heal_charges = clampi(GameState.heal_charges, 0, player.config.heal_charges)
 	_emit_all()
 
@@ -37,6 +41,7 @@ func update(delta: float) -> void:
 	if player == null or player.is_dead:
 		return
 	cooldown = maxf(0.0, cooldown - delta)
+	special_cooldown_remaining = maxf(0.0, special_cooldown_remaining - delta)
 	combo_reset_timer = maxf(0.0, combo_reset_timer - delta)
 	buffered_melee_remaining = maxf(0.0, buffered_melee_remaining - delta)
 	if combo_reset_timer <= 0.0 and attack_phase == AttackPhase.NONE:
@@ -47,6 +52,10 @@ func update(delta: float) -> void:
 		return
 	if player.state_machine.current_state in [PlayerStateMachine.State.HURT, PlayerStateMachine.State.DEAD]:
 		_cancel_melee_sequence()
+		special_remaining = 0.0
+		return
+	if special_remaining > 0.0:
+		_update_special(delta)
 		return
 	if attack_phase != AttackPhase.NONE:
 		if Input.is_action_just_pressed("melee"):
@@ -55,12 +64,14 @@ func update(delta: float) -> void:
 		return
 	if Input.is_action_just_pressed("heal"):
 		_start_heal()
+	elif Input.is_action_just_pressed("special_attack"):
+		_fire_special()
 	elif Input.is_action_just_pressed("melee"):
 		request_melee_input()
-	elif Input.is_action_just_pressed("shoot_shotgun"):
-		_fire_shotgun()
-	elif Input.is_action_just_pressed("shoot_revolver"):
-		_fire_revolver()
+	elif Input.is_action_just_pressed("shoot_rifle"):
+		_fire_rifle()
+	elif Input.is_action_just_pressed("shoot_pistol"):
+		_fire_pistol()
 
 
 func request_melee_input() -> void:
@@ -79,51 +90,72 @@ func interrupt_heal() -> void:
 
 func refill_at_checkpoint() -> void:
 	heal_charges = player.config.heal_charges
-	revolver_ammo = revolver_data.magazine_size
-	shotgun_ammo = shotgun_data.magazine_size
+	pistol_ammo = pistol_data.magazine_size
+	rifle_ammo = rifle_data.magazine_size
+	special_cooldown_remaining = 0.0
 	GameState.heal_charges = heal_charges
 	_emit_all()
 
 
-func _fire_revolver() -> void:
+func _fire_pistol() -> void:
 	if cooldown > 0.0 or reload_timer > 0.0:
 		return
-	if revolver_ammo <= 0:
-		_start_reload(revolver_data)
+	if pistol_ammo <= 0:
+		_start_reload(pistol_data)
 		return
-	revolver_ammo -= 1
-	cooldown = maxf(revolver_data.fire_interval, 0.24)
-	player.state_machine.request(PlayerStateMachine.State.SHOOT, 0.24)
-	EventBus.player_ammo_changed.emit(&"revolver", revolver_ammo, revolver_data.magazine_size)
-	if revolver_ammo == 0:
-		_start_reload(revolver_data)
+	pistol_ammo -= 1
+	cooldown = maxf(pistol_data.fire_interval, 0.24)
+	player.state_machine.request(PlayerStateMachine.State.PISTOL, 0.24)
+	EventBus.player_ammo_changed.emit(&"pistol", pistol_ammo, pistol_data.magazine_size)
+	if pistol_ammo == 0:
+		_start_reload(pistol_data)
 	await get_tree().create_timer(0.06).timeout
 	if player == null or player.is_dead or player.state_machine.current_state in [PlayerStateMachine.State.HURT, PlayerStateMachine.State.DEAD]:
 		return
-	player.spawn_projectile(revolver_data, player.get_aim_direction(), &"revolver", feedback_config.revolver_hitstop)
-	player.play_weapon_feedback(&"revolver")
+	player.spawn_projectile(pistol_data, player.get_aim_direction(), &"pistol", feedback_config.pistol_hitstop)
+	player.play_weapon_feedback(&"pistol")
 
 
-func _fire_shotgun() -> void:
+func _fire_rifle() -> void:
 	if cooldown > 0.0 or reload_timer > 0.0:
 		return
-	if shotgun_ammo <= 0:
-		_start_reload(shotgun_data)
+	if rifle_ammo <= 0:
+		_start_reload(rifle_data)
 		return
-	shotgun_ammo -= 1
-	cooldown = shotgun_data.fire_interval
-	player.state_machine.request(PlayerStateMachine.State.SHOTGUN, 0.36)
-	EventBus.player_ammo_changed.emit(&"shotgun", shotgun_ammo, shotgun_data.magazine_size)
-	if shotgun_ammo == 0:
-		_start_reload(shotgun_data)
+	rifle_ammo -= 1
+	cooldown = rifle_data.fire_interval
+	player.state_machine.request(PlayerStateMachine.State.RIFLE, 0.38)
+	EventBus.player_ammo_changed.emit(&"rifle", rifle_ammo, rifle_data.magazine_size)
+	if rifle_ammo == 0:
+		_start_reload(rifle_data)
 	await get_tree().create_timer(0.08).timeout
 	if player == null or player.is_dead or player.state_machine.current_state in [PlayerStateMachine.State.HURT, PlayerStateMachine.State.DEAD]:
 		return
 	var direction: Vector2 = player.get_aim_direction()
-	for angle in [-0.10, 0.0, 0.10]:
-		player.spawn_projectile(shotgun_data, direction.rotated(angle), &"shotgun", feedback_config.shotgun_hitstop)
-	player.velocity.x -= direction.x * shotgun_data.recoil
-	player.play_weapon_feedback(&"shotgun")
+	player.spawn_projectile(rifle_data, direction, &"rifle", feedback_config.rifle_hitstop)
+	player.velocity.x -= direction.x * rifle_data.recoil
+	player.play_weapon_feedback(&"rifle")
+
+
+func _fire_special() -> void:
+	if cooldown > 0.0 or reload_timer > 0.0 or special_cooldown_remaining > 0.0:
+		return
+	_cancel_melee_sequence()
+	special_remaining = 0.64
+	special_cooldown_remaining = special_data.fire_interval
+	special_hit_triggered = false
+	cooldown = special_remaining
+	player.velocity = Vector2.ZERO
+	player.state_machine.request(PlayerStateMachine.State.SPECIAL, special_remaining, true)
+
+
+func _update_special(delta: float) -> void:
+	special_remaining = maxf(0.0, special_remaining - delta)
+	var elapsed := 0.64 - special_remaining
+	if not special_hit_triggered and elapsed >= 0.17:
+		special_hit_triggered = true
+		player.spawn_special(special_data, feedback_config.special_hitstop)
+		player.play_special_feedback()
 
 
 func _begin_machete_sequence() -> void:
@@ -234,28 +266,29 @@ func _update_reload(delta: float) -> void:
 	reload_timer -= delta
 	if reload_timer > 0.0:
 		return
-	if reloading_weapon == &"revolver":
-		revolver_ammo = revolver_data.magazine_size
-		EventBus.player_ammo_changed.emit(&"revolver", revolver_ammo, revolver_data.magazine_size)
-	elif reloading_weapon == &"shotgun":
-		shotgun_ammo = shotgun_data.magazine_size
-		EventBus.player_ammo_changed.emit(&"shotgun", shotgun_ammo, shotgun_data.magazine_size)
+	if reloading_weapon == &"pistol":
+		pistol_ammo = pistol_data.magazine_size
+		EventBus.player_ammo_changed.emit(&"pistol", pistol_ammo, pistol_data.magazine_size)
+	elif reloading_weapon == &"rifle":
+		rifle_ammo = rifle_data.magazine_size
+		EventBus.player_ammo_changed.emit(&"rifle", rifle_ammo, rifle_data.magazine_size)
 	reloading_weapon = &""
 
 
 func _emit_all() -> void:
-	EventBus.player_ammo_changed.emit(&"revolver", revolver_ammo, revolver_data.magazine_size)
-	EventBus.player_ammo_changed.emit(&"shotgun", shotgun_ammo, shotgun_data.magazine_size)
+	EventBus.player_ammo_changed.emit(&"pistol", pistol_ammo, pistol_data.magazine_size)
+	EventBus.player_ammo_changed.emit(&"rifle", rifle_ammo, rifle_data.magazine_size)
 	EventBus.player_heal_charges_changed.emit(heal_charges, player.config.heal_charges)
 
 
 func debug_snapshot() -> Dictionary:
 	return {
-		"revolver": revolver_ammo,
-		"shotgun": shotgun_ammo,
+		"pistol": pistol_ammo,
+		"rifle": rifle_ammo,
 		"heals": heal_charges,
 		"reload": reloading_weapon,
 		"attack_phase": AttackPhase.keys()[attack_phase],
 		"combo_step": combo_step,
 		"buffer": buffered_melee_remaining,
+		"special_cooldown": special_cooldown_remaining,
 	}

@@ -7,6 +7,7 @@ enum RespawnBehavior { ON_ROOM_LOAD, ON_WORLD_RESET, NEVER }
 @export var spawn_id: StringName
 @export var active_if_occupied := true
 @export var facing := -1.0
+@export var patrol_radius := -1.0
 @export var respawn_behavior := RespawnBehavior.ON_ROOM_LOAD
 
 var spawned_enemy: EnemyBase
@@ -37,7 +38,7 @@ func _refresh_spawn() -> void:
 		actors = get_parent()
 	actors.add_child(spawned_enemy)
 	spawned_enemy.global_position = global_position
-	spawned_enemy.facing = facing
+	spawned_enemy.configure_post(global_position, facing, patrol_radius)
 
 
 func _on_world_state_changed(region_id: StringName, _state: StringName) -> void:

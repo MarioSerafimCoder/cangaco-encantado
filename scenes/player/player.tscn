@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Resource" path="res://resources/player/player_config.tres" id="2"]
@@ -7,13 +7,14 @@
 [ext_resource type="Script" path="res://scripts/player/player_combat.gd" id="5"]
 [ext_resource type="Script" path="res://scripts/player/player_state_machine.gd" id="6"]
 [ext_resource type="Script" path="res://scripts/combat/hurtbox.gd" id="7"]
-[ext_resource type="Resource" path="res://resources/weapons/revolver.tres" id="8"]
-[ext_resource type="Resource" path="res://resources/weapons/shotgun.tres" id="9"]
+[ext_resource type="Resource" path="res://resources/weapons/pistol.tres" id="8"]
+[ext_resource type="Resource" path="res://resources/weapons/rifle.tres" id="9"]
 [ext_resource type="Resource" path="res://resources/weapons/machete.tres" id="10"]
-[ext_resource type="Texture2D" path="res://assets/sprite_guides/generic_sertanejo_chibi_4x4_64px.png" id="11"]
+[ext_resource type="Resource" path="res://resources/weapons/special.tres" id="13_special"]
+[ext_resource type="Texture2D" path="res://assets/player/nilo_locomocao_0_2_6.png" id="11"]
 [ext_resource type="Script" path="res://scripts/player/nilo_visual_controller.gd" id="12"]
 [ext_resource type="Resource" path="res://resources/combat/feedback.tres" id="14"]
-[ext_resource type="Texture2D" path="res://assets/player/nilo_animacoes_de_tiro.png" id="15_shooting"]
+[ext_resource type="Texture2D" path="res://assets/player/nilo_combate_0_2_6.png" id="15_shooting"]
 [ext_resource type="Script" path="res://scripts/fx/contact_shadow.gd" id="16_shadow"]
 
 [sub_resource type="RectangleShape2D" id="PlayerShape"]
@@ -30,15 +31,13 @@ script = ExtResource("1")
 config = ExtResource("2")
 
 [node name="Visual" type="Sprite2D" parent="."]
-position = Vector2(0, -10)
-scale = Vector2(0.68, 0.68)
 texture = ExtResource("11")
 region_enabled = true
-region_rect = Rect2(0, 0, 64, 64)
+region_rect = Rect2(0, 0, 246, 249)
 script = ExtResource("12")
-columns = 4
-rows = 4
-shooting_texture = ExtResource("15_shooting")
+combat_texture = ExtResource("15_shooting")
+target_visual_height = 40.0
+visual_baseline_offset = 12.0
 
 [node name="ContactShadow" type="Node2D" parent="."]
 script = ExtResource("16_shadow")
@@ -59,9 +58,10 @@ config = ExtResource("2")
 
 [node name="PlayerCombat" type="Node" parent="."]
 script = ExtResource("5")
-revolver_data = ExtResource("8")
-shotgun_data = ExtResource("9")
+pistol_data = ExtResource("8")
+rifle_data = ExtResource("9")
 machete_data = ExtResource("10")
+special_data = ExtResource("13_special")
 feedback_config = ExtResource("14")
 
 [node name="PlayerStateMachine" type="Node" parent="."]

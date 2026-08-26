@@ -10,15 +10,22 @@ func _ready() -> void:
 	await get_tree().process_frame
 	var rooms := get_tree().get_nodes_in_group("production_rooms")
 	var expected_rooms := {
+		&"casa_nilo": 320.0,
 		&"rua_cinzas": 640.0,
+		&"igreja_velha": 320.0,
 		&"telhados": 640.0,
 		&"praca_umbu": 640.0,
 		&"barracos": 640.0,
+		&"armazem": 640.0,
+		&"patio": 640.0,
+		&"beco": 320.0,
+		&"poco": 320.0,
+		&"barricada": 640.0,
 		&"posto": 320.0,
 		&"arena": 640.0,
 	}
 	if rooms.size() != expected_rooms.size():
-		failures.append("A iteração deve possuir seis salas no pipeline de produção; encontradas: %d." % rooms.size())
+		failures.append("Todas as treze áreas devem usar RoomController; encontradas: %d." % rooms.size())
 		_finish()
 		return
 	var by_id: Dictionary = {}
@@ -40,10 +47,20 @@ func _ready() -> void:
 		_validate_roof_collisions(by_id[&"telhados"])
 	if by_id.has(&"barracos"):
 		_validate_spawns(by_id[&"barracos"], 1)
+	if by_id.has(&"armazem"):
+		_validate_spawns(by_id[&"armazem"], 2)
+	if by_id.has(&"patio"):
+		_validate_spawns(by_id[&"patio"], 2)
+	if by_id.has(&"beco"):
+		_validate_spawns(by_id[&"beco"], 1)
 	if by_id.has(&"arena"):
 		_validate_spawns(by_id[&"arena"], 1)
-	_validate_decorator_exclusions()
+	_validate_no_hybrid_decorator()
+	await _validate_camera_director(by_id)
+	_validate_visual_cohesion(rooms)
 	_validate_character_shadows()
+	_validate_player_sprite_regions()
+	_validate_enemy_sprite_regions()
 	_validate_save_payload_roundtrip()
 	_finish()
 
@@ -59,6 +76,8 @@ func _validate_identity_and_bounds(room: RoomController, expected_rooms: Diction
 		failures.append("Camera bounds são menores que o viewport interno.")
 	if not room.camera_bounds.encloses(room.local_bounds):
 		failures.append("Camera bounds não abrangem a área jogável completa.")
+	if not is_equal_approx(room.camera_bounds.position.y, -60.0) or not is_equal_approx(room.camera_bounds.size.y, 300.0):
+		failures.append("Sala %s não usa o enquadramento vertical padronizado." % room.room_id)
 
 
 func _validate_entrances(room: RoomController) -> void:
@@ -164,17 +183,48 @@ func _validate_roof_collisions(room: RoomController) -> void:
 			failures.append("Colisão desalinhada no telhado %s: %.2f." % [path, top])
 
 
-func _validate_decorator_exclusions() -> void:
+func _validate_no_hybrid_decorator() -> void:
 	var world := $Main/VilaDoUmbuzeiro as VilaGraybox
 	var decorator := world.get_node_or_null("VilaArtDecorator") as VilaArtDecorator
-	if decorator == null:
-		failures.append("VilaArtDecorator não foi encontrado para auditar exclusões.")
+	if decorator != null:
+		failures.append("O compositor híbrido global ainda está ativo depois da migração.")
+
+
+func _validate_camera_director(by_id: Dictionary) -> void:
+	var main := $Main
+	var director := main.get_node_or_null("CameraDirector") as CameraDirector
+	var player := main.get_node("Nilo") as NiloPlayer
+	if director == null:
+		failures.append("Gerenciador central de câmera não foi encontrado.")
 		return
-	for sprite in decorator.art_sprites:
-		for room_id in [&"telhados", &"praca_umbu", &"barracos", &"posto", &"arena"]:
-			var bounds: Rect2 = world.room_bounds[room_id]
-			if bounds.has_point(sprite.position):
-				failures.append("VilaArtDecorator ainda posiciona arte na sala migrada %s." % room_id)
+	player.set_physics_process(false)
+	player.global_position = Vector2(300, 138)
+	await get_tree().physics_frame
+	player.global_position = Vector2(340, 138)
+	await get_tree().physics_frame
+	var target := (by_id[&"rua_cinzas"] as RoomController).get_global_camera_bounds()
+	if not director.is_transitioning():
+		failures.append("Troca Casa–Rua aplicou limites instantaneamente, sem transição.")
+	if player.camera.limit_left == roundi(target.position.x) and player.camera.limit_right == roundi(target.end.x):
+		failures.append("Câmera saltou diretamente para os limites da sala seguinte.")
+	for _frame in 30:
+		await get_tree().physics_frame
+	if player.camera.limit_left != roundi(target.position.x) or player.camera.limit_right != roundi(target.end.x):
+		failures.append("Câmera não concluiu a transição nos limites da Rua.")
+	player.set_physics_process(true)
+
+
+func _validate_visual_cohesion(rooms: Array[Node]) -> void:
+	var expected_tint := Color("f0e6db")
+	for candidate in rooms:
+		var room := candidate as RoomController
+		var environment := room.get_node_or_null("Environment") as CanvasItem
+		if environment == null or not environment.self_modulate.is_equal_approx(expected_tint):
+			failures.append("Sala %s não recebeu o perfil cromático comum." % room.room_id)
+		for sprite_candidate in room.find_children("*", "Sprite2D", true, false):
+			var sprite := sprite_candidate as Sprite2D
+			if sprite.texture_filter != CanvasItem.TEXTURE_FILTER_NEAREST:
+				failures.append("Sprite sem filtro nearest na sala %s: %s." % [room.room_id, sprite.name])
 
 
 func _validate_character_shadows() -> void:
@@ -189,6 +239,57 @@ func _validate_character_shadows() -> void:
 		if actor.get_node_or_null("ContactShadow") == null:
 			failures.append("Personagem sem sombra de contato: %s." % scene_path)
 		actor.free()
+
+
+func _validate_enemy_sprite_regions() -> void:
+	for scene_path in [
+		"res://scenes/enemies/saqueador.tscn",
+		"res://scenes/enemies/pistoleiro.tscn",
+		"res://scenes/bosses/ze_tranca.tscn",
+	]:
+		var packed := load(scene_path) as PackedScene
+		var actor := packed.instantiate()
+		var visual := actor.get_node("Visual") as MvpSpriteAnimator
+		var image := visual.texture.get_image()
+		for frame_region in visual.get_profile_regions_for_validation():
+			if frame_region.position.x < 0.0 or frame_region.position.y < 0.0 or frame_region.end.x > image.get_width() or frame_region.end.y > image.get_height():
+				failures.append("Região de sprite fora da folha em %s: %s." % [scene_path, frame_region])
+				continue
+			if _region_touches_opaque_vertical_border(image, frame_region):
+				failures.append("Sprite ainda toca o limite vertical de corte em %s: %s." % [scene_path, frame_region])
+		actor.free()
+
+
+func _validate_player_sprite_regions() -> void:
+	var player := get_tree().get_first_node_in_group("player") as NiloPlayer
+	if player == null:
+		failures.append("Nilo não foi encontrado para validar as novas folhas.")
+		return
+	for profile_set in player.visual.get_profile_sets_for_validation():
+		var sprite_texture := profile_set["texture"] as Texture2D
+		if sprite_texture == null:
+			failures.append("Uma das novas folhas de Nilo não foi carregada.")
+			continue
+		var image := sprite_texture.get_image()
+		for profile in profile_set["profiles"]:
+			var frame_region: Rect2 = profile["region"]
+			if frame_region.position.x < 0.0 or frame_region.position.y < 0.0 or frame_region.end.x > image.get_width() or frame_region.end.y > image.get_height():
+				failures.append("Região de Nilo fora da folha: %s." % frame_region)
+			elif _region_touches_opaque_vertical_border(image, frame_region):
+				failures.append("Pose de Nilo ainda toca o corte vertical: %s." % frame_region)
+
+
+func _region_touches_opaque_vertical_border(image: Image, region: Rect2) -> bool:
+	var left := roundi(region.position.x)
+	var top := roundi(region.position.y)
+	var right := roundi(region.end.x) - 1
+	var bottom := roundi(region.end.y) - 1
+	for x in range(left, right + 1):
+		# Ignora apenas o halo subvisual de 1-4% deixado pelo gerador,
+		# mas rejeita qualquer pixel efetivamente visível na borda.
+		if image.get_pixel(x, top).a > 0.07 or image.get_pixel(x, bottom).a > 0.07:
+			return true
+	return false
 
 
 func _validate_save_payload_roundtrip() -> void:
@@ -220,15 +321,6 @@ func _validate_player_baseline(room: RoomController) -> void:
 	var visual_foot := player.global_position.y + player.visual.normalized_baseline_offset
 	if absf(visual_foot - 150.0) > 0.8:
 		failures.append("Pé visual de Nilo não coincide com a baseline: %.2f." % visual_foot)
-	var expected_camera := room.get_global_camera_bounds()
-	if player.camera.limit_left != roundi(expected_camera.position.x) or player.camera.limit_right != roundi(expected_camera.end.x):
-		failures.append("Entrada na sala não aplicou camera bounds próprios.")
-	player.global_position = room.to_global(Vector2(-20.0, 138.0))
-	player.velocity = Vector2.ZERO
-	for _frame in 4:
-		await get_tree().physics_frame
-	if player.camera.limit_left == roundi(expected_camera.position.x) and player.camera.limit_right == roundi(expected_camera.end.x):
-		failures.append("Saída da sala não restaurou os camera bounds do mundo.")
 
 
 func _finish() -> void:

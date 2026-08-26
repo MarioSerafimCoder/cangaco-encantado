@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/weapon_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"rifle"
+display_name = "Rifle"
+magazine_size = 4
+fire_interval = 0.38
+reload_time = 1.15
+damage = 2
+posture_damage = 2.4
+range = 360.0
+projectile_speed = 680.0
+knockback = 105.0
+recoil = 22.0

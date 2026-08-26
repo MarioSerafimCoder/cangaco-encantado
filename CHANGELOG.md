@@ -1,5 +1,122 @@
 # Changelog
 
+## Pipeline integral, câmera e coesão visual — 0.3.4
+
+- Casa de Nilo, Igreja Velha, Armazém, Pátio, Beco, Poço e Barricada foram convertidos em cenas completas com `RoomController`.
+- As treze áreas agora possuem ambiente, paralaxe, chão, colisões, entradas, triggers e gameplay no mesmo espaço local.
+- Arte das sete salas foi materializada como nós editáveis; o `VilaArtDecorator` deixou de ser instanciado no runtime.
+- Plataformas do Armazém, obstáculo do Poço e spawns de Armazém/Pátio/Beco saíram do graybox global e foram incorporados às respectivas salas.
+- `CameraDirector` tornou-se a única autoridade de enquadramento e interpola limites entre salas adjacentes em 0,34 s.
+- Teleportes de longa distância evitam a varredura involuntária por todo o mapa.
+- Corrigida a âncora de paralaxe das salas de 320 px, que ainda usava o centro de uma sala de 640 px.
+- Todas as salas usam limites verticais padronizados e perfil cromático comum.
+- Herói, inimigos, chefe e cenários fixam filtro nearest; Saqueador e Pistoleiro foram recalibrados para aproximadamente 40 px de altura útil.
+- Validação de produção ampliada para treze salas, transição de câmera, ausência do compositor híbrido, nitidez e perfil de cor.
+
+## Identidade metroidvania do mapa — 0.3.3
+
+- Passo da Pedra e Passo da Poeira passaram de flags futuras a habilidades jogáveis de salto de parede e investida.
+- Igreja recebeu uma subida vertical de campanário conectada à rota alta dos Telhados.
+- Praça e Armazém ganharam uma rota alternativa controlada pela investida.
+- Poço passou a abrir um atalho persistente de retorno à Igreja pelo lado tardio da exploração.
+- Casa de Nilo ganhou um segredo de retorno que exige as duas habilidades e concede vida máxima permanente.
+- Salas visitadas, posição no mapa, habilidades, atalhos, segredos e melhorias permanentes agora persistem no save.
+- M abre um mapa navegável com treze áreas, conexões verticais, bloqueios, posição atual e contador de segredos.
+- Aquisições importantes exibem um aviso com o novo comando ou efeito permanente.
+- Adicionada validação automatizada da topologia, progressão, bloqueios, mobilidade, mapa e schema de persistência.
+
+## IA e animações inimigas — 0.3.2
+
+- Saqueadores e pistoleiros patrulham ao redor do posto, esperam nos extremos e retornam quando se afastam demais.
+- Percepção passou a exigir linha de visão; ao perder Nilo, o inimigo investiga apenas a última posição vista por tempo limitado.
+- Limites de perseguição impedem inimigos de abandonar permanentemente sua área de guarda.
+- Sondas de parede e beirada interrompem o movimento antes de obstáculos ou quedas.
+- Pistoleiros recuam quando pressionados, avançam quando estão longe e atiram na faixa de distância preferida.
+- Antecipações receberam marcador progressivo, linha de mira ampliada e indicação da área corpo a corpo.
+- Reação a dano agora possui recuo, tremor, inclinação e flash alternado.
+- Mortes comuns e do chefe ficaram mais longas, com queda, compressão e desaparecimento gradual.
+- Corrigido conflito que podia recolocar o inimigo no estado de dano depois de receber o golpe fatal.
+- Rua das Cinzas, Praça do Umbu, Barracos Queimados e Posto de Comando receberam novas formações mistas.
+- Adicionada validação automatizada para patrulha, memória, paredes, distância tática, dano, morte e composição de encontros.
+
+## Menu inicial e pausa — 0.3.1
+
+- O jogo agora abre em um menu inicial completo, com o mundo congelado ao fundo.
+- Continuar só fica disponível quando existe um save ou uma sessão em andamento.
+- Novo jogo pede confirmação antes de apagar o progresso existente.
+- Escape abre uma interface real de pausa e também retorna das telas secundárias.
+- Menus inicial e de pausa oferecem Continuar, Novo jogo, Configurações, Controles e Sair.
+- Configurações persistentes incluem volume geral, tela cheia e tremor de câmera.
+- Tela de controles reúne movimentação, combate, cura, interação e pausa.
+- Fonte pixel, molduras do atlas, foco por teclado e suporte aos comandos de interface do controle foram aplicados ao fluxo.
+- Adicionada validação automatizada para navegação, pausa, conteúdo e confirmação destrutiva.
+
+## Reconstrução profissional do HUD — 0.3.0
+
+- Painel principal reduzido para 136 × 36 pixels na resolução interna e reorganizado em duas linhas.
+- Vida passou a usar os diamantes preenchidos e vazios do atlas oficial.
+- Pistola, rifle, ataque especial e cabaça receberam iconografia própria, sem abreviações textuais.
+- Munição da pistola usa projéteis individuais; munição do rifle usa cartuchos do atlas.
+- Recarga ganhou arco de progresso e marcador giratório sobre a arma correspondente.
+- Ataque especial ganhou medidor contínuo de cooldown e brilho quando está disponível.
+- Cura ganhou barra de canalização junto à cabaça.
+- Perda e recuperação de vida, munição e cargas agora disparam pulsos, cores e pequenos impactos visuais.
+- Fonte pixel Tiny5, sob licença OFL, substitui a fonte padrão em títulos e avisos do HUD.
+- Barra de Zé Tranca foi ampliada e agora mostra nome, vida suavizada, duas fases e postura.
+- Adicionada validação automatizada exclusiva para estrutura e estados do HUD.
+
+## Passe de preenchimento ambiental 0.2.7
+
+- Quatro casas completas substituem os blocos chapados de Telhados da Vila.
+- A Praça do Umbu recebeu pavimento de pedra com caminho central.
+- Rua das Cinzas e demais salas receberam acabamento contínuo de rua junto à baseline.
+- O Posto de Comando recebeu uma muralha rasterizada no lugar do fundo geométrico.
+- Segmentos de solo das salas largas agora se sobrepõem para não deixar fenda central.
+
+## Atualização do arsenal e sprites do herói
+
+- Novas folhas 4×4 de locomoção e combate aplicadas com margem transparente por célula para evitar cortes.
+- Revólver e espingarda foram substituídos por pistola semiautomática e rifle de longo alcance.
+- A quarta linha da folha de combate agora executa um ataque especial amplo com recarga própria.
+- HUD, controles, dados de armas, testes e capturas foram atualizados para o novo arsenal.
+
+## 0.2.6 — Nilo Animation Upgrade
+
+### Herói
+
+- Duas novas folhas transparentes substituem o boneco-guia e a antiga folha de tiros.
+- Idle alterna três poses de respiração e executa uma piscada curta a cada 4,8 segundos.
+- Nilo começa andando a 58% da velocidade máxima e passa a correr após 2 segundos mantendo a mesma direção.
+- Soltar ou inverter o movimento reinicia o contador da corrida.
+- Revólver e espingarda usam sequências completas de mira, disparo, ejeção e recuperação.
+- O facão usa antecipação, cortes distintos por combo, golpe descendente e finalizador com energia.
+
+### Pipeline
+
+- As duas folhas 1254×1254 usam regiões explícitas para impedir cortes causados pela grade irregular.
+- Testes automatizados cobrem respiração, piscada, caminhada, atraso da corrida, quatro quadros de corrida e novas poses de tiro.
+- Prints oficiais ganharam registros específicos de idle, piscada, corrida e ataques de facão.
+
+## 0.2.5 — Sprite Integration & Enemy Framing
+
+### Sprites e ambientes
+
+- Oito folhas transparentes novas foram copiadas para o runtime e aplicadas a arquitetura, chão, paralaxe, preenchimentos, atmosfera, moradores e objetos interativos.
+- Checkpoint, porta de atalho e portão de liberação deixaram de usar formas geométricas provisórias e agora alternam sprites por estado.
+- As sete salas ainda apoiadas no graybox receberam chão e fundo rasterizados sem alterar suas colisões.
+
+### Inimigos
+
+- Saqueador, Pistoleiro e Zé Tranca deixaram de dividir folhas irregulares como grades uniformes.
+- Cada estado usado possui região explícita, escala calibrada e alinhamento dos pés independente das dimensões do quadro.
+- Estados de dano e morte do Pistoleiro e de Zé Tranca receberam poses próprias.
+- A validação de produção rejeita quadros que encostem no corte vertical da região.
+
+### Capturas
+
+- Os prints oficiais foram regenerados e ganharam `inimigos_escala_e_recorte.png`.
+- O conjunto ambiental desta rodada fica em `prints_do_jogo/iteracao_0_2_5/`.
+
 ## 0.2.4 — Environmental Composition Pass
 
 ### Escala e personagens
@@ -105,3 +222,21 @@
 - Prints oficiais regenerados após a mudança visual.
 - A suíte de capturas agora registra individualmente as áreas 01 e 03–13, além da Rua das Cinzas.
 - Camadas da Rua das Cinzas, Saqueador, Pistoleiro e Zé Tranca receberam transparência RGBA definitiva; os shaders de recorte de fundo foram removidos.
+# Correção de chão e idle ancorado — 0.2.8
+
+- Eliminada a faixa cinza entre a rua e o primeiro plano em todas as salas, com sobreposição segura entre sprites de solo.
+- Rua das Cinzas recebeu acabamento frontal próprio para não expor o fundo abaixo da plataforma.
+- Quadros parados de Nilo agora compensam o deslocamento horizontal irregular da spritesheet.
+- Respiração ganhou leitura mais clara sem mover os pés; piscada e poses continuam sincronizadas.
+- Teste de game feel agora também verifica a estabilidade horizontal do idle.
+# Justiça e leitura de combate — 0.2.9
+
+- Inimigos agora atacam em três fases legíveis: antecipação, momento ativo e recuperação.
+- Dano corpo a corpo e disparos inimigos só nascem depois da janela de aviso.
+- Aviso visual muda de amarelo para vermelho e mostra linha de mira para ataques à distância.
+- Ataques fixam a direção durante a antecipação, permitindo esquiva consistente.
+- Projéteis agora colidem com cenário e portões usando raycast contínuo, sem atravessar paredes em alta velocidade.
+- Pistoleiros e Zé Tranca verificam linha de visão antes de iniciar disparos.
+- Inimigos comuns mostram vida e postura temporariamente depois de receber dano.
+- Animação do Saqueador deixou de acessar o quadro de ataque sem recorte dedicado.
+- Adicionado teste automatizado de justiça de combate para fases, paredes e linha de visão.

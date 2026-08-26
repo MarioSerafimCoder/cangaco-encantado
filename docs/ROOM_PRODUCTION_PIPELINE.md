@@ -1,6 +1,6 @@
 # Pipeline de produção de salas
 
-Este documento define o padrão inaugurado pela Rua das Cinzas na versão 0.2.2 e consolidado no passe ambiental 0.2.4. As seis cenas de referência estão em `res://scenes/world/vila_umbuzeiro/rooms/`: Rua das Cinzas, Telhados da Vila, Praça do Umbu, Barracos Queimados, Posto de Comando e Arena de Zé Tranca.
+Este documento define o padrão inaugurado pela Rua das Cinzas e aplicado às treze áreas da Vila do Umbuzeiro. Cada sala possui cena própria em `res://scenes/world/vila_umbuzeiro/rooms/`, com ambiente, geometria, gameplay, entradas e limites editáveis.
 
 O princípio central é que a cena visual, a geometria física e o gameplay sejam editados no mesmo espaço. Scripts coordenam estado e comportamento; não funcionam como editor de layout.
 
@@ -30,7 +30,7 @@ RoomName (RoomController)
     └── Bounds
 ```
 
-Use `RoomController` somente para identidade, entrada/saída, limites de câmera, estado visual e debug. Lógica específica deve ficar em componentes próprios.
+Use `RoomController` somente para identidade, entrada/saída, estado visual e debug. `CameraDirector` é a única autoridade que aplica limites de câmera; lógica específica deve ficar em componentes próprios.
 
 ## Identidade e coordenadas
 
@@ -130,8 +130,10 @@ enemy.tscn
 ## Câmera
 
 - `camera_bounds` precisa abranger a área jogável e ter pelo menos 320x180.
-- Ao entrar, `RoomController` aplica limites globais com `limit_smoothed`.
-- Ao sair, restaura os limites anteriores para manter compatibilidade com o mundo contínuo atual.
+- Todas as salas usam faixa vertical local `Rect2(0, -60, largura, 300)`.
+- `CameraDirector` identifica a sala pela posição do jogador e interpola os limites durante 0,34 s.
+- Salas não restauram limites ao sair e nunca disputam o controle da mesma câmera.
+- Teleportes longos aplicam diretamente o novo enquadramento para evitar uma varredura por toda a Vila.
 - Não chame `reset_smoothing()` durante uma transição normal; ele é reservado a teleportes, respawn e testes.
 
 ## Estado do mundo
@@ -145,7 +147,7 @@ Agrupe containers da própria sala como:
 
 ## Debug e validação
 
-F3 mostra bounds da sala, camera bounds, entradas e spawns. A validação automatizada cobre as seis salas produzidas:
+F3 mostra bounds da sala, camera bounds, entradas e spawns. A validação automatizada cobre as treze salas produzidas:
 
 ```powershell
 godot --headless --path . res://tools/room_production_validation.tscn
@@ -163,4 +165,6 @@ Antes de aceitar uma nova sala, confirme:
 8. gameplay a 60 FPS na build-alvo.
 9. arquitetura sem lacunas, recortes involuntários ou assets flutuantes;
 10. estado ocupado/libertado sem alterar a geometria ou criar bloqueios invisíveis;
-11. sala migrada sem decoração duplicada do `VilaArtDecorator`.
+11. sala migrada sem decoração duplicada ou compositor global ativo;
+12. todos os `Sprite2D` usam filtro `nearest` e o perfil cromático comum;
+13. a câmera interpola limites em fronteiras adjacentes sem salto instantâneo.

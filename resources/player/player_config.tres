@@ -5,6 +5,8 @@
 [resource]
 script = ExtResource("1")
 move_speed = 120.0
+walk_speed_multiplier = 0.58
+run_hold_duration = 2.0
 ground_acceleration = 1400.0
 ground_deceleration = 1800.0
 air_control = 0.75
@@ -14,10 +16,13 @@ fast_fall_multiplier = 1.35
 coyote_time = 0.1
 jump_buffer = 0.12
 crouch_speed_multiplier = 0.35
+wall_jump_velocity = Vector2(185, -275)
+dash_speed = 285.0
+dash_duration = 0.16
+dash_cooldown = 0.42
 max_health = 5
 hurt_lock_time = 0.15
 invulnerability_time = 0.65
 heal_charges = 2
 heal_amount = 2
 heal_duration = 1.1
-

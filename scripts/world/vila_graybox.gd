@@ -10,6 +10,13 @@ const PRACA_DO_UMBU_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/pr
 const BARRACOS_QUEIMADOS_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/barracos_queimados.tscn")
 const POSTO_DE_COMANDO_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/posto_de_comando.tscn")
 const ARENA_ZE_TRANCA_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/arena_ze_tranca.tscn")
+const CASA_DE_NILO_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/casa_de_nilo.tscn")
+const IGREJA_VELHA_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/igreja_velha.tscn")
+const ARMAZEM_TOMADO_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/armazem_tomado.tscn")
+const PATIO_DO_ARMAZEM_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/patio_do_armazem.tscn")
+const BECO_DOS_SAQUEADORES_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/beco_dos_saqueadores.tscn")
+const POCO_DO_ROMAOZINHO_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/poco_do_romaozinho.tscn")
+const BARRICADA_DA_COMPANHIA_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/barricada_da_companhia.tscn")
 
 const ROOMS := [
 	{"id": &"casa_nilo", "name": "01 CASA DE NILO", "width": 320.0, "function": "Origem e controles"},
@@ -35,8 +42,8 @@ var player: NiloPlayer
 
 func _ready() -> void:
 	_build_rooms()
-	_build_art_decorator()
 	_build_gameplay()
+	_build_metroidvania_routes()
 	EventBus.world_state_changed.connect(_on_world_state_changed)
 	queue_redraw()
 
@@ -59,18 +66,11 @@ func _build_rooms() -> void:
 		var bounds := Rect2(cursor_x, 0.0, room.width, 180.0)
 		room_bounds[room.id] = bounds
 		var production_scene := _production_scene_for(room.id)
-		if production_scene != null:
-			_add_production_room(bounds, production_scene)
-		else:
-			_add_solid(Rect2(cursor_x, 150.0, room.width, 30.0))
-			var trigger := RoomTrigger.new()
-			add_child(trigger)
-			trigger.configure(room.id, room.name, bounds)
+		_add_production_room(bounds, production_scene)
 		cursor_x += room.width
 	world_width = cursor_x
 	_add_solid(Rect2(-24.0, -40.0, 24.0, 240.0))
 	_add_solid(Rect2(world_width, -40.0, 24.0, 240.0))
-	_add_room_platforms()
 
 
 func _add_production_room(bounds: Rect2, scene: PackedScene) -> void:
@@ -81,28 +81,34 @@ func _add_production_room(bounds: Rect2, scene: PackedScene) -> void:
 
 func _production_scene_for(room_id: StringName) -> PackedScene:
 	match room_id:
+		&"casa_nilo":
+			return CASA_DE_NILO_SCENE
 		&"rua_cinzas":
 			return RUA_DAS_CINZAS_SCENE
+		&"igreja_velha":
+			return IGREJA_VELHA_SCENE
 		&"telhados":
 			return TELHADOS_DA_VILA_SCENE
 		&"praca_umbu":
 			return PRACA_DO_UMBU_SCENE
 		&"barracos":
 			return BARRACOS_QUEIMADOS_SCENE
+		&"armazem":
+			return ARMAZEM_TOMADO_SCENE
+		&"patio":
+			return PATIO_DO_ARMAZEM_SCENE
+		&"beco":
+			return BECO_DOS_SAQUEADORES_SCENE
+		&"poco":
+			return POCO_DO_ROMAOZINHO_SCENE
+		&"barricada":
+			return BARRICADA_DA_COMPANHIA_SCENE
 		&"posto":
 			return POSTO_DE_COMANDO_SCENE
 		&"arena":
 			return ARENA_ZE_TRANCA_SCENE
 		_:
 			return null
-
-
-func _add_room_platforms() -> void:
-	var warehouse: Rect2 = room_bounds[&"armazem"]
-	_add_solid(Rect2(warehouse.position.x + 130.0, 106.0, 86.0, 8.0))
-	_add_solid(Rect2(warehouse.position.x + 344.0, 92.0, 96.0, 8.0))
-	var well: Rect2 = room_bounds[&"poco"]
-	_add_solid(Rect2(well.position.x + 116.0, 126.0, 88.0, 24.0))
 
 
 func _build_gameplay() -> void:
@@ -137,19 +143,82 @@ func _build_gameplay() -> void:
 		_spawn_occupied_encounters()
 
 
-func _build_art_decorator() -> void:
-	var decorator := VilaArtDecorator.new()
-	decorator.name = "VilaArtDecorator"
-	add_child(decorator)
-	decorator.configure(room_bounds)
+func _build_metroidvania_routes() -> void:
+	var home: Rect2 = room_bounds[&"casa_nilo"]
+	var church: Rect2 = room_bounds[&"igreja_velha"]
+	var roofs: Rect2 = room_bounds[&"telhados"]
+	var square: Rect2 = room_bounds[&"praca_umbu"]
+	var warehouse: Rect2 = room_bounds[&"armazem"]
+	var well: Rect2 = room_bounds[&"poco"]
+
+	# Primeiro poder: muda imediatamente a forma de ler a igreja e os telhados.
+	var wall_jump_pickup := AbilityPickup.new()
+	wall_jump_pickup.ability_id = &"wall_jump"
+	wall_jump_pickup.display_name = "PASSO DA PEDRA"
+	add_child(wall_jump_pickup)
+	wall_jump_pickup.position = Vector2(church.position.x + 104.0, 130.0)
+
+	# Campanário: uma chaminé curta que exige alternar saltos nas paredes.
+	_add_traversal_platform(Vector2(church.position.x + 214.0, 91.0), Vector2(9.0, 66.0), true)
+	_add_traversal_platform(Vector2(church.position.x + 250.0, 91.0), Vector2(9.0, 66.0), true)
+	_add_traversal_platform(Vector2(church.position.x + 278.0, 54.0), Vector2(64.0, 8.0), true)
+	_add_traversal_platform(Vector2(roofs.position.x + 18.0, 75.0), Vector2(54.0, 8.0), false)
+
+	# A habilidade de investida fica na rota alta, visível antes de ser alcançada.
+	var dash_pickup := AbilityPickup.new()
+	dash_pickup.ability_id = &"dash"
+	dash_pickup.display_name = "PASSO DA POEIRA"
+	dash_pickup.description = "C PARA ATRAVESSAR SELOS E VÃOS"
+	add_child(dash_pickup)
+	dash_pickup.position = Vector2(roofs.position.x + 250.0, 72.0)
+
+	# Segredo na casa inicial: só abre no retorno com Pedra + Poeira.
+	_add_traversal_platform(Vector2(home.position.x + 176.0, 112.0), Vector2(42.0, 7.0), false)
+	_add_traversal_platform(Vector2(home.position.x + 224.0, 82.0), Vector2(46.0, 7.0), false)
+	_add_traversal_platform(Vector2(home.position.x + 281.0, 72.0), Vector2(66.0, 7.0), false)
+	var home_gate := AbilityGate.new()
+	home_gate.required_ability = &"dash"
+	home_gate.label = "SELO DA POEIRA"
+	home_gate.gate_size = Vector2(8.0, 52.0)
+	add_child(home_gate)
+	home_gate.position = Vector2(home.position.x + 252.0, 49.0)
+	var heart_upgrade := PermanentUpgradePickup.new()
+	heart_upgrade.upgrade_id = &"coracao_casa_nilo"
+	heart_upgrade.display_name = "CORAÇÃO DO SERTÃO"
+	add_child(heart_upgrade)
+	heart_upgrade.position = Vector2(home.position.x + 292.0, 57.0)
+
+	# Rota alternativa: Praça -> fundos do Armazém. Abre nos dois sentidos.
+	_add_connector(&"praca_armazem_alto", Vector2(square.position.x + 525.0, 125.0), Vector2(warehouse.position.x + 500.0, 125.0), &"dash", "TRILHA ALTA", &"armazem")
+	_add_connector(&"praca_armazem_alto", Vector2(warehouse.position.x + 500.0, 125.0), Vector2(square.position.x + 525.0, 125.0), &"", "VOLTAR À PRAÇA", &"praca_umbu", true)
+
+	# Atalho tardio: aberto pelo lado do Poço, devolve rapidamente à Igreja.
+	_add_connector(&"poco_igreja_cripta", Vector2(well.position.x + 160.0, 112.0), Vector2(church.position.x + 40.0, 130.0), &"wall_jump", "DESCER À CRIPTA", &"igreja_velha")
+	_add_connector(&"poco_igreja_cripta", Vector2(church.position.x + 40.0, 130.0), Vector2(well.position.x + 160.0, 112.0), &"", "TÚNEL DO POÇO", &"poco", true)
+
+
+func _add_traversal_platform(at: Vector2, size: Vector2, stone_style: bool) -> void:
+	var platform := TraversalPlatform.new()
+	platform.platform_size = size
+	platform.stone_style = stone_style
+	add_child(platform)
+	platform.position = at
+
+
+func _add_connector(id: StringName, at: Vector2, target: Vector2, ability: StringName, label: String, target_room: StringName, wait_for_unlock := false) -> void:
+	var connector := WorldConnector.new()
+	connector.connector_id = id
+	connector.destination = target
+	connector.required_ability = ability
+	connector.display_name = label
+	connector.destination_room = target_room
+	connector.locked_until_opened = wait_for_unlock
+	add_child(connector)
+	connector.position = at
 
 
 func _spawn_occupied_encounters() -> void:
-	_spawn_enemy(SAQUEADOR_SCENE, &"armazem", 180.0)
-	_spawn_enemy(PISTOLEIRO_SCENE, &"armazem", 430.0)
-	_spawn_enemy(SAQUEADOR_SCENE, &"patio", 190.0)
-	_spawn_enemy(SAQUEADOR_SCENE, &"patio", 390.0)
-	_spawn_enemy(PISTOLEIRO_SCENE, &"beco", 180.0)
+	pass
 
 
 func _spawn_enemy(scene: PackedScene, room_id: StringName, local_x: float) -> void:
@@ -179,15 +248,7 @@ func _on_world_state_changed(region_id: StringName, _state: StringName) -> void:
 
 
 func _draw() -> void:
-	var liberated := WorldState.is_vila_liberated()
-	for index in ROOMS.size():
-		var room: Dictionary = ROOMS[index]
-		var bounds: Rect2 = room_bounds[room.id]
-		if _production_scene_for(room.id) == null:
-			_draw_room_background(bounds, index, liberated)
-	for solid in solid_rects:
-		_draw_styled_solid(solid, liberated)
-	_draw_world_state_atmosphere(liberated)
+	pass
 
 
 func _draw_room_background(bounds: Rect2, index: int, liberated: bool) -> void:

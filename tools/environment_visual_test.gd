@@ -1,6 +1,6 @@
 extends Node
 
-const OUTPUT_DIRECTORY := "res://prints_do_jogo/iteracao_0_2_4"
+const OUTPUT_DIRECTORY := "res://prints_do_jogo/iteracao_0_2_5"
 
 
 func _ready() -> void:
@@ -41,8 +41,8 @@ func _capture_room(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: 
 	var bounds: Rect2 = world.room_bounds[room_id]
 	camera.limit_left = roundi(bounds.position.x)
 	camera.limit_right = roundi(bounds.end.x)
-	camera.limit_top = -40
-	camera.limit_bottom = 220
+	camera.limit_top = -60
+	camera.limit_bottom = 240
 	camera.reset_smoothing()
 	hud.room_fade = 0.0
 	hud.world_fade = 0.0

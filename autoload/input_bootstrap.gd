@@ -8,11 +8,14 @@ const KEYBOARD_BINDINGS := {
 	"jump": [KEY_SPACE],
 	"crouch": [KEY_CTRL],
 	"melee": [KEY_J],
-	"shoot_revolver": [KEY_K],
-	"shoot_shotgun": [KEY_L],
+	"shoot_pistol": [KEY_K],
+	"shoot_rifle": [KEY_L],
+	"special_attack": [KEY_I],
 	"aim": [KEY_SHIFT],
 	"heal": [KEY_Q],
 	"interact": [KEY_E],
+	"dash": [KEY_C],
+	"map": [KEY_M],
 	"pause": [KEY_ESCAPE],
 	"toggle_debug": [KEY_F3],
 	"debug_liberate": [KEY_F12],
@@ -22,9 +25,12 @@ const JOYPAD_BUTTON_BINDINGS := {
 	"jump": JOY_BUTTON_A,
 	"crouch": JOY_BUTTON_LEFT_STICK,
 	"melee": JOY_BUTTON_X,
-	"shoot_shotgun": JOY_BUTTON_RIGHT_SHOULDER,
+	"shoot_rifle": JOY_BUTTON_RIGHT_SHOULDER,
+	"special_attack": JOY_BUTTON_LEFT_SHOULDER,
 	"heal": JOY_BUTTON_B,
 	"interact": JOY_BUTTON_Y,
+	"dash": JOY_BUTTON_RIGHT_STICK,
+	"map": JOY_BUTTON_BACK,
 	"pause": JOY_BUTTON_START,
 }
 
@@ -42,7 +48,7 @@ func _enter_tree() -> void:
 	_add_joy_axis_if_missing("move_up", JOY_AXIS_LEFT_Y, -1.0)
 	_add_joy_axis_if_missing("move_down", JOY_AXIS_LEFT_Y, 1.0)
 	_add_joy_axis_if_missing("aim", JOY_AXIS_TRIGGER_LEFT, 1.0)
-	_add_joy_axis_if_missing("shoot_revolver", JOY_AXIS_TRIGGER_RIGHT, 1.0)
+	_add_joy_axis_if_missing("shoot_pistol", JOY_AXIS_TRIGGER_RIGHT, 1.0)
 
 
 func _ensure_action(action: StringName) -> void:

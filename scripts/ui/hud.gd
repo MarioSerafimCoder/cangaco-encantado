@@ -1,25 +1,19 @@
 class_name GameHUD
 extends CanvasLayer
 
-const STATUS_PANEL_TEXTURE := preload("res://assets/ui/hud/status_panel.tres")
-const BOSS_PANEL_TEXTURE := preload("res://assets/ui/hud/boss_bar_panel.tres")
 const ROOM_PANEL_TEXTURE := preload("res://assets/ui/hud/room_banner.tres")
 const WORLD_PANEL_TEXTURE := preload("res://assets/ui/hud/world_plaque.tres")
 const HELP_PANEL_TEXTURE := preload("res://assets/ui/hud/help_banner.tres")
+const PIXEL_FONT := preload("res://assets/ui/fonts/Tiny5-Regular.ttf")
 
-var health_label: Label
-var revolver_label: Label
-var shotgun_label: Label
-var heal_label: Label
+var player_status: PlayerStatusHUD
 var room_panel: Panel
 var room_label: Label
 var world_panel: Panel
 var world_label: Label
 var debug_panel: Panel
 var debug_label: Label
-var boss_panel: Panel
-var boss_label: Label
-var boss_fill: ColorRect
+var boss_status: BossStatusHUD
 var help_panel: Panel
 var player: NiloPlayer
 var room_fade := 0.0
@@ -38,8 +32,8 @@ func _ready() -> void:
 	EventBus.room_entered.connect(_on_room_entered)
 	EventBus.world_state_changed.connect(_on_world_changed)
 	_on_health_changed(GameState.player_health, 5)
-	_on_ammo_changed(&"revolver", 6, 6)
-	_on_ammo_changed(&"shotgun", 2, 2)
+	_on_ammo_changed(&"pistol", 8, 8)
+	_on_ammo_changed(&"rifle", 4, 4)
 	_on_heals_changed(GameState.heal_charges, 2)
 	_on_world_changed(&"vila_umbuzeiro", WorldState.get_region_state(&"vila_umbuzeiro"))
 
@@ -56,6 +50,7 @@ func _process(delta: float) -> void:
 	if player == null:
 		player = get_tree().get_first_node_in_group("player") as NiloPlayer
 	if player != null:
+		player_status.bind_player(player)
 		if debug_visible:
 			debug_label.text = "%s\nPOS %d,%d  VEL %d,%d" % [
 				player.state_machine.state_name(),
@@ -77,11 +72,8 @@ func _apply_temporary_visibility(control: Control, remaining: float) -> void:
 
 
 func _build_hud() -> void:
-	var status_panel := _make_panel(Rect2(4.0, 4.0, 94.0, 46.0), Color("241d1acc"), Color("b88042"), STATUS_PANEL_TEXTURE)
-	health_label = _make_label(status_panel, Vector2(11.0, 4.0), Vector2(78.0, 8.0), 7, Color("ffe2a8"))
-	revolver_label = _make_label(status_panel, Vector2(11.0, 12.0), Vector2(78.0, 8.0), 6, Color("e9d5aa"))
-	shotgun_label = _make_label(status_panel, Vector2(11.0, 20.0), Vector2(78.0, 8.0), 6, Color("e9d5aa"))
-	heal_label = _make_label(status_panel, Vector2(11.0, 28.0), Vector2(78.0, 8.0), 6, Color("8fe3b4"))
+	player_status = PlayerStatusHUD.new()
+	add_child(player_status)
 
 	world_panel = _make_panel(Rect2(222.0, 4.0, 94.0, 16.0), Color("241d1acc"), Color("b88042"), WORLD_PANEL_TEXTURE)
 	world_label = _make_label(world_panel, Vector2(3.0, 3.0), Vector2(88.0, 10.0), 6, Color("f2d49a"))
@@ -96,35 +88,21 @@ func _build_hud() -> void:
 	room_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	room_panel.visible = false
 
-	boss_panel = _make_panel(Rect2(125.0, 22.0, 191.0, 16.0), Color("1b1115e8"), Color("9f3c38"), BOSS_PANEL_TEXTURE)
-	boss_label = _make_label(boss_panel, Vector2(5.0, 1.0), Vector2(181.0, 7.0), 6, Color("f4d8bd"))
-	boss_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var boss_track := ColorRect.new()
-	boss_track.position = Vector2(8.0, 9.0)
-	boss_track.size = Vector2(175.0, 3.0)
-	boss_track.color = Color("3a2528")
-	boss_panel.add_child(boss_track)
-	boss_fill = ColorRect.new()
-	boss_fill.size = boss_track.size
-	boss_fill.color = Color("c94b3f")
-	boss_track.add_child(boss_fill)
-	boss_panel.visible = false
+	boss_status = BossStatusHUD.new()
+	add_child(boss_status)
 
 	help_panel = _make_panel(Rect2(32.0, 163.0, 256.0, 12.0), Color("171311c9"), Color("6e5337"), HELP_PANEL_TEXTURE)
 	var help_label := _make_label(help_panel, Vector2(3.0, 1.0), Vector2(250.0, 9.0), 5, Color("d8c39e"))
-	help_label.text = "A/D MOVER  ESPAÇO PULAR  J FACÃO  K/L TIROS  F3 DEBUG"
+	help_label.text = "A/D MOVER  ESPAÇO PULAR  J FACÃO  K PISTOLA  L RIFLE  I ESPECIAL"
 	help_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 
 func _update_boss_bar() -> void:
 	var boss := get_tree().get_first_node_in_group("bosses") as EnemyBase
 	if boss == null or not is_instance_valid(boss) or player.global_position.distance_to(boss.global_position) > 300.0:
-		boss_panel.visible = false
+		boss_status.hide_boss()
 		return
-	boss_panel.visible = true
-	boss_label.text = "ZÉ TRANCA"
-	var ratio := float(boss.health.current_health) / maxf(float(boss.health.max_health), 1.0)
-	boss_fill.size.x = 175.0 * clampf(ratio, 0.0, 1.0)
+	boss_status.show_boss(boss)
 
 
 func _make_panel(rect: Rect2, background: Color, border: Color, panel_texture: Texture2D = null) -> Panel:
@@ -162,6 +140,7 @@ func _make_label(parent: Control, position_value: Vector2, size_value: Vector2, 
 	label.position = position_value
 	label.size = size_value
 	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_font_override("font", PIXEL_FONT)
 	label.add_theme_color_override("font_color", color)
 	label.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.9))
 	label.add_theme_constant_override("shadow_offset_x", 1)
@@ -171,18 +150,15 @@ func _make_label(parent: Control, position_value: Vector2, size_value: Vector2, 
 
 
 func _on_health_changed(current: int, maximum: int) -> void:
-	health_label.text = "VIDA %s%s" % ["◆".repeat(current), "◇".repeat(maximum - current)]
+	player_status.set_health(current, maximum)
 
 
 func _on_ammo_changed(weapon_id: StringName, current: int, maximum: int) -> void:
-	if weapon_id == &"revolver":
-		revolver_label.text = "REV %s%s %d/%d" % ["●".repeat(current), "·".repeat(maximum - current), current, maximum]
-	elif weapon_id == &"shotgun":
-		shotgun_label.text = "ESP %s%s %d/%d" % ["▮".repeat(current), "·".repeat(maximum - current), current, maximum]
+	player_status.set_ammo(weapon_id, current, maximum)
 
 
 func _on_heals_changed(current: int, maximum: int) -> void:
-	heal_label.text = "CABAÇA %s%s %d/%d" % ["✦".repeat(current), "·".repeat(maximum - current), current, maximum]
+	player_status.set_heals(current, maximum)
 
 
 func _on_room_entered(room_id: StringName, display_name: String) -> void:

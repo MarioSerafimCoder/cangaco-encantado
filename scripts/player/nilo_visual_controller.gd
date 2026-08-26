@@ -1,33 +1,57 @@
 class_name NiloVisualController
 extends Sprite2D
 
-const BASE_USEFUL_HEIGHTS := [53.0, 53.0, 53.0, 51.0, 51.0, 50.0, 48.0, 49.0, 57.0, 61.0, 48.0, 45.0, 49.0, 49.0, 29.0, 23.0]
-const BASE_USEFUL_BOTTOMS := [64.0, 64.0, 64.0, 64.0, 60.0, 61.0, 59.0, 60.0, 57.0, 64.0, 55.0, 55.0, 49.0, 49.0, 49.0, 50.0]
-const REVOLVER_USEFUL_HEIGHTS := [271.0, 290.0, 271.0, 270.0, 290.0, 270.0]
-const REVOLVER_USEFUL_BOTTOMS := [356.0, 356.0, 356.0, 356.0, 356.0, 356.0]
-const SHOTGUN_USEFUL_HEIGHTS := [277.0, 286.0, 271.0, 271.0, 281.0, 271.0]
-const SHOTGUN_USEFUL_BOTTOMS := [344.0, 345.0, 345.0, 345.0, 345.0, 345.0]
+const COHESION_TINT := Color("fff8ee")
+
+const LOCOMOTION_PROFILES := [
+	{"region": Rect2(0, 0, 246, 249), "height": 179.0, "bottom": 182.0, "center_x": 104.5},
+	{"region": Rect2(246, 0, 246, 249), "height": 179.0, "bottom": 182.0, "center_x": 114.5},
+	{"region": Rect2(492, 0, 246, 249), "height": 179.0, "bottom": 182.0, "center_x": 124.5},
+	{"region": Rect2(738, 0, 247, 249), "height": 179.0, "bottom": 182.0, "center_x": 134.5},
+	{"region": Rect2(0, 249, 246, 249), "height": 179.0, "bottom": 200.0},
+	{"region": Rect2(246, 249, 246, 249), "height": 179.0, "bottom": 201.0},
+	{"region": Rect2(492, 249, 246, 249), "height": 179.0, "bottom": 199.0},
+	{"region": Rect2(738, 249, 247, 249), "height": 179.0, "bottom": 199.0},
+	{"region": Rect2(0, 498, 246, 249), "height": 171.0, "bottom": 204.0},
+	{"region": Rect2(246, 498, 246, 249), "height": 174.0, "bottom": 204.0},
+	{"region": Rect2(492, 498, 246, 249), "height": 172.0, "bottom": 205.0},
+	{"region": Rect2(738, 498, 247, 249), "height": 171.0, "bottom": 206.0},
+	{"region": Rect2(0, 747, 246, 250), "height": 179.0, "bottom": 204.0},
+	{"region": Rect2(246, 747, 246, 250), "height": 179.0, "bottom": 208.0},
+	{"region": Rect2(492, 747, 246, 250), "height": 179.0, "bottom": 211.0},
+	{"region": Rect2(738, 747, 247, 250), "height": 179.0, "bottom": 212.0},
+]
+
+const COMBAT_PROFILES := [
+	{"region": Rect2(0, 0, 239, 248), "height": 179.0, "bottom": 184.0},
+	{"region": Rect2(239, 0, 239, 248), "height": 179.0, "bottom": 183.0},
+	{"region": Rect2(478, 0, 239, 248), "height": 178.0, "bottom": 184.0},
+	{"region": Rect2(717, 0, 239, 248), "height": 180.0, "bottom": 184.0},
+	{"region": Rect2(0, 248, 239, 248), "height": 177.0, "bottom": 194.0},
+	{"region": Rect2(239, 248, 239, 248), "height": 177.0, "bottom": 194.0},
+	{"region": Rect2(478, 248, 239, 248), "height": 177.0, "bottom": 194.0},
+	{"region": Rect2(717, 248, 239, 248), "height": 177.0, "bottom": 194.0},
+	{"region": Rect2(0, 496, 239, 248), "height": 176.0, "bottom": 206.0},
+	{"region": Rect2(239, 496, 239, 248), "height": 159.0, "bottom": 202.0},
+	{"region": Rect2(478, 496, 239, 248), "height": 157.0, "bottom": 207.0},
+	{"region": Rect2(717, 496, 239, 248), "height": 172.0, "bottom": 203.0},
+	{"region": Rect2(0, 744, 239, 248), "height": 165.0, "bottom": 232.0},
+	{"region": Rect2(239, 744, 239, 248), "height": 189.0, "bottom": 238.0},
+	{"region": Rect2(478, 744, 239, 248), "height": 216.0, "bottom": 242.0},
+	{"region": Rect2(717, 744, 239, 248), "height": 181.0, "bottom": 235.0},
+]
 
 enum VisualTransition { NONE, RUN_START, RUN_STOP, TURN, TAKEOFF, LAND }
 
 signal foot_contact(side: int)
 signal transition_started(transition: VisualTransition)
 
-@export_range(1, 12) var columns := 4
-@export_range(1, 8) var rows := 4
-@export var shooting_texture: Texture2D
-@export_range(2, 12) var shooting_columns := 6
-@export var shooting_row_height := 380.0
-@export var revolver_row_y := 30.0
-@export var shotgun_row_y := 440.0
-@export var base_reference_useful_height := 53.0
-@export var base_reference_useful_bottom := 64.0
-@export var target_visual_height := 0.0
+@export var combat_texture: Texture2D
+@export var target_visual_height := 40.0
+@export var visual_baseline_offset := 12.0
 @export var minimum_run_cycles_per_second := 1.65
 @export var maximum_run_cycles_per_second := 3.05
 @export var moving_speed_threshold := 5.0
-@export_range(0.1, 0.5) var running_enter_ratio := 0.22
-@export_range(0.05, 0.4) var running_exit_ratio := 0.16
 
 var run_phase := 0.0
 var smoothed_speed_ratio := 0.0
@@ -39,6 +63,8 @@ var bob_offset := 0.0
 var run_contact_amount := 1.0
 var moving_active := false
 var running_active := false
+var locomotion_frame := -1
+var combat_frame := -1
 var shooting_frame := -1
 var normalized_visual_height := 0.0
 var normalized_baseline_offset := 0.0
@@ -62,28 +88,29 @@ var _recoil_remaining := 0.0
 var _recoil_duration := 0.0
 var _hurt_flash_remaining := 0.0
 var _base_texture: Texture2D
-var _using_shooting_sheet := false
-var _current_useful_height := 53.0
-var _current_useful_bottom := 64.0
-var _current_region_height := 64.0
+var _current_sheet := -1
+var _current_useful_height := 285.0
+var _current_useful_bottom := 297.0
+var _current_useful_center_x := 0.0
+var _current_region_height := 309.0
+var _current_region_width := 309.0
 var _canonical_baseline_offset := 0.0
 
 
 func _ready() -> void:
+	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_player = get_parent() as NiloPlayer
 	_base_position = position
 	_base_scale = scale
 	_base_rotation = rotation
 	_base_texture = texture
-	if target_visual_height <= 0.0:
-		target_visual_height = base_reference_useful_height * absf(_base_scale.y)
-	_canonical_baseline_offset = _base_position.y + (base_reference_useful_bottom - 32.0) * absf(_base_scale.y)
+	_canonical_baseline_offset = visual_baseline_offset
 	region_enabled = true
 	region_filter_clip_enabled = true
 	_previous_grounded = _player.is_on_floor()
 	_previous_facing = _player.facing
 	_last_running_facing = _player.facing
-	_apply_frame(0)
+	_apply_locomotion_frame(0)
 
 
 func _process(delta: float) -> void:
@@ -144,7 +171,7 @@ func _update_transitions(delta: float) -> void:
 	elif grounded and not running and _previous_running:
 		_start_transition(VisualTransition.RUN_STOP, 0.105)
 		_spawn_foot_dust(0, 0.72)
-	if grounded and running and signf(_player.facing) != signf(_previous_facing):
+	if grounded and moving_active and signf(_player.facing) != signf(_previous_facing):
 		_start_transition(VisualTransition.TURN, 0.105)
 		_spawn_foot_dust(0, 0.9)
 	if running:
@@ -196,46 +223,63 @@ func _update_air_phase() -> void:
 
 func _select_frame() -> int:
 	match _player.state_machine.current_state:
+		PlayerStateMachine.State.IDLE:
+			return _idle_frame()
 		PlayerStateMachine.State.RUN:
-			return 4 + int(floor(run_phase * 4.0)) % 4 if running_active else int(floor(_life_elapsed / 0.72)) % 2
+			var row_start := 8 if running_active else 4
+			return row_start + int(floor(run_phase * 4.0)) % 4
 		PlayerStateMachine.State.CROUCH:
 			return 0
 		PlayerStateMachine.State.JUMP:
-			return 8
+			return 5
 		PlayerStateMachine.State.FALL:
-			return 8 if air_phase == &"apex" else 9
-		PlayerStateMachine.State.SHOOT, PlayerStateMachine.State.SHOTGUN:
-			return 2
-		PlayerStateMachine.State.MELEE:
-			return 11
+			return 6 if air_phase == &"apex" else 7
+		PlayerStateMachine.State.PISTOL, PlayerStateMachine.State.RIFLE, PlayerStateMachine.State.MELEE, PlayerStateMachine.State.SPECIAL:
+			return 0
 		PlayerStateMachine.State.HEAL:
-			return 13
+			return 2
 		PlayerStateMachine.State.HURT:
-			return 12
+			return 3
 		PlayerStateMachine.State.DEAD:
-			return 15
+			return 12 + mini(3, int(floor(_state_elapsed / 0.16)))
 		_:
-			return int(floor(_life_elapsed / 0.72)) % 2
+			return _idle_frame()
+
+
+func _idle_frame() -> int:
+	# A piscada aparece brevemente a cada 4,8 s. Nos demais instantes,
+	# as três poses abertas formam uma respiração lenta e ancorada.
+	var idle_cycle := fmod(_life_elapsed, 4.8)
+	if idle_cycle >= 4.12 and idle_cycle < 4.27:
+		return 1
+	var breathing_sequence := [0, 2, 3, 2]
+	return breathing_sequence[int(floor(fmod(_life_elapsed, 2.4) / 0.6)) % breathing_sequence.size()]
 
 
 func _apply_visual_transform() -> void:
 	position = _base_position
 	var normalized_scale := target_visual_height / maxf(_current_useful_height, 1.0)
 	scale = Vector2(normalized_scale, normalized_scale)
+	# As poses paradas vieram deslocadas 10 px para a direita a cada célula.
+	# Compensar o centro útil mantém o corpo sobre o mesmo ponto do mundo.
+	var center_delta := _current_useful_center_x - _current_region_width * 0.5
+	position.x -= center_delta * normalized_scale * _player.facing
 	position.y = _canonical_baseline_offset - (_current_useful_bottom - _current_region_height * 0.5) * normalized_scale
 	rotation = _base_rotation
-	self_modulate = Color.WHITE
+	self_modulate = COHESION_TINT
 	flip_h = _player.facing < 0.0
 	normalized_visual_height = _current_useful_height * absf(scale.y)
 	normalized_baseline_offset = position.y + (_current_useful_bottom - _current_region_height * 0.5) * absf(scale.y)
 
 	match _player.state_machine.current_state:
 		PlayerStateMachine.State.IDLE:
-			# Respiração só altera volume; os pés permanecem ancorados.
-			var breath := (sin(_life_elapsed * 2.0) + 1.0) * 0.5
+			# Respiração perceptível, mas com os pés presos à baseline.
+			var breath := (sin(_life_elapsed * TAU / 2.8) + 1.0) * 0.5
+			var scale_before_breath := scale
 			scale.x *= 1.0 + breath * 0.008
-			scale.y *= 1.0 - breath * 0.006
-			position.y += _base_scale.y * 64.0 * breath * 0.003
+			scale.y *= 1.0 + breath * 0.012
+			var bottom_from_center := _current_useful_bottom - _current_region_height * 0.5
+			position.y -= bottom_from_center * (scale.y - scale_before_breath.y)
 		PlayerStateMachine.State.RUN:
 			if running_active:
 				var compression := run_contact_amount * lerpf(0.002, 0.012, smoothed_speed_ratio)
@@ -248,12 +292,16 @@ func _apply_visual_transform() -> void:
 			position.y += 2.0
 		PlayerStateMachine.State.JUMP, PlayerStateMachine.State.FALL:
 			_apply_air_transform()
-		PlayerStateMachine.State.SHOOT:
+		PlayerStateMachine.State.PISTOL:
 			_apply_shoot_transform(false)
-		PlayerStateMachine.State.SHOTGUN:
+		PlayerStateMachine.State.RIFLE:
 			_apply_shoot_transform(true)
 		PlayerStateMachine.State.MELEE:
 			position.x += _player.facing * 1.5
+		PlayerStateMachine.State.SPECIAL:
+			var special_pulse := sin(clampf(_state_elapsed / 0.64, 0.0, 1.0) * PI)
+			scale *= Vector2(1.0 + special_pulse * 0.045, 1.0 - special_pulse * 0.025)
+			position.x += _player.facing * special_pulse * 2.0
 		PlayerStateMachine.State.HEAL:
 			var pulse := (sin(_life_elapsed * 9.0) + 1.0) * 0.5
 			scale *= Vector2.ONE * (1.0 + pulse * 0.025)
@@ -287,26 +335,26 @@ func _apply_air_transform() -> void:
 			rotation += _player.facing * 0.045
 
 
-func _apply_shoot_transform(is_shotgun: bool) -> void:
-	var anticipation := 0.08 if is_shotgun else 0.06
-	var active_end := 0.18 if is_shotgun else 0.14
-	var total := 0.36 if is_shotgun else 0.24
-	var strength := 1.0 if is_shotgun else 0.45
+func _apply_shoot_transform(is_rifle: bool) -> void:
+	var anticipation := 0.08 if is_rifle else 0.06
+	var active_end := 0.19 if is_rifle else 0.14
+	var total := 0.38 if is_rifle else 0.24
+	var strength := 0.8 if is_rifle else 0.45
 	if _state_elapsed < anticipation:
 		var brace := smoothstep(0.0, anticipation, _state_elapsed)
-		position.x += _player.facing * brace * (1.1 if is_shotgun else 0.55)
+		position.x += _player.facing * brace * (0.9 if is_rifle else 0.55)
 		scale *= Vector2(1.0 + brace * 0.012 * strength, 1.0 - brace * 0.018 * strength)
 		rotation += _player.facing * brace * 0.012
 	elif _state_elapsed < active_end:
 		var fire_progress := (_state_elapsed - anticipation) / maxf(active_end - anticipation, 0.001)
 		var recoil_pulse := sin(fire_progress * PI)
-		position.x -= _player.facing * recoil_pulse * (1.7 if is_shotgun else 0.7)
-		rotation -= _player.facing * recoil_pulse * (0.045 if is_shotgun else 0.018)
+		position.x -= _player.facing * recoil_pulse * (1.15 if is_rifle else 0.7)
+		rotation -= _player.facing * recoil_pulse * (0.032 if is_rifle else 0.018)
 	else:
 		var recovery := clampf((_state_elapsed - active_end) / maxf(total - active_end, 0.001), 0.0, 1.0)
 		var settle := 1.0 - recovery
-		position.x -= _player.facing * settle * (0.65 if is_shotgun else 0.25)
-		rotation -= _player.facing * settle * (0.018 if is_shotgun else 0.008)
+		position.x -= _player.facing * settle * (0.48 if is_rifle else 0.25)
+		rotation -= _player.facing * settle * (0.014 if is_rifle else 0.008)
 
 
 func _apply_transition_transform() -> void:
@@ -377,79 +425,111 @@ func _update_motion_flags() -> void:
 	var grounded := _player.is_on_floor()
 	var speed := absf(_player.velocity.x)
 	moving_active = grounded and speed > moving_speed_threshold
-	var speed_ratio := speed / maxf(_player.config.move_speed, 1.0)
-	if running_active:
-		running_active = grounded and speed_ratio > running_exit_ratio
-	else:
-		running_active = grounded and speed_ratio > running_enter_ratio
+	running_active = moving_active and _player.movement.running_active
 
 
-func _apply_frame(frame_index: int) -> void:
-	if texture != _base_texture:
-		texture = _base_texture
-		_last_frame = -1
-	_using_shooting_sheet = false
+func _apply_locomotion_frame(frame_index: int) -> void:
+	locomotion_frame = frame_index
+	combat_frame = -1
 	shooting_frame = -1
-	if frame_index == _last_frame or texture == null:
-		return
-	_last_frame = frame_index
-	var cell_size := Vector2(float(texture.get_width()) / float(maxi(columns, 1)), float(texture.get_height()) / float(maxi(rows, 1)))
-	region_rect = Rect2(Vector2(frame_index % columns, frame_index / columns) * cell_size, cell_size)
-	_current_useful_height = BASE_USEFUL_HEIGHTS[clampi(frame_index, 0, BASE_USEFUL_HEIGHTS.size() - 1)]
-	_current_useful_bottom = BASE_USEFUL_BOTTOMS[clampi(frame_index, 0, BASE_USEFUL_BOTTOMS.size() - 1)]
-	_current_region_height = cell_size.y
+	_apply_profile(_base_texture, LOCOMOTION_PROFILES[clampi(frame_index, 0, LOCOMOTION_PROFILES.size() - 1)], frame_index, 0)
 
 
 func _apply_current_frame() -> void:
 	var state := _player.state_machine.current_state
-	if shooting_texture != null and (state == PlayerStateMachine.State.SHOOT or state == PlayerStateMachine.State.SHOTGUN):
-		_apply_shooting_frame(state == PlayerStateMachine.State.SHOTGUN)
+	if combat_texture != null and (state == PlayerStateMachine.State.PISTOL or state == PlayerStateMachine.State.RIFLE):
+		_apply_shooting_frame(state == PlayerStateMachine.State.RIFLE)
+	elif combat_texture != null and state == PlayerStateMachine.State.MELEE:
+		_apply_melee_frame()
+	elif combat_texture != null and state == PlayerStateMachine.State.SPECIAL:
+		_apply_special_frame()
 	else:
-		_apply_frame(_select_frame())
+		_apply_locomotion_frame(_select_frame())
 
 
-func _apply_shooting_frame(is_shotgun: bool) -> void:
-	var frame_index := _shooting_frame_at_time(is_shotgun)
-	var sheet_changed := texture != shooting_texture
-	if sheet_changed:
-		texture = shooting_texture
-		_last_frame = -1
-	_using_shooting_sheet = true
+func _apply_shooting_frame(is_rifle: bool) -> void:
+	locomotion_frame = -1
+	var frame_index := _shooting_frame_at_time(is_rifle)
 	shooting_frame = frame_index
-	if frame_index == _last_frame and not sheet_changed:
+	var profile_index := frame_index + (4 if is_rifle else 0)
+	combat_frame = profile_index
+	_apply_profile(combat_texture, COMBAT_PROFILES[profile_index], profile_index, 1)
+
+
+func _apply_melee_frame() -> void:
+	locomotion_frame = -1
+	shooting_frame = -1
+	var profile_index := 8
+	match _player.combat.attack_phase:
+		PlayerCombat.AttackPhase.ANTICIPATION:
+			profile_index = 8
+		PlayerCombat.AttackPhase.ACTIVE:
+			if _player.combat.current_melee_variant == &"machete_down" or _player.combat.combo_step == 2:
+				profile_index = 10
+			else:
+				profile_index = 9
+		PlayerCombat.AttackPhase.FOLLOW_THROUGH:
+			profile_index = 10
+		PlayerCombat.AttackPhase.RECOVERY:
+			profile_index = 11
+		_:
+			profile_index = 11
+	combat_frame = profile_index
+	_apply_profile(combat_texture, COMBAT_PROFILES[profile_index], profile_index, 1)
+
+
+func _apply_special_frame() -> void:
+	locomotion_frame = -1
+	shooting_frame = -1
+	var frame_index := 0
+	if _state_elapsed >= 0.46:
+		frame_index = 3
+	elif _state_elapsed >= 0.28:
+		frame_index = 2
+	elif _state_elapsed >= 0.12:
+		frame_index = 1
+	var profile_index := 12 + frame_index
+	combat_frame = profile_index
+	_apply_profile(combat_texture, COMBAT_PROFILES[profile_index], profile_index, 1)
+
+
+func _apply_profile(next_texture: Texture2D, profile: Dictionary, frame_index: int, sheet_id: int) -> void:
+	if next_texture == null:
 		return
+	var sheet_changed := texture != next_texture or _current_sheet != sheet_id
+	if not sheet_changed and frame_index == _last_frame:
+		return
+	texture = next_texture
+	_current_sheet = sheet_id
 	_last_frame = frame_index
-	var cell_width := float(shooting_texture.get_width()) / float(maxi(shooting_columns, 1))
-	var row_y := shotgun_row_y if is_shotgun else revolver_row_y
-	region_rect = Rect2(frame_index * cell_width, row_y, cell_width, shooting_row_height)
-	var heights := SHOTGUN_USEFUL_HEIGHTS if is_shotgun else REVOLVER_USEFUL_HEIGHTS
-	var bottoms := SHOTGUN_USEFUL_BOTTOMS if is_shotgun else REVOLVER_USEFUL_BOTTOMS
-	_current_useful_height = heights[frame_index]
-	_current_useful_bottom = bottoms[frame_index]
-	_current_region_height = shooting_row_height
+	region_rect = profile["region"]
+	_current_useful_height = float(profile["height"])
+	_current_useful_bottom = float(profile["bottom"])
+	_current_useful_center_x = float(profile.get("center_x", region_rect.size.x * 0.5))
+	_current_region_height = region_rect.size.y
+	_current_region_width = region_rect.size.x
 
 
-func _shooting_frame_at_time(is_shotgun: bool) -> int:
-	if is_shotgun:
-		if _state_elapsed < 0.025:
+func _shooting_frame_at_time(is_rifle: bool) -> int:
+	if is_rifle:
+		if _state_elapsed < 0.06:
 			return 0
-		if _state_elapsed < 0.05:
+		if _state_elapsed < 0.18:
 			return 1
-		if _state_elapsed < 0.08:
+		if _state_elapsed < 0.28:
 			return 2
-		if _state_elapsed < 0.16:
-			return 3
-		if _state_elapsed < 0.25:
-			return 4
-		return 5
-	if _state_elapsed < 0.02:
-		return 0
-	if _state_elapsed < 0.04:
-		return 1
-	if _state_elapsed < 0.06:
-		return 2
-	if _state_elapsed < 0.12:
 		return 3
+	if _state_elapsed < 0.045:
+		return 0
+	if _state_elapsed < 0.12:
+		return 1
 	if _state_elapsed < 0.18:
-		return 4
-	return 5
+		return 2
+	return 3
+
+
+func get_profile_sets_for_validation() -> Array[Dictionary]:
+	return [
+		{"texture": _base_texture, "profiles": LOCOMOTION_PROFILES},
+		{"texture": combat_texture, "profiles": COMBAT_PROFILES},
+	]

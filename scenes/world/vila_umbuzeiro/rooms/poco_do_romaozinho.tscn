@@ -1,0 +1,92 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/room_controller.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_320.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/ground_320.tscn" id="3"]
+[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/atlases/06_beco_e_poco_romaozinho.png" id="4"]
+[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/05_conjuntos_de_transicao_e_preenchimento.png" id="5"]
+[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/06_elementos_atmosfericos.png" id="6"]
+
+[sub_resource type="RectangleShape2D" id="RoomShape"]
+size = Vector2(320, 180)
+[sub_resource type="RectangleShape2D" id="WellShape"]
+size = Vector2(88, 24)
+
+[node name="PocoDoRomaozinho" type="Node2D"]
+script = ExtResource("1")
+room_id = &"poco"
+display_name = "10 POÇO DO ROMÃOZINHO"
+local_bounds = Rect2(0, 0, 320, 180)
+camera_bounds = Rect2(0, -60, 320, 300)
+[node name="Environment" type="Node2D" parent="."]
+[node name="Parallax" parent="Environment" instance=ExtResource("2")]
+[node name="Architecture" type="Node2D" parent="Environment"]
+[node name="DustBand" type="Sprite2D" parent="Environment/Architecture"]
+position = Vector2(160, 47)
+scale = Vector2(0.1987, 0.1987)
+z_index = -90
+texture_filter = 1
+texture = ExtResource("6")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(82, 79, 1385, 70)
+[node name="Well" type="Sprite2D" parent="Environment/Architecture"]
+position = Vector2(160, 84)
+scale = Vector2(0.41892, 0.41892)
+texture_filter = 1
+texture = ExtResource("4")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(120, 425, 370, 315)
+[node name="EastProps" type="Sprite2D" parent="Environment/Architecture"]
+position = Vector2(262, 127)
+scale = Vector2(0.20536, 0.20536)
+texture_filter = 1
+texture = ExtResource("4")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(910, 500, 560, 225)
+[node name="WestProps" type="Sprite2D" parent="Environment/Architecture"]
+position = Vector2(48, 126)
+scale = Vector2(0.22564, 0.22564)
+texture_filter = 1
+texture = ExtResource("4")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(80, 770, 390, 215)
+[node name="EastFiller" type="Sprite2D" parent="Environment/Architecture"]
+position = Vector2(250, 107)
+scale = Vector2(0.26667, 0.26667)
+z_index = 3
+texture_filter = 1
+texture = ExtResource("5")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(420, 500, 420, 320)
+[node name="OccupiedOnly" type="Node2D" parent="Environment" groups=["room_occupied_only"]]
+[node name="LiberatedOnly" type="Node2D" parent="Environment" groups=["room_liberated_only"]]
+visible = false
+[node name="Geometry" type="Node2D" parent="."]
+[node name="Ground" parent="Geometry" instance=ExtResource("3")]
+[node name="WellObstacle" type="StaticBody2D" parent="Geometry"]
+position = Vector2(160, 138)
+collision_layer = 1
+collision_mask = 0
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/WellObstacle"]
+shape = SubResource("WellShape")
+[node name="Gameplay" type="Node2D" parent="."]
+[node name="Actors" type="Node2D" parent="Gameplay"]
+[node name="Entrances" type="Node2D" parent="Gameplay"]
+[node name="LEFT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances"]
+position = Vector2(18, 138)
+[node name="RIGHT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances"]
+position = Vector2(302, 138)
+[node name="EnemySpawns" type="Node2D" parent="Gameplay"]
+[node name="Triggers" type="Node2D" parent="Gameplay"]
+[node name="RoomArea" type="Area2D" parent="Gameplay/Triggers"]
+position = Vector2(160, 90)
+collision_layer = 0
+collision_mask = 2
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Triggers/RoomArea"]
+shape = SubResource("RoomShape")
+[node name="Camera" type="Node2D" parent="."]

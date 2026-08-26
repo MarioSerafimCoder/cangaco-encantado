@@ -5,8 +5,9 @@ extends Resource
 @export var machete_hitstop_1 := 0.030
 @export var machete_hitstop_2 := 0.035
 @export var machete_hitstop_3 := 0.055
-@export var revolver_hitstop := 0.020
-@export var shotgun_hitstop := 0.045
+@export var pistol_hitstop := 0.020
+@export var rifle_hitstop := 0.040
+@export var special_hitstop := 0.075
 @export var posture_break_hitstop := 0.070
 
 @export_category("Combo")

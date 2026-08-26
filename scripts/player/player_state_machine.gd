@@ -7,16 +7,17 @@ enum State {
 	CROUCH,
 	JUMP,
 	FALL,
-	SHOOT,
-	SHOTGUN,
+	PISTOL,
+	RIFLE,
 	MELEE,
+	SPECIAL,
 	HEAL,
 	HURT,
 	DEAD,
 }
 
 const STATE_NAMES := [
-	"IDLE", "RUN", "CROUCH", "JUMP", "FALL", "SHOOT", "SHOTGUN", "MELEE", "HEAL", "HURT", "DEAD"
+	"IDLE", "RUN", "CROUCH", "JUMP", "FALL", "PISTOL", "RIFLE", "MELEE", "SPECIAL", "HEAL", "HURT", "DEAD"
 ]
 
 signal state_changed(previous: State, current: State)
@@ -56,7 +57,7 @@ func update_locomotion(body: CharacterBody2D, crouching: bool) -> void:
 
 
 func is_movement_locked() -> bool:
-	return current_state == State.DEAD or (current_state in [State.HEAL, State.HURT] and lock_remaining > 0.0)
+	return current_state == State.DEAD or (current_state in [State.SPECIAL, State.HEAL, State.HURT] and lock_remaining > 0.0)
 
 
 func state_name() -> String:

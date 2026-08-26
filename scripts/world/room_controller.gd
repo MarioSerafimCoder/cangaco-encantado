@@ -11,8 +11,6 @@ signal player_exited(room_id: StringName)
 @export var camera_bounds := Rect2(0.0, -40.0, 320.0, 260.0)
 
 var _active_player: NiloPlayer
-var _previous_camera_limits := Rect2()
-var _has_previous_camera_limits := false
 var _debug_visible := false
 
 
@@ -23,6 +21,7 @@ func _ready() -> void:
 		room_area.body_entered.connect(_on_body_entered)
 		room_area.body_exited.connect(_on_body_exited)
 	EventBus.world_state_changed.connect(_on_world_state_changed)
+	_apply_rendering_profile()
 	_refresh_world_state()
 	set_process(true)
 
@@ -53,7 +52,6 @@ func _on_body_entered(body: Node) -> void:
 	if not body.is_in_group("player"):
 		return
 	_active_player = body as NiloPlayer
-	_apply_camera_bounds(_active_player)
 	EventBus.room_entered.emit(room_id, display_name)
 	player_entered.emit(room_id)
 
@@ -61,39 +59,8 @@ func _on_body_entered(body: Node) -> void:
 func _on_body_exited(body: Node) -> void:
 	if body != _active_player:
 		return
-	_restore_camera_bounds(_active_player)
 	_active_player = null
 	player_exited.emit(room_id)
-
-
-func _apply_camera_bounds(player: NiloPlayer) -> void:
-	if player == null or player.camera == null:
-		return
-	var camera := player.camera
-	_previous_camera_limits = Rect2(
-		float(camera.limit_left),
-		float(camera.limit_top),
-		float(camera.limit_right - camera.limit_left),
-		float(camera.limit_bottom - camera.limit_top)
-	)
-	_has_previous_camera_limits = true
-	var bounds := get_global_camera_bounds()
-	camera.limit_smoothed = true
-	camera.limit_left = roundi(bounds.position.x)
-	camera.limit_top = roundi(bounds.position.y)
-	camera.limit_right = roundi(bounds.end.x)
-	camera.limit_bottom = roundi(bounds.end.y)
-
-
-func _restore_camera_bounds(player: NiloPlayer) -> void:
-	if player == null or player.camera == null or not _has_previous_camera_limits:
-		return
-	var camera := player.camera
-	camera.limit_left = roundi(_previous_camera_limits.position.x)
-	camera.limit_top = roundi(_previous_camera_limits.position.y)
-	camera.limit_right = roundi(_previous_camera_limits.end.x)
-	camera.limit_bottom = roundi(_previous_camera_limits.end.y)
-	_has_previous_camera_limits = false
 
 
 func _on_world_state_changed(region_id: StringName, _state: StringName) -> void:
@@ -103,8 +70,18 @@ func _on_world_state_changed(region_id: StringName, _state: StringName) -> void:
 
 func _refresh_world_state() -> void:
 	var liberated := WorldState.get_region_state(world_region_id) == WorldState.LIBERATED
+	var environment := get_node_or_null("Environment") as CanvasItem
+	if environment != null:
+		environment.self_modulate = Color("fff8e9") if liberated else Color("f0e6db")
 	_set_group_visibility(&"room_occupied_only", not liberated)
 	_set_group_visibility(&"room_liberated_only", liberated)
+
+
+func _apply_rendering_profile() -> void:
+	for candidate in find_children("*", "Sprite2D", true, false):
+		var sprite := candidate as Sprite2D
+		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		sprite.position = sprite.position.round()
 
 
 func _set_group_visibility(group_id: StringName, value: bool) -> void:

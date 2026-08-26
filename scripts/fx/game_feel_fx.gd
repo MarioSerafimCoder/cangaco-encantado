@@ -1,7 +1,7 @@
 class_name GameFeelFX
 extends Node2D
 
-enum Kind { RUN_DUST, LAND_DUST, MUZZLE, SLASH_HORIZONTAL, SLASH_UP, SLASH_DOWN, HIT, HEAL_CHANNEL, HEAL_COMPLETE }
+enum Kind { RUN_DUST, LAND_DUST, MUZZLE, SLASH_HORIZONTAL, SLASH_UP, SLASH_DOWN, HIT, HEAL_CHANNEL, HEAL_COMPLETE, PROJECTILE_IMPACT }
 
 var kind := Kind.HIT
 var facing := 1.0
@@ -56,6 +56,8 @@ func _draw() -> void:
 			_draw_heal_channel(progress, fade)
 		Kind.HEAL_COMPLETE:
 			_draw_heal_complete(progress, fade)
+		Kind.PROJECTILE_IMPACT:
+			_draw_projectile_impact(progress, fade)
 
 
 func _draw_dust(progress: float, fade: float, wide: bool) -> void:
@@ -123,6 +125,15 @@ func _draw_heal_complete(progress: float, fade: float) -> void:
 		draw_line(direction * radius * 0.35, direction * radius, Color(0.92, 1.0, 0.7, fade), 2.0)
 
 
+func _draw_projectile_impact(progress: float, fade: float) -> void:
+	var travel := 3.0 + progress * 5.0
+	for index in 4:
+		var vertical := -2.5 + float(index) * 1.7
+		var endpoint := Vector2(facing * travel * (0.7 + index * 0.12), vertical * (1.0 + progress))
+		draw_line(Vector2.ZERO, endpoint, Color(1.0, 0.72 if index % 2 == 0 else 0.38, 0.16, fade), 1.0)
+	draw_circle(Vector2.ZERO, maxf(0.5, 2.2 * fade), Color(1.0, 0.9, 0.48, fade))
+
+
 func _duration_for_kind(effect_kind: Kind) -> float:
 	match effect_kind:
 		Kind.RUN_DUST:
@@ -139,4 +150,6 @@ func _duration_for_kind(effect_kind: Kind) -> float:
 			return 1.05
 		Kind.HEAL_COMPLETE:
 			return 0.55
+		Kind.PROJECTILE_IMPACT:
+			return 0.14
 	return 0.18

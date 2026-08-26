@@ -1,7 +1,7 @@
 class_name EnemyStateMachine
 extends Node
 
-enum State { IDLE, CHASE, ATTACK, HURT, STAGGER, DEAD }
+enum State { IDLE, PATROL, CHASE, RETURN, RETREAT, ATTACK, HURT, STAGGER, DEAD }
 
 signal state_changed(previous: State, current: State)
 

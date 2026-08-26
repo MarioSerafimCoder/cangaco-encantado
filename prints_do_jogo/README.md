@@ -13,10 +13,17 @@ res://tools/mvp_visual_test.tscn
 Ela atualiza as capturas com nomes descritivos da ação apresentada:
 
 - `andando_no_mapa_01.png`
+- `heroi_parado_respirando.png`
+- `heroi_piscando.png`
+- `correndo_apos_2_segundos.png`
 - `dano_de_personagem.png`
 - `combate_com_ze_tranca.png`
-- `tiro_de_revolver.png`
-- `tiro_de_espingarda.png`
+- `tiro_de_pistola.png`
+- `tiro_de_rifle.png`
+- `ataque_de_facao.png`
+- `ataque_finalizador_de_facao.png`
+- `ataque_especial.png`
+- `inimigos_escala_e_recorte.png`
 - `vila_libertada_praca_do_umbu.png`
 
 As grandes mudanças ambientais também atualizam `ambiente_01_...png` até `ambiente_13_...png`, com uma captura para cada sala que recebeu o novo kit visual. A Rua das Cinzas permanece representada por `andando_no_mapa_01.png`.
@@ -36,6 +43,8 @@ A pasta `iteracao_0_2_4/` é o conjunto de aceitação do passe ambiental. Execu
 - `nilo_revolver.png`
 - `nilo_shotgun.png`
 - `nilo_comparacao_escala.png`
+
+A pasta `iteracao_0_2_5/` registra a aplicação das novas folhas transparentes nas salas de produção. Ela é atualizada por `res://tools/environment_visual_test.tscn`.
 
 As capturas devem ser executadas com renderização normal. O modo `--headless` do Godot 4.7 usa um renderizador dummy e não disponibiliza a textura do viewport para `save_png()`.
 

@@ -6,6 +6,7 @@ $requiredFiles = @(
     'project.godot',
     'scenes/main.tscn',
     'scenes/player/player.tscn',
+	'scenes/ui/front_end_menu.tscn',
     'scenes/enemies/saqueador.tscn',
     'scenes/enemies/pistoleiro.tscn',
     'scenes/bosses/ze_tranca.tscn',
@@ -15,6 +16,12 @@ $requiredFiles = @(
     'scripts/world/enemy_spawn.gd',
     'scripts/world/camera_parallax_layer.gd',
     'tools/room_production_validation.tscn',
+	'tools/hud_validation.tscn',
+	'tools/menu_flow_validation.tscn',
+	'tools/enemy_ai_validation.tscn',
+	'autoload/settings_manager.gd',
+	'assets/ui/fonts/Tiny5-Regular.ttf',
+	'assets/ui/fonts/OFL-Tiny5.txt',
     'README.md',
     'docs/IMPLEMENTATION.md',
     'docs/ROOM_PRODUCTION_PIPELINE.md',
@@ -32,7 +39,7 @@ foreach ($relativePath in $requiredFiles) {
 $projectText = Get-Content -Raw -LiteralPath (Join-Path $projectRoot 'project.godot')
 $requiredActions = @(
     'move_left', 'move_right', 'move_up', 'move_down', 'jump', 'crouch',
-    'melee', 'shoot_revolver', 'shoot_shotgun', 'aim', 'heal',
+    'melee', 'shoot_pistol', 'shoot_rifle', 'special_attack', 'aim', 'heal',
     'interact', 'pause', 'toggle_debug'
 )
 foreach ($action in $requiredActions) {

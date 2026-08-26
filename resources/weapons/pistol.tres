@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/weapon_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"pistol"
+display_name = "Pistola"
+magazine_size = 8
+fire_interval = 0.24
+reload_time = 0.85
+damage = 1
+posture_damage = 0.75
+range = 280.0
+projectile_speed = 560.0
+knockback = 55.0
+recoil = 0.0

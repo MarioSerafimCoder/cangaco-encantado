@@ -8,12 +8,14 @@ func _ready() -> void:
 	var nilo := $Main/Nilo as NiloPlayer
 	nilo.global_position = Vector2(80.0, 126.0)
 	await _wait_physics_frames(20)
+	await _validate_idle_breath_and_blink(nilo)
 	await _validate_continuous_run(nilo)
 	await _validate_turn_transition(nilo)
 	await _validate_jump_phases(nilo)
 	await _validate_crouch_hurtbox(nilo)
 	await _validate_visual_scale_consistency(nilo)
-	await _validate_revolver_is_semi_automatic(nilo)
+	await _validate_pistol_is_semi_automatic(nilo)
+	await _validate_rifle_and_special(nilo)
 	await _validate_machete_buffer_and_variants(nilo)
 	await _validate_projectile_orientation()
 	_validate_feedback_configuration(nilo)
@@ -30,18 +32,22 @@ func _ready() -> void:
 
 func _validate_continuous_run(nilo: NiloPlayer) -> void:
 	var visual := nilo.visual
-	var seen_frames: Dictionary = {}
+	var seen_walk_frames: Dictionary = {}
+	var seen_run_frames: Dictionary = {}
 	var start_contacts := visual.foot_contact_count
 	var phase_advanced := false
 	var bob_matches_phase := true
+	var ran_before_two_seconds := false
 	var previous_phase := visual.run_phase
 	Input.action_press("move_right")
-	for _frame in 90:
+	for _frame in 180:
 		await get_tree().physics_frame
-		var column := int(round(visual.region_rect.position.x / 64.0))
-		var row := int(round(visual.region_rect.position.y / 64.0))
-		if row == 1:
-			seen_frames[column] = true
+		if visual.locomotion_frame >= 4 and visual.locomotion_frame <= 7:
+			seen_walk_frames[visual.locomotion_frame] = true
+		elif visual.locomotion_frame >= 8 and visual.locomotion_frame <= 11:
+			seen_run_frames[visual.locomotion_frame] = true
+		if nilo.movement.movement_hold_time < nilo.config.run_hold_duration - 0.02 and nilo.movement.running_active:
+			ran_before_two_seconds = true
 		if not is_equal_approx(previous_phase, visual.run_phase):
 			phase_advanced = true
 		previous_phase = visual.run_phase
@@ -51,14 +57,42 @@ func _validate_continuous_run(nilo: NiloPlayer) -> void:
 			if absf(visual.bob_offset - expected) > 0.035:
 				bob_matches_phase = false
 	Input.action_release("move_right")
-	if seen_frames.size() != 4:
-		failures.append("Corrida deveria percorrer 4 frames; observados: %s" % [seen_frames.keys()])
+	if seen_walk_frames.size() != 4:
+		failures.append("Caminhada deveria percorrer 4 frames antes da corrida; observados: %s" % [seen_walk_frames.keys()])
+	if seen_run_frames.size() != 4:
+		failures.append("Corrida deveria percorrer 4 frames após 2 segundos; observados: %s" % [seen_run_frames.keys()])
+	if ran_before_two_seconds:
+		failures.append("Corrida foi ativada antes de 2 segundos de movimento contínuo.")
 	if not phase_advanced:
 		failures.append("run_phase não avançou continuamente durante a corrida.")
 	if not bob_matches_phase:
 		failures.append("Bob visual deixou de derivar do mesmo run_phase da animação.")
 	if visual.foot_contact_count - start_contacts < 2:
 		failures.append("Corrida não registrou contatos de pé suficientes para sincronizar poeira.")
+
+
+func _validate_idle_breath_and_blink(nilo: NiloPlayer) -> void:
+	nilo.velocity = Vector2.ZERO
+	nilo.state_machine.request(PlayerStateMachine.State.IDLE, 0.0, true)
+	var visual := nilo.visual
+	var breath_frames: Dictionary = {}
+	var horizontal_anchors: Array[float] = []
+	for sample_time in [0.05, 0.65, 1.25, 1.85]:
+		visual.set("_life_elapsed", sample_time)
+		await get_tree().process_frame
+		breath_frames[visual.locomotion_frame] = true
+		var useful_center := float(visual.get("_current_useful_center_x"))
+		var region_width := float(visual.get("_current_region_width"))
+		var rendered_center := visual.position.x + (useful_center - region_width * 0.5) * absf(visual.scale.x) * nilo.facing
+		horizontal_anchors.append(rendered_center)
+	visual.set("_life_elapsed", 4.16)
+	await get_tree().process_frame
+	if breath_frames.size() < 3 or not breath_frames.has(0) or not breath_frames.has(2) or not breath_frames.has(3):
+		failures.append("Idle não percorreu as três poses de respiração: %s." % [breath_frames.keys()])
+	if visual.locomotion_frame != 1:
+		failures.append("Idle não selecionou o frame de piscada na janela esperada.")
+	if horizontal_anchors.max() - horizontal_anchors.min() > 0.12:
+		failures.append("Idle deslocou o centro horizontal entre poses: %s." % [horizontal_anchors])
 
 
 func _validate_turn_transition(nilo: NiloPlayer) -> void:
@@ -120,12 +154,12 @@ func _validate_visual_scale_consistency(nilo: NiloPlayer) -> void:
 	await _wait_physics_frames(2)
 	samples[&"run"] = Vector2(nilo.visual.normalized_visual_height, nilo.visual.normalized_baseline_offset)
 	nilo.velocity.x = 0.0
-	nilo.state_machine.request(PlayerStateMachine.State.SHOOT, 0.24, true)
+	nilo.state_machine.request(PlayerStateMachine.State.PISTOL, 0.24, true)
 	await _wait_physics_frames(5)
-	samples[&"revolver"] = Vector2(nilo.visual.normalized_visual_height, nilo.visual.normalized_baseline_offset)
-	nilo.state_machine.request(PlayerStateMachine.State.SHOTGUN, 0.36, true)
+	samples[&"pistol"] = Vector2(nilo.visual.normalized_visual_height, nilo.visual.normalized_baseline_offset)
+	nilo.state_machine.request(PlayerStateMachine.State.RIFLE, 0.38, true)
 	await _wait_physics_frames(6)
-	samples[&"shotgun"] = Vector2(nilo.visual.normalized_visual_height, nilo.visual.normalized_baseline_offset)
+	samples[&"rifle"] = Vector2(nilo.visual.normalized_visual_height, nilo.visual.normalized_baseline_offset)
 	nilo.state_machine.request(PlayerStateMachine.State.IDLE, 0.0, true)
 	var reference: Vector2 = samples[&"idle"]
 	for pose_id in samples:
@@ -138,20 +172,45 @@ func _validate_visual_scale_consistency(nilo: NiloPlayer) -> void:
 		failures.append("Nilo não possui ContactShadow reutilizável.")
 
 
-func _validate_revolver_is_semi_automatic(nilo: NiloPlayer) -> void:
-	var ammo_before := nilo.combat.revolver_ammo
+func _validate_pistol_is_semi_automatic(nilo: NiloPlayer) -> void:
+	var ammo_before := nilo.combat.pistol_ammo
 	var shooting_frames: Dictionary = {}
-	Input.action_press("shoot_revolver")
+	Input.action_press("shoot_pistol")
 	for frame in 60:
 		await get_tree().physics_frame
-		if frame < 18 and nilo.state_machine.current_state == PlayerStateMachine.State.SHOOT:
+		if frame < 18 and nilo.state_machine.current_state == PlayerStateMachine.State.PISTOL:
 			shooting_frames[nilo.visual.shooting_frame] = true
-	Input.action_release("shoot_revolver")
-	var spent := ammo_before - nilo.combat.revolver_ammo
+	Input.action_release("shoot_pistol")
+	var spent := ammo_before - nilo.combat.pistol_ammo
 	if spent != 1:
-		failures.append("Revólver semiautomático deveria gastar 1 bala ao segurar; gastou %d." % spent)
-	if not shooting_frames.has(2) or not shooting_frames.has(3) or not shooting_frames.has(5):
-		failures.append("Disparo do revólver não percorreu mira, clarão e recuperação da folha dedicada: %s." % shooting_frames.keys())
+		failures.append("Pistola semiautomática deveria gastar 1 bala ao segurar; gastou %d." % spent)
+	if not shooting_frames.has(0) or not shooting_frames.has(1) or not shooting_frames.has(2) or not shooting_frames.has(3):
+		failures.append("Disparo da pistola não percorreu mira, clarão, fumaça e recuperação: %s." % [shooting_frames.keys()])
+
+
+func _validate_rifle_and_special(nilo: NiloPlayer) -> void:
+	await _wait_physics_frames(20)
+	var rifle_before := nilo.combat.rifle_ammo
+	Input.action_press("shoot_rifle")
+	await get_tree().physics_frame
+	Input.action_release("shoot_rifle")
+	await _wait_physics_frames(28)
+	if rifle_before - nilo.combat.rifle_ammo != 1:
+		failures.append("Rifle deveria consumir exatamente uma munição por disparo.")
+	await _wait_physics_frames(20)
+	Input.action_press("special_attack")
+	await get_tree().physics_frame
+	Input.action_release("special_attack")
+	var special_frames: Dictionary = {}
+	for _frame in 48:
+		await get_tree().physics_frame
+		if nilo.state_machine.current_state == PlayerStateMachine.State.SPECIAL:
+			special_frames[nilo.visual.combat_frame] = true
+	if nilo.combat.special_cooldown_remaining <= 0.0:
+		failures.append("Ataque especial não iniciou a recarga própria.")
+	for required_frame in [12, 13, 14, 15]:
+		if not special_frames.has(required_frame):
+			failures.append("Ataque especial não exibiu o frame %d da quarta linha." % required_frame)
 
 
 func _validate_machete_buffer_and_variants(nilo: NiloPlayer) -> void:
@@ -208,8 +267,10 @@ func _validate_feedback_configuration(nilo: NiloPlayer) -> void:
 		return
 	if config.machete_hitstop(1) <= 0.0 or config.machete_hitstop(3) <= config.machete_hitstop(1):
 		failures.append("Hitstop do facão não escala até o terceiro golpe.")
-	if config.shotgun_hitstop <= config.revolver_hitstop:
-		failures.append("Espingarda deveria ter hitstop maior que o revólver.")
+	if config.rifle_hitstop <= config.pistol_hitstop:
+		failures.append("Rifle deveria ter hitstop maior que a pistola.")
+	if config.special_hitstop <= config.rifle_hitstop:
+		failures.append("Ataque especial deveria ter o maior hitstop do arsenal.")
 
 
 func _validate_temporary_hud() -> void:
@@ -222,7 +283,7 @@ func _validate_temporary_hud() -> void:
 
 
 func _release_test_inputs() -> void:
-	for action in ["move_left", "move_right", "move_up", "move_down", "jump", "crouch", "melee", "shoot_revolver"]:
+	for action in ["move_left", "move_right", "move_up", "move_down", "jump", "crouch", "melee", "shoot_pistol", "shoot_rifle", "special_attack"]:
 		Input.action_release(action)
 
 

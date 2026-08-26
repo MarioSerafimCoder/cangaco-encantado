@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3]
+[gd_scene load_steps=25 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/room_controller.gd" id="1_controller"]
 [ext_resource type="Script" path="res://scripts/world/camera_parallax_layer.gd" id="2_parallax"]
@@ -20,6 +20,8 @@
 [ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/fillers/parede_quebrada_direita.tres" id="18_wall_right"]
 [ext_resource type="Texture2D" path="res://assets/fx/vfx_ocupacao_e_tiros.png" id="19_vfx"]
 [ext_resource type="Script" path="res://scripts/fx/atlas_strip_animator.gd" id="20_atlas_anim"]
+[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_7/rua_chao_continuo.png" id="21_ground"]
+[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/03_sistema_de_chao_e_transicoes.png" id="22_ground_front"]
 
 [sub_resource type="RectangleShape2D" id="GroundShape"]
 size = Vector2(640, 30)
@@ -32,7 +34,7 @@ script = ExtResource("1_controller")
 room_id = &"rua_cinzas"
 display_name = "02 RUA DAS CINZAS"
 local_bounds = Rect2(0, 0, 640, 180)
-camera_bounds = Rect2(0, -40, 640, 260)
+camera_bounds = Rect2(0, -60, 640, 300)
 
 [node name="Environment" type="Node2D" parent="."]
 
@@ -199,14 +201,41 @@ modulate = Color(0.63, 0.59, 0.55, 0.96)
 [node name="Ground" type="Node2D" parent="Geometry"]
 
 [node name="VisualBody" type="Polygon2D" parent="Geometry/Ground"]
+visible = false
 z_index = -1
 polygon = PackedVector2Array(0, 150, 640, 150, 640, 180, 0, 180)
 color = Color(0.407, 0.27, 0.208, 1)
 
 [node name="BaselineCap" type="Polygon2D" parent="Geometry/Ground"]
+visible = false
 z_index = -1
 polygon = PackedVector2Array(0, 150, 640, 150, 640, 154, 0, 154)
 color = Color(0.612, 0.439, 0.275, 1)
+
+[node name="StreetGroundSprite" type="Sprite2D" parent="Geometry/Ground"]
+position = Vector2(320, 153)
+scale = Vector2(0.29466, 0.16)
+z_index = -1
+texture_filter = 1
+texture = ExtResource("21_ground")
+
+[node name="GroundFrontWest" type="Sprite2D" parent="Geometry/Ground"]
+position = Vector2(160, 205)
+scale = Vector2(0.772727, 0.727273)
+texture_filter = 1
+texture = ExtResource("22_ground_front")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(19, 520, 475, 166)
+
+[node name="GroundFrontEast" type="Sprite2D" parent="Geometry/Ground"]
+position = Vector2(480, 205)
+scale = Vector2(0.772727, 0.727273)
+texture_filter = 1
+texture = ExtResource("22_ground_front")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(19, 520, 475, 166)
 
 [node name="GroundCollision" type="StaticBody2D" parent="Geometry/Ground"]
 position = Vector2(320, 165)
@@ -246,6 +275,15 @@ position = Vector2(430, 138)
 script = ExtResource("3_spawn")
 enemy_scene = ExtResource("11_pistoleiro")
 spawn_id = &"rua_pistoleiro_01"
+patrol_radius = 52.0
+
+[node name="SaqueadorFlancoSpawn" type="Marker2D" parent="Gameplay/EnemySpawns"]
+position = Vector2(335, 138)
+script = ExtResource("3_spawn")
+enemy_scene = ExtResource("10_saqueador")
+spawn_id = &"rua_saqueador_02"
+facing = -1.0
+patrol_radius = 34.0
 
 [node name="Interactables" type="Node2D" parent="Gameplay"]
 

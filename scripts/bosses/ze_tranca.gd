@@ -12,7 +12,6 @@ func _ready() -> void:
 
 
 func _perform_attack() -> void:
-	attack_cooldown = data.attack_cooldown
 	attack_index = (attack_index + 1) % 5
 	var second_phase := health.current_health <= health.max_health / 2
 	match attack_index:
@@ -36,9 +35,12 @@ func _burst(count: int) -> void:
 
 
 func _on_died() -> void:
+	_cancel_attack()
 	state_machine.transition(EnemyStateMachine.State.DEAD, 0.0, true)
 	set_physics_process(false)
+	collision_layer = 0
+	collision_mask = 0
+	$Hurtbox.set_deferred("monitorable", false)
 	EventBus.boss_defeated.emit(&"ze_tranca")
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(data.death_duration).timeout
 	queue_free()
-

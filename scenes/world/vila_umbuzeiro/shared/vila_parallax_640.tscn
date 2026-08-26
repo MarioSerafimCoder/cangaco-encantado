@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/world/camera_parallax_layer.gd" id="1"]
 [ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/rua_sky_far.png" id="2"]
-[ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/rua_village_mid.png" id="3"]
+[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/04_parallax_serras_e_vila_distante.png" id="3"]
 
 [node name="ParallaxBackground" type="Node2D"]
 
@@ -22,17 +22,47 @@ z_index = -80
 script = ExtResource("1")
 scroll_scale = Vector2(0.16, 1)
 
-[node name="Haze" type="Polygon2D" parent="FarMountains"]
-polygon = PackedVector2Array(0, 68, 640, 68, 640, 150, 0, 150)
-color = Color(0.72, 0.64, 0.57, 0.08)
+[node name="TextureWest" type="Sprite2D" parent="FarMountains"]
+position = Vector2(160, 106)
+scale = Vector2(0.613, 0.613)
+texture_filter = 1
+texture = ExtResource("3")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(20, 263, 522, 121)
+modulate = Color(0.88, 0.84, 0.78, 0.78)
+
+[node name="TextureEast" type="Sprite2D" parent="FarMountains"]
+position = Vector2(480, 106)
+scale = Vector2(0.618, 0.618)
+texture_filter = 1
+texture = ExtResource("3")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(570, 263, 518, 121)
+modulate = Color(0.88, 0.84, 0.78, 0.78)
 
 [node name="Village" type="Node2D" parent="."]
 z_index = -50
 script = ExtResource("1")
 scroll_scale = Vector2(0.48, 1)
 
-[node name="Texture" type="Sprite2D" parent="Village"]
-position = Vector2(320, 69)
+[node name="TextureWest" type="Sprite2D" parent="Village"]
+position = Vector2(160, 117)
+scale = Vector2(0.611, 0.611)
 texture_filter = 1
 texture = ExtResource("3")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(20, 562, 524, 108)
+modulate = Color(0.82, 0.78, 0.73, 0.84)
+
+[node name="TextureEast" type="Sprite2D" parent="Village"]
+position = Vector2(480, 117)
+scale = Vector2(0.611, 0.611)
+texture_filter = 1
+texture = ExtResource("3")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(570, 562, 520, 108)
 modulate = Color(0.82, 0.78, 0.73, 0.84)

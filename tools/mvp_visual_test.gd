@@ -10,7 +10,23 @@ func _ready() -> void:
 	var output_directory := ProjectSettings.globalize_path("res://prints_do_jogo")
 	DirAccess.make_dir_recursive_absolute(output_directory)
 
+	nilo.invulnerability_remaining = 999.0
+	nilo.global_position = world.get_room_center(&"casa_nilo")
+	nilo.velocity = Vector2.ZERO
+	nilo.state_machine.request(PlayerStateMachine.State.IDLE, 0.0, true)
+	nilo.visual.set("_life_elapsed", 1.25)
+	camera.reset_smoothing()
+	await _wait_frames(10)
+	hud.room_fade = 0.0
+	hud.world_fade = 0.0
+	hud.help_fade = 0.0
+	await _capture(output_directory.path_join("heroi_parado_respirando.png"))
+	nilo.visual.set("_life_elapsed", 4.16)
+	await _wait_frames(1)
+	await _capture(output_directory.path_join("heroi_piscando.png"))
+
 	nilo.global_position = Vector2(600.0, 126.0)
+	nilo.visual.set("_life_elapsed", 0.0)
 	camera.reset_smoothing()
 	await _wait_frames(20)
 	hud.room_fade = 0.0
@@ -19,7 +35,11 @@ func _ready() -> void:
 	Input.action_press("move_right")
 	await _wait_frames(18)
 	await _capture(output_directory.path_join("andando_no_mapa_01.png"))
+	await _wait_physics_frames(125)
+	await _capture(output_directory.path_join("correndo_apos_2_segundos.png"))
 	Input.action_release("move_right")
+	await _wait_frames(2)
+	await _capture(output_directory.path_join("inimigos_escala_e_recorte.png"))
 
 	nilo.global_position = Vector2(720.0, 126.0)
 	nilo.velocity = Vector2.ZERO
@@ -34,23 +54,51 @@ func _ready() -> void:
 
 	for enemy in get_tree().get_nodes_in_group("enemies"):
 		enemy.process_mode = Node.PROCESS_MODE_DISABLED
+		if enemy is CanvasItem:
+			(enemy as CanvasItem).visible = false
 	nilo.global_position = Vector2(640.0, 138.0)
 	nilo.velocity = Vector2.ZERO
+	nilo.invulnerability_remaining = 0.0
 	nilo.state_machine.request(PlayerStateMachine.State.IDLE, 0.0, true)
 	camera.reset_smoothing()
 	await _wait_frames(12)
-	Input.action_press("shoot_revolver")
+	Input.action_press("shoot_pistol")
 	await get_tree().physics_frame
-	Input.action_release("shoot_revolver")
-	await _wait_for_shooting_frame(nilo.visual, 3, 20)
-	await _capture(output_directory.path_join("tiro_de_revolver.png"))
+	Input.action_release("shoot_pistol")
+	await _wait_for_shooting_frame(nilo.visual, 1, 20)
+	await _capture(output_directory.path_join("tiro_de_pistola.png"))
 	await _wait_physics_frames(20)
-	Input.action_press("shoot_shotgun")
+	Input.action_press("shoot_rifle")
 	await get_tree().physics_frame
-	Input.action_release("shoot_shotgun")
-	await _wait_for_shooting_frame(nilo.visual, 3, 24)
-	await _capture(output_directory.path_join("tiro_de_espingarda.png"))
+	Input.action_release("shoot_rifle")
+	await _wait_for_shooting_frame(nilo.visual, 1, 24)
+	await _capture(output_directory.path_join("tiro_de_rifle.png"))
 	await _wait_frames(20)
+	nilo.invulnerability_remaining = 0.0
+	nilo.combat.combo_step = 1
+	nilo.combat.attack_phase = PlayerCombat.AttackPhase.ACTIVE
+	nilo.combat.attack_phase_remaining = 1.0
+	nilo.state_machine.request(PlayerStateMachine.State.MELEE, 0.2, true)
+	await _wait_frames(2)
+	await _capture(output_directory.path_join("ataque_de_facao.png"))
+	nilo.combat.combo_step = 3
+	nilo.combat.attack_phase = PlayerCombat.AttackPhase.ACTIVE
+	nilo.combat.attack_phase_remaining = 1.0
+	nilo.state_machine.request(PlayerStateMachine.State.MELEE, 0.2, true)
+	await _wait_frames(2)
+	await _capture(output_directory.path_join("ataque_finalizador_de_facao.png"))
+	nilo.combat.attack_phase = PlayerCombat.AttackPhase.NONE
+	nilo.combat.attack_phase_remaining = 0.0
+	nilo.combat.cooldown = 0.0
+	Input.action_press("special_attack")
+	await get_tree().physics_frame
+	Input.action_release("special_attack")
+	await _wait_for_combat_frame(nilo.visual, 13, 24)
+	await _capture(output_directory.path_join("ataque_especial.png"))
+	nilo.combat.special_remaining = 0.0
+	nilo.combat.cooldown = 0.0
+	nilo.state_machine.request(PlayerStateMachine.State.IDLE, 0.0, true)
+	await _wait_frames(8)
 	var visual_tour := [
 		[&"casa_nilo", "ambiente_01_casa_de_nilo.png"],
 		[&"igreja_velha", "ambiente_03_igreja_velha.png"],
@@ -105,6 +153,13 @@ func _wait_for_shooting_frame(visual: NiloVisualController, frame_index: int, ma
 			return
 
 
+func _wait_for_combat_frame(visual: NiloVisualController, frame_index: int, maximum_frames: int) -> void:
+	for _frame in maximum_frames:
+		await get_tree().process_frame
+		if visual.combat_frame == frame_index:
+			return
+
+
 func _capture_room(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: GameHUD, room_id: StringName, path: String) -> void:
 	nilo.invulnerability_remaining = 0.0
 	nilo.health.restore_full()
@@ -116,8 +171,8 @@ func _capture_room(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: 
 	var bounds: Rect2 = world.room_bounds[room_id]
 	camera.limit_left = roundi(bounds.position.x)
 	camera.limit_right = roundi(bounds.end.x)
-	camera.limit_top = -40
-	camera.limit_bottom = 220
+	camera.limit_top = -60
+	camera.limit_bottom = 240
 	camera.reset_smoothing()
 	await _wait_frames(2)
 	hud.room_fade = 0.0

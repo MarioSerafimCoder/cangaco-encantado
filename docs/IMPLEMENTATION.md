@@ -2,7 +2,7 @@
 
 ## Escopo desta etapa
 
-O projeto implementa o vertical slice da Vila do Umbuzeiro sem tentar antecipar o jogo inteiro. Todas as habilidades futuras (`dash`, `wall_jump`, `double_jump`, `air_dash`, movimento aquático e magia) existem apenas como dados persistentes desativados; nenhuma é necessária para chegar a Zé Tranca.
+O projeto implementa o vertical slice da Vila do Umbuzeiro com seu primeiro ciclo real de exploração. `wall_jump` e `dash` são adquiridos dentro da Vila e abrem rotas, atalhos e um segredo permanente; habilidades posteriores continuam apenas como dados persistentes.
 
 ## Arquitetura
 
@@ -33,7 +33,7 @@ EventBus
 
 ## State machine do player
 
-Estados implementados: `IDLE`, `RUN`, `CROUCH`, `JUMP`, `FALL`, `SHOOT`, `SHOTGUN`, `MELEE`, `HEAL`, `HURT` e `DEAD`.
+Estados implementados: `IDLE`, `RUN`, `CROUCH`, `JUMP`, `FALL`, `PISTOL`, `RIFLE`, `MELEE`, `SPECIAL`, `HEAL`, `HURT` e `DEAD`.
 
 A state machine mantém um lock curto para ações que não devem se sobrepor. `HURT` e `DEAD` podem interromper qualquer ação; dano interrompe `HEAL`. Locomoção é atualizada pelo componente de movimento e só reassume o estado quando o lock termina.
 
@@ -61,8 +61,9 @@ Soltar o botão reduz a velocidade ascendente, produzindo salto variável. Agach
 
 Todos os ataques geram `AttackHitbox` ou `CombatProjectile` com payload uniforme: time, dano, dano de postura, knockback, identificador e fonte.
 
-- Revólver: semiautomático, 6 tiros, intervalo mínimo de 0,20 s, recarga de 0,85 s, 1 dano e 0,75 de postura.
-- Espingarda: 2 tiros, 0,45 s, recarga de 1,20 s, 3 projéteis curtos, 2 de dano, 3,2 de postura e recoil.
+- Pistola: semiautomática, 8 tiros, intervalo mínimo de 0,24 s, recarga de 0,85 s, 1 dano e 0,75 de postura.
+- Rifle: 4 tiros, intervalo de 0,38 s, recarga de 1,15 s, longo alcance, 2 de dano, 2,4 de postura e recoil.
+- Especial: golpe amplo com 4 de dano, 6 de postura e recarga própria de 5 segundos.
 - Facão: combo de três passos; o terceiro ganha dano/postura/knockback. `UP` cria hitbox vertical; `DOWN` no ar cria hitbox descendente e confirma bounce.
 - Cura: 2 cargas, 2 HP, 1,10 s. A carga só é consumida ao completar a animação lógica.
 
@@ -84,9 +85,9 @@ Esse modelo permite eventos futuros como `water_restored` e `wind_restored` sem 
 
 O save usa JSON versionado. Ele persiste checkpoint/posição, vida, cargas, habilidades, bosses, atalhos, segredos, estado de regiões e flags globais. Não persiste nós de cena nem coordenadas de spawn hardcoded.
 
-## Graybox da Vila
+## Topologia metroidvania da Vila
 
-As 13 áreas usam as dimensões da especificação e formam, nesta primeira versão, uma faixa contínua navegável. A separação visual e os triggers já são por sala; numa próxima iteração, cada trecho deve migrar para cena própria sem mudar o contrato de dados.
+As 13 áreas mantêm a faixa principal para preservar o vertical slice, mas agora também formam um grafo: o campanário cria uma subida real, Telhados contém a segunda habilidade, Praça–Armazém oferece rota alternativa e Poço–Igreja vira um atalho tardio. Salas, poderes, segredos, melhorias e atalhos descobertos persistem no save.
 
 Fluxo testável:
 
@@ -95,7 +96,7 @@ Casa -> Rua -> Igreja -> Telhados -> Praça -> Barracos -> Armazém
      -> Pátio -> Beco -> Poço -> Barricada -> Posto -> Zé Tranca -> Pedra Seca
 ```
 
-O Poço contém uma descida visual parcial e bloqueio explícito. O atalho do Armazém é aberto por dentro e passa a transportar Nilo de volta à Praça. A Igreja restaura vida, munição e cargas.
+O Passo da Pedra é encontrado na Igreja e habilita salto de parede. O Passo da Poeira fica na rota alta dos Telhados e habilita investida com `C`. Voltar à Casa de Nilo com ambos abre o Coração do Sertão, que aumenta a vida máxima permanentemente. O mapa em `M` registra exploração e explicita rotas bloqueadas.
 
 ## Arte e pixel-perfect
 
@@ -115,17 +116,20 @@ O projeto foi importado no Godot 4.7.1 e completou um smoke test headless de 180
 8. Gastar 2 cartuchos, observar recarga de 1,20 s, dispersão e recoil.
 9. Executar combo 1-2-3, golpe para cima e golpe descendente com bounce.
 10. Receber dano durante a cura e confirmar que a carga não foi consumida.
-11. Quebrar a postura de um inimigo com a espingarda e observar 1,2 s de stagger.
+11. Quebrar a postura de um inimigo com o rifle ou o especial e observar 1,2 s de stagger.
 12. Ativar o checkpoint da Igreja, morrer e reaparecer com recursos restaurados.
 13. Abrir o atalho do Armazém e usá-lo para voltar à Praça.
-14. Chegar à arena sem dash/wall jump/double jump.
-15. Derrotar Zé Tranca, salvar, reiniciar e confirmar a Vila `LIBERATED`.
-16. Repetir o teste com F12 para validar a rota de debug.
+14. Obter Passo da Pedra na Igreja, subir o campanário e obter Passo da Poeira nos Telhados.
+15. Abrir o mapa com M e confirmar salas visitadas, posição, bloqueios e conexões alternativas.
+16. Voltar à Casa de Nilo e coletar o Coração do Sertão atrás do selo da investida.
+17. Abrir Praça–Armazém e, pelo lado do Poço, o atalho Poço–Igreja; salvar e recarregar.
+18. Derrotar Zé Tranca, salvar, reiniciar e confirmar a Vila `LIBERATED`.
+19. Repetir o teste com F12 para validar a rota de debug.
 
 ## Limitações conhecidas
 
 - A importação, compilação e inicialização automatizada passaram; o playtest humano completo ainda está pendente.
-- O mundo ainda é uma faixa única, não um sistema de streaming de salas; somente a Rua das Cinzas foi migrada para o novo pipeline.
+- O mundo ainda usa uma cena global contínua; a topologia agora possui ramificações, mas ainda não há streaming entre salas.
 - Ainda não há áudio nem balanceamento final; animação, recortes de inimigos e parte dos VFX permanecem provisórios.
 - Batedor, Incendiário e Jagunço de Preto possuem espaço na arquitetura, mas ainda não têm IA própria.
 - Os inimigos precisam de spritesheets desenhados com poses e pivôs consistentes antes do uso final.

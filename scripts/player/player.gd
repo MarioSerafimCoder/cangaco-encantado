@@ -25,8 +25,8 @@ var _camera_look_ahead := Vector2.ZERO
 func _ready() -> void:
 	add_to_group("player")
 	motion_mode = CharacterBody2D.MOTION_MODE_GROUNDED
-	health.configure(config.max_health)
-	health.current_health = clampi(GameState.player_health, 1, config.max_health)
+	health.configure(get_max_health())
+	health.current_health = clampi(GameState.player_health, 1, get_max_health())
 	health.health_changed.connect(_on_health_changed)
 	health.healed.connect(_on_healed)
 	health.died.connect(_on_died)
@@ -34,6 +34,18 @@ func _ready() -> void:
 	combat.initialize(self)
 	_on_health_changed(health.current_health, health.max_health)
 	queue_redraw()
+
+
+func get_max_health() -> int:
+	return config.max_health + GameState.max_health_bonus
+
+
+func apply_permanent_health_upgrade(amount: int) -> void:
+	var old_maximum := health.max_health
+	GameState.max_health_bonus += maxi(1, amount)
+	health.configure(get_max_health(), false)
+	health.current_health = mini(health.max_health, health.current_health + health.max_health - old_maximum)
+	health.health_changed.emit(health.current_health, health.max_health)
 
 
 func _physics_process(delta: float) -> void:
@@ -78,7 +90,7 @@ func spawn_projectile(data: WeaponData, direction: Vector2, attack_id: StringNam
 	projectile.velocity = direction.normalized() * data.projectile_speed
 	projectile.max_distance = data.range
 	projectile.lifetime = data.range / maxf(1.0, data.projectile_speed) + 0.1
-	projectile.setup_shape(Vector2(4.0, 2.0 if attack_id == &"revolver" else 4.0))
+	projectile.setup_shape(Vector2(4.0, 2.0 if attack_id == &"pistol" else 3.0))
 	get_tree().current_scene.add_child(projectile)
 	projectile.global_position = global_position + direction * 12.0 + Vector2(0.0, -5.0)
 
@@ -105,6 +117,21 @@ func spawn_melee(data: WeaponData, combo_step: int, variant: StringName, hitstop
 	hitbox.connected.connect(_on_melee_connected.bind(variant))
 	get_tree().current_scene.add_child(hitbox)
 	hitbox.global_position = global_position + offset
+
+
+func spawn_special(data: WeaponData, hitstop_duration := 0.0) -> void:
+	var hitbox := AttackHitbox.new()
+	hitbox.team = "player"
+	hitbox.damage = data.damage
+	hitbox.posture_damage = data.posture_damage
+	hitbox.knockback = Vector2(facing * data.knockback, -58.0)
+	hitbox.attack_id = &"special"
+	hitbox.owner_actor = self
+	hitbox.hitstop_duration = hitstop_duration
+	hitbox.lifetime = 0.2
+	hitbox.setup_shape(Vector2(34.0, 22.0))
+	get_tree().current_scene.add_child(hitbox)
+	hitbox.global_position = global_position + Vector2(facing * 16.0, -6.0)
 
 
 func receive_hit(hit: Dictionary) -> bool:
@@ -147,14 +174,14 @@ func _set_crouched(value: bool) -> void:
 
 func play_weapon_feedback(weapon_id: StringName) -> void:
 	match weapon_id:
-		&"revolver":
+		&"pistol":
 			# A folha dedicada já contém o flash no frame ativo; evite duplicá-lo.
 			add_camera_shake(0.7, 0.05)
 			visual.notify_weapon_recoil(0.65, 0.08)
-		&"shotgun":
-			# O clarão largo faz parte da pose ativa da espingarda.
-			add_camera_shake(2.2, 0.13)
-			visual.notify_weapon_recoil(2.0, 0.2)
+		&"rifle":
+			# O rifle tem maior alcance, com recoil firme e controlado.
+			add_camera_shake(1.45, 0.1)
+			visual.notify_weapon_recoil(1.3, 0.15)
 
 
 func play_machete_feedback(variant: StringName, combo_step: int) -> void:
@@ -170,6 +197,13 @@ func play_machete_feedback(variant: StringName, combo_step: int) -> void:
 	visual.notify_weapon_recoil(0.35 + combo_step * 0.22, 0.1 + combo_step * 0.025)
 
 
+func play_special_feedback() -> void:
+	GameFeelFX.spawn(get_tree().current_scene, global_position + Vector2(facing * 10.0, -8.0), GameFeelFX.Kind.SLASH_HORIZONTAL, facing, 2.0)
+	GameFeelFX.spawn(get_tree().current_scene, global_position + Vector2(0.0, -5.0), GameFeelFX.Kind.HIT, facing, 1.5)
+	visual.notify_weapon_recoil(2.4, 0.24)
+	add_camera_shake(3.4, 0.24)
+
+
 func play_heal_channel_feedback() -> void:
 	GameFeelFX.spawn(get_tree().current_scene, global_position + Vector2(0.0, -10.0), GameFeelFX.Kind.HEAL_CHANNEL, facing)
 
@@ -179,6 +213,11 @@ func play_heal_complete_feedback() -> void:
 
 
 func add_camera_shake(strength: float, duration: float) -> void:
+	if not SettingsManager.screen_shake_enabled:
+		_camera_shake_remaining = 0.0
+		_camera_shake_strength = 0.0
+		_camera_shake_offset = Vector2.ZERO
+		return
 	_camera_shake_strength = maxf(_camera_shake_strength, strength)
 	_camera_shake_remaining = maxf(_camera_shake_remaining, duration)
 

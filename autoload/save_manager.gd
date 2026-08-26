@@ -2,6 +2,9 @@ extends Node
 
 const SAVE_PATH := "user://cangaco_encantado_save.json"
 
+var _new_game_requested := false
+var _skip_title_once := false
+
 
 func _ready() -> void:
 	EventBus.request_autosave.connect(_on_autosave_requested)
@@ -47,6 +50,23 @@ func delete_save() -> void:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(SAVE_PATH))
 
 
+func request_new_game() -> void:
+	delete_save()
+	_new_game_requested = true
+	_skip_title_once = true
+
+
+func consume_new_game_request() -> bool:
+	var requested := _new_game_requested
+	_new_game_requested = false
+	return requested
+
+
+func consume_skip_title_request() -> bool:
+	var requested := _skip_title_once
+	_skip_title_once = false
+	return requested
+
+
 func _on_autosave_requested(_reason: StringName) -> void:
 	save_game()
-

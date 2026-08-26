@@ -14,5 +14,12 @@ detection_range = 250.0
 attack_range = 120.0
 attack_damage = 1
 attack_cooldown = 0.95
+attack_windup = 0.3
+attack_active_time = 0.1
+attack_recovery = 0.3
 stagger_duration = 1.2
-
+hurt_duration = 0.24
+death_duration = 1.35
+patrol_radius = 0.0
+target_memory = 2.0
+leash_range = 300.0
