@@ -24,17 +24,17 @@
 [ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/03_sistema_de_chao_e_transicoes.png" id="22_ground_front"]
 
 [sub_resource type="RectangleShape2D" id="GroundShape"]
-size = Vector2(640, 30)
+size = Vector2(1280, 210)
 
 [sub_resource type="RectangleShape2D" id="RoomShape"]
-size = Vector2(640, 180)
+size = Vector2(1280, 480)
 
 [node name="RuaDasCinzas" type="Node2D"]
 script = ExtResource("1_controller")
 room_id = &"rua_cinzas"
 display_name = "02 RUA DAS CINZAS"
-local_bounds = Rect2(0, 0, 640, 180)
-camera_bounds = Rect2(0, -60, 640, 300)
+local_bounds = Rect2(0, -120, 1280, 480)
+camera_bounds = Rect2(0, -120, 1280, 480)
 
 [node name="Environment" type="Node2D" parent="."]
 
@@ -49,13 +49,19 @@ texture_filter = 1
 texture = ExtResource("4_sky")
 modulate = Color(0.84, 0.87, 0.86, 1)
 
+[node name="TextureEast" type="Sprite2D" parent="Environment/Sky"]
+position = Vector2(960, 0)
+texture_filter = 1
+texture = ExtResource("4_sky")
+modulate = Color(0.84, 0.87, 0.86, 1)
+
 [node name="FarBackground" type="Node2D" parent="Environment"]
 z_index = -24
 script = ExtResource("2_parallax")
 scroll_scale = Vector2(0.14, 1)
 
 [node name="AtmosphericBand" type="Polygon2D" parent="Environment/FarBackground"]
-polygon = PackedVector2Array(0, 75, 640, 75, 640, 150, 0, 150)
+polygon = PackedVector2Array(0, 75, 1280, 75, 1280, 150, 0, 150)
 color = Color(0.57, 0.49, 0.45, 0.1)
 
 [node name="MidBackground" type="Node2D" parent="Environment"]
@@ -65,6 +71,12 @@ scroll_scale = Vector2(0.5, 1)
 
 [node name="Texture" type="Sprite2D" parent="Environment/MidBackground"]
 position = Vector2(320, 69)
+texture_filter = 1
+texture = ExtResource("5_mid")
+modulate = Color(0.88, 0.82, 0.77, 1)
+
+[node name="TextureEast" type="Sprite2D" parent="Environment/MidBackground"]
+position = Vector2(960, 69)
 texture_filter = 1
 texture = ExtResource("5_mid")
 modulate = Color(0.88, 0.82, 0.77, 1)
@@ -80,7 +92,7 @@ texture_filter = 1
 texture = ExtResource("17_wall_left")
 
 [node name="TransitionRight" type="Sprite2D" parent="Environment/GameplayDecor"]
-position = Vector2(622, 115)
+position = Vector2(1262, 115)
 scale = Vector2(-0.3, 0.3)
 z_index = -4
 texture_filter = 1
@@ -128,11 +140,41 @@ scale = Vector2(0.12, 0.12)
 texture_filter = 1
 texture = ExtResource("16_bones")
 
+[node name="CarrocaLeste" type="Sprite2D" parent="Environment/GameplayDecor"]
+position = Vector2(782, 114)
+scale = Vector2(0.224242, 0.224242)
+texture_filter = 1
+texture = ExtResource("7_cart")
+
+[node name="CercaLeste" type="Sprite2D" parent="Environment/GameplayDecor"]
+position = Vector2(1126, 114)
+scale = Vector2(0.255556, 0.255556)
+texture_filter = 1
+texture = ExtResource("8_fence")
+
+[node name="RochasLeste" type="Sprite2D" parent="Environment/GameplayDecor"]
+position = Vector2(712, 136)
+scale = Vector2(0.19, 0.19)
+texture_filter = 1
+texture = ExtResource("12_rocks")
+
+[node name="CapimLeste" type="Sprite2D" parent="Environment/GameplayDecor"]
+position = Vector2(943, 137)
+scale = Vector2(0.16, 0.16)
+texture_filter = 1
+texture = ExtResource("13_grass")
+
+[node name="CactoExtremoLeste" type="Sprite2D" parent="Environment/GameplayDecor"]
+position = Vector2(1188, 132)
+scale = Vector2(0.17, 0.17)
+texture_filter = 1
+texture = ExtResource("14_cactus")
+
 [node name="OccupiedOnly" type="Node2D" parent="Environment" groups=["room_occupied_only"]]
 
 [node name="OccupationTint" type="Polygon2D" parent="Environment/OccupiedOnly"]
 z_index = -7
-polygon = PackedVector2Array(0, 0, 640, 0, 640, 150, 0, 150)
+polygon = PackedVector2Array(0, 0, 1280, 0, 1280, 150, 0, 150)
 color = Color(0.22, 0.055, 0.04, 0.1)
 
 [node name="Barricada" type="Sprite2D" parent="Environment/OccupiedOnly"]
@@ -176,7 +218,7 @@ visible = false
 
 [node name="RecoveryLight" type="Polygon2D" parent="Environment/LiberatedOnly"]
 z_index = -7
-polygon = PackedVector2Array(0, 0, 640, 0, 640, 150, 0, 150)
+polygon = PackedVector2Array(0, 0, 1280, 0, 1280, 150, 0, 150)
 color = Color(0.94, 0.72, 0.35, 0.055)
 
 [node name="RecoveredLantern" type="Polygon2D" parent="Environment/LiberatedOnly"]
@@ -192,6 +234,12 @@ scroll_scale = Vector2(1.1, 1)
 
 [node name="Texture" type="Sprite2D" parent="Environment/Foreground"]
 position = Vector2(320, 8)
+texture_filter = 1
+texture = ExtResource("6_foreground")
+modulate = Color(0.63, 0.59, 0.55, 0.96)
+
+[node name="TextureEast" type="Sprite2D" parent="Environment/Foreground"]
+position = Vector2(960, 8)
 texture_filter = 1
 texture = ExtResource("6_foreground")
 modulate = Color(0.63, 0.59, 0.55, 0.96)
@@ -213,8 +261,8 @@ polygon = PackedVector2Array(0, 150, 640, 150, 640, 154, 0, 154)
 color = Color(0.612, 0.439, 0.275, 1)
 
 [node name="StreetGroundSprite" type="Sprite2D" parent="Geometry/Ground"]
-position = Vector2(320, 153)
-scale = Vector2(0.29466, 0.16)
+position = Vector2(640, 153)
+scale = Vector2(0.58932, 0.16)
 z_index = -1
 texture_filter = 1
 texture = ExtResource("21_ground")
@@ -237,8 +285,62 @@ region_enabled = true
 region_filter_clip_enabled = true
 region_rect = Rect2(19, 520, 475, 166)
 
+[node name="GroundFrontFarEast" type="Sprite2D" parent="Geometry/Ground"]
+position = Vector2(800, 205)
+scale = Vector2(0.772727, 0.727273)
+texture_filter = 1
+texture = ExtResource("22_ground_front")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(19, 520, 475, 166)
+
+[node name="GroundFrontEdge" type="Sprite2D" parent="Geometry/Ground"]
+position = Vector2(1120, 205)
+scale = Vector2(0.772727, 0.727273)
+texture_filter = 1
+texture = ExtResource("22_ground_front")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(19, 520, 475, 166)
+
+[node name="DeepGroundWest" type="Sprite2D" parent="Geometry/Ground"]
+position = Vector2(160, 335)
+scale = Vector2(0.772727, 0.727273)
+texture_filter = 1
+texture = ExtResource("22_ground_front")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(19, 520, 475, 166)
+
+[node name="DeepGroundCenterWest" type="Sprite2D" parent="Geometry/Ground"]
+position = Vector2(480, 335)
+scale = Vector2(0.772727, 0.727273)
+texture_filter = 1
+texture = ExtResource("22_ground_front")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(19, 520, 475, 166)
+
+[node name="DeepGroundCenterEast" type="Sprite2D" parent="Geometry/Ground"]
+position = Vector2(800, 335)
+scale = Vector2(0.772727, 0.727273)
+texture_filter = 1
+texture = ExtResource("22_ground_front")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(19, 520, 475, 166)
+
+[node name="DeepGroundEast" type="Sprite2D" parent="Geometry/Ground"]
+position = Vector2(1120, 335)
+scale = Vector2(0.772727, 0.727273)
+texture_filter = 1
+texture = ExtResource("22_ground_front")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(19, 520, 475, 166)
+
 [node name="GroundCollision" type="StaticBody2D" parent="Geometry/Ground"]
-position = Vector2(320, 165)
+position = Vector2(640, 255)
 collision_layer = 1
 collision_mask = 0
 
@@ -257,7 +359,7 @@ shape = SubResource("GroundShape")
 position = Vector2(18, 138)
 
 [node name="RIGHT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances"]
-position = Vector2(622, 138)
+position = Vector2(1262, 138)
 
 [node name="Actors" type="Node2D" parent="Gameplay"]
 
@@ -290,7 +392,7 @@ patrol_radius = 34.0
 [node name="Triggers" type="Node2D" parent="Gameplay"]
 
 [node name="RoomArea" type="Area2D" parent="Gameplay/Triggers"]
-position = Vector2(320, 90)
+position = Vector2(640, 120)
 collision_layer = 0
 collision_mask = 2
 
@@ -302,7 +404,7 @@ shape = SubResource("RoomShape")
 [node name="Bounds" type="Node2D" parent="Camera"]
 
 [node name="TopLeft" type="Marker2D" parent="Camera/Bounds"]
-position = Vector2(0, -40)
+position = Vector2(0, -120)
 
 [node name="BottomRight" type="Marker2D" parent="Camera/Bounds"]
-position = Vector2(640, 220)
+position = Vector2(1280, 360)

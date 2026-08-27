@@ -7,8 +7,10 @@ signal player_exited(room_id: StringName)
 @export var room_id: StringName
 @export var display_name := ""
 @export var world_region_id: StringName = &"vila_umbuzeiro"
-@export var local_bounds := Rect2(0.0, 0.0, 320.0, 180.0)
-@export var camera_bounds := Rect2(0.0, -40.0, 320.0, 260.0)
+@export var local_bounds := Rect2(0.0, -120.0, 960.0, 480.0)
+@export var camera_bounds := Rect2(0.0, -120.0, 960.0, 480.0)
+@export var authored_composition_width := 0.0
+@export var repeat_platform_geometry := false
 
 var _active_player: NiloPlayer
 var _debug_visible := false
@@ -21,9 +23,48 @@ func _ready() -> void:
 		room_area.body_entered.connect(_on_body_entered)
 		room_area.body_exited.connect(_on_body_exited)
 	EventBus.world_state_changed.connect(_on_world_state_changed)
+	_extend_authored_composition()
 	_apply_rendering_profile()
 	_refresh_world_state()
 	set_process(true)
+
+
+func _extend_authored_composition() -> void:
+	if authored_composition_width <= 0.0 or authored_composition_width >= local_bounds.size.x:
+		return
+	var environment := get_node_or_null("Environment") as Node2D
+	if environment != null:
+		var authored_layers := environment.get_children().filter(func(child: Node) -> bool:
+			return child is Node2D and child.name != &"Parallax"
+		)
+		var offset := authored_composition_width
+		while offset < local_bounds.size.x:
+			for layer in authored_layers:
+				var repeated := (layer as Node).duplicate()
+				repeated.name = "%s_Ext_%d" % [layer.name, roundi(offset)]
+				repeated.position.x += offset
+				environment.add_child(repeated)
+			offset += authored_composition_width
+	if repeat_platform_geometry:
+		_repeat_geometry_branch("Geometry/Platforms")
+		_repeat_geometry_branch("Geometry/Walls")
+
+
+func _repeat_geometry_branch(path: String) -> void:
+	var branch := get_node_or_null(path) as Node2D
+	if branch == null:
+		return
+	var originals := branch.get_children()
+	var offset := authored_composition_width
+	while offset < local_bounds.size.x:
+		for original in originals:
+			if not original is Node2D:
+				continue
+			var repeated := original.duplicate()
+			repeated.name = "%s_Ext_%d" % [original.name, roundi(offset)]
+			repeated.position.x += offset
+			branch.add_child(repeated)
+		offset += authored_composition_width
 
 
 func _process(_delta: float) -> void:
@@ -78,6 +119,10 @@ func _refresh_world_state() -> void:
 
 
 func _apply_rendering_profile() -> void:
+	for candidate in find_children("*", "CameraParallaxLayer", true, false):
+		var layer := candidate as CameraParallaxLayer
+		layer.camera_anchor = Vector2(local_bounds.get_center().x, 90.0)
+		layer.activation_bounds = local_bounds.grow(400.0)
 	for candidate in find_children("*", "Sprite2D", true, false):
 		var sprite := candidate as Sprite2D
 		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST

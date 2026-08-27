@@ -1,20 +1,21 @@
 [gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/room_controller.gd" id="1"]
-[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_320.tscn" id="2"]
-[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/ground_320.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_1280.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/ground_960.tscn" id="3"]
 [ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/atlases/02_igreja_velha_e_checkpoint.png" id="4"]
 [ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/06_elementos_atmosfericos.png" id="5"]
 
 [sub_resource type="RectangleShape2D" id="RoomShape"]
-size = Vector2(320, 180)
+size = Vector2(960, 480)
 
 [node name="IgrejaVelha" type="Node2D"]
 script = ExtResource("1")
 room_id = &"igreja_velha"
 display_name = "03 IGREJA VELHA"
-local_bounds = Rect2(0, 0, 320, 180)
-camera_bounds = Rect2(0, -60, 320, 300)
+local_bounds = Rect2(0, -120, 960, 480)
+camera_bounds = Rect2(0, -120, 960, 480)
+authored_composition_width = 320.0
 
 [node name="Environment" type="Node2D" parent="."]
 [node name="Parallax" parent="Environment" instance=ExtResource("2")]
@@ -58,11 +59,11 @@ visible = false
 [node name="LEFT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances"]
 position = Vector2(18, 138)
 [node name="RIGHT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances"]
-position = Vector2(302, 138)
+position = Vector2(942, 138)
 [node name="EnemySpawns" type="Node2D" parent="Gameplay"]
 [node name="Triggers" type="Node2D" parent="Gameplay"]
 [node name="RoomArea" type="Area2D" parent="Gameplay/Triggers"]
-position = Vector2(160, 90)
+position = Vector2(480, 120)
 collision_layer = 0
 collision_mask = 2
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Triggers/RoomArea"]

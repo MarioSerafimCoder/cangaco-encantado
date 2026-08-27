@@ -15,7 +15,7 @@ var _time := 0.0
 
 
 func _ready() -> void:
-	position = Vector2(40.0, 148.0)
+	position = Vector2(200.0, 328.0)
 	size = Vector2(240.0, 27.0)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST

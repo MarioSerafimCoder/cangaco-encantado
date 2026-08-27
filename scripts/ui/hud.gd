@@ -75,15 +75,15 @@ func _build_hud() -> void:
 	player_status = PlayerStatusHUD.new()
 	add_child(player_status)
 
-	world_panel = _make_panel(Rect2(222.0, 4.0, 94.0, 16.0), Color("241d1acc"), Color("b88042"), WORLD_PANEL_TEXTURE)
+	world_panel = _make_panel(Rect2(542.0, 4.0, 94.0, 16.0), Color("241d1acc"), Color("b88042"), WORLD_PANEL_TEXTURE)
 	world_label = _make_label(world_panel, Vector2(3.0, 3.0), Vector2(88.0, 10.0), 6, Color("f2d49a"))
 	world_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
-	debug_panel = _make_panel(Rect2(204.0, 23.0, 112.0, 31.0), Color("101417df"), Color("5a8290"))
+	debug_panel = _make_panel(Rect2(524.0, 23.0, 112.0, 31.0), Color("101417df"), Color("5a8290"))
 	debug_label = _make_label(debug_panel, Vector2(5.0, 3.0), Vector2(103.0, 25.0), 6, Color("bce8ee"))
 	debug_panel.visible = false
 
-	room_panel = _make_panel(Rect2(84.0, 48.0, 152.0, 17.0), Color("241d1ae6"), Color("d59a4a"), ROOM_PANEL_TEXTURE)
+	room_panel = _make_panel(Rect2(244.0, 58.0, 152.0, 17.0), Color("241d1ae6"), Color("d59a4a"), ROOM_PANEL_TEXTURE)
 	room_label = _make_label(room_panel, Vector2(3.0, 3.0), Vector2(146.0, 10.0), 7, Color("fff0ca"))
 	room_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	room_panel.visible = false
@@ -91,7 +91,7 @@ func _build_hud() -> void:
 	boss_status = BossStatusHUD.new()
 	add_child(boss_status)
 
-	help_panel = _make_panel(Rect2(32.0, 163.0, 256.0, 12.0), Color("171311c9"), Color("6e5337"), HELP_PANEL_TEXTURE)
+	help_panel = _make_panel(Rect2(192.0, 343.0, 256.0, 12.0), Color("171311c9"), Color("6e5337"), HELP_PANEL_TEXTURE)
 	var help_label := _make_label(help_panel, Vector2(3.0, 1.0), Vector2(250.0, 9.0), 5, Color("d8c39e"))
 	help_label.text = "A/D MOVER  ESPAÇO PULAR  J FACÃO  K PISTOLA  L RIFLE  I ESPECIAL"
 	help_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -99,7 +99,7 @@ func _build_hud() -> void:
 
 func _update_boss_bar() -> void:
 	var boss := get_tree().get_first_node_in_group("bosses") as EnemyBase
-	if boss == null or not is_instance_valid(boss) or player.global_position.distance_to(boss.global_position) > 300.0:
+	if boss == null or not is_instance_valid(boss) or player.global_position.distance_to(boss.global_position) > 520.0:
 		boss_status.hide_boss()
 		return
 	boss_status.show_boss(boss)

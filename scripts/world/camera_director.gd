@@ -4,7 +4,11 @@ extends Node
 @export var world_path: NodePath = NodePath("../VilaDoUmbuzeiro")
 @export var player_path: NodePath = NodePath("../Nilo")
 @export_range(0.1, 1.0) var transition_duration := 0.34
-@export var teleport_snap_distance := 960.0
+@export var base_vertical_offset := -42.0
+@export_range(60.0, 100.0) var maximum_horizontal_look_ahead := 84.0
+@export var ascending_look_ahead := -34.0
+@export var falling_look_ahead := 42.0
+@export var teleport_snap_distance := 640.0
 
 var world: VilaGraybox
 var player: NiloPlayer
@@ -14,6 +18,10 @@ var _transition_elapsed := 0.0
 var _start_bounds := Rect2()
 var _target_bounds := Rect2()
 var _current_bounds := Rect2()
+var _horizontal_look := 0.0
+var _vertical_look := 0.0
+var _previous_player_position := Vector2.ZERO
+var _vertical_intent_time := 0.0
 
 
 func _ready() -> void:
@@ -21,11 +29,19 @@ func _ready() -> void:
 	world = get_node(world_path) as VilaGraybox
 	player = get_node(player_path) as NiloPlayer
 	camera = player.camera
-	_select_room(true)
+	camera.zoom = Vector2.ONE
+	camera.drag_horizontal_enabled = false
+	camera.drag_vertical_enabled = false
+	_previous_player_position = player.global_position
+	_select_room(true, true)
+	_update_composition(1.0, true)
 
 
 func _physics_process(delta: float) -> void:
-	_select_room(false)
+	var teleported := player.global_position.distance_to(_previous_player_position) > teleport_snap_distance
+	_previous_player_position = player.global_position
+	_select_room(false, teleported)
+	_update_composition(delta, teleported)
 	if active_room == null or _current_bounds == _target_bounds:
 		return
 	_transition_elapsed = minf(transition_duration, _transition_elapsed + delta)
@@ -37,7 +53,34 @@ func _physics_process(delta: float) -> void:
 	_apply_bounds(_current_bounds)
 
 
-func _select_room(immediate: bool) -> void:
+func _update_composition(delta: float, immediate := false) -> void:
+	var maximum_speed := maxf(player.config.move_speed, 1.0)
+	var speed_ratio := clampf(absf(player.velocity.x) / maximum_speed, 0.0, 1.0)
+	var horizontal_target := 0.0
+	if speed_ratio > 0.08:
+		horizontal_target = player.facing * lerpf(60.0, maximum_horizontal_look_ahead, smoothstep(0.15, 1.0, speed_ratio))
+	var vertical_target := 0.0
+	var has_vertical_intent := false
+	if not player.is_on_floor() and player.velocity.y < -145.0:
+		vertical_target = ascending_look_ahead
+		has_vertical_intent = true
+	elif not player.is_on_floor() and player.velocity.y > 155.0:
+		vertical_target = falling_look_ahead
+		has_vertical_intent = true
+	if has_vertical_intent:
+		_vertical_intent_time += delta
+	else:
+		_vertical_intent_time = maxf(0.0, _vertical_intent_time - delta * 2.0)
+	if _vertical_intent_time < 0.08:
+		vertical_target = 0.0
+	var horizontal_response := 1.0 if immediate else 1.0 - exp(-delta * (5.5 if horizontal_target != 0.0 else 3.4))
+	var vertical_response := 1.0 if immediate else 1.0 - exp(-delta * (3.2 if vertical_target != 0.0 else 2.6))
+	_horizontal_look = lerpf(_horizontal_look, horizontal_target, horizontal_response)
+	_vertical_look = lerpf(_vertical_look, vertical_target, vertical_response)
+	camera.position = Vector2(round(_horizontal_look), round(base_vertical_offset + _vertical_look))
+
+
+func _select_room(immediate: bool, teleported := false) -> void:
 	var candidate := _room_at_player_x()
 	if candidate == null or candidate == active_room:
 		return
@@ -45,8 +88,7 @@ func _select_room(immediate: bool) -> void:
 	_start_bounds = _camera_rect()
 	_target_bounds = active_room.get_global_camera_bounds()
 	_transition_elapsed = 0.0
-	var long_distance_transition := _start_bounds.get_center().distance_to(_target_bounds.get_center()) > teleport_snap_distance
-	if immediate or long_distance_transition:
+	if immediate or teleported:
 		_current_bounds = _target_bounds
 		_transition_elapsed = transition_duration
 		_apply_bounds(_current_bounds)

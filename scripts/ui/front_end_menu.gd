@@ -103,14 +103,14 @@ func _build_shell() -> void:
 
 	var top_glow := ColorRect.new()
 	top_glow.position = Vector2(0.0, 0.0)
-	top_glow.size = Vector2(320.0, 2.0)
+	top_glow.size = Vector2(640.0, 2.0)
 	top_glow.color = Color("b97535")
 	top_glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_root.add_child(top_glow)
 
-	_title = _make_label(_root, Vector2(28.0, 11.0), Vector2(264.0, 20.0), 18, Color("ffd47d"))
+	_title = _make_label(_root, Vector2(188.0, 101.0), Vector2(264.0, 20.0), 18, Color("ffd47d"))
 	_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_subtitle = _make_label(_root, Vector2(35.0, 33.0), Vector2(250.0, 10.0), 7, Color("d0a56a"))
+	_subtitle = _make_label(_root, Vector2(195.0, 123.0), Vector2(250.0, 10.0), 7, Color("d0a56a"))
 	_subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	_frame = NinePatchRect.new()
@@ -133,17 +133,17 @@ func _build_shell() -> void:
 
 func _set_standard_layout() -> void:
 	_content.add_theme_constant_override("separation", 2)
-	_frame.position = Vector2(76.0, 46.0)
+	_frame.position = Vector2(236.0, 136.0)
 	_frame.size = Vector2(168.0, 126.0)
-	_content.position = Vector2(92.0, 56.0)
+	_content.position = Vector2(252.0, 146.0)
 	_content.size = Vector2(136.0, 106.0)
 
 
 func _set_wide_layout() -> void:
 	_content.add_theme_constant_override("separation", 3)
-	_frame.position = Vector2(28.0, 42.0)
+	_frame.position = Vector2(188.0, 132.0)
 	_frame.size = Vector2(264.0, 132.0)
-	_content.position = Vector2(43.0, 63.0)
+	_content.position = Vector2(203.0, 153.0)
 	_content.size = Vector2(234.0, 98.0)
 
 

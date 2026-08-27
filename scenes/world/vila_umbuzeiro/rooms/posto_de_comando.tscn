@@ -1,8 +1,8 @@
 [gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/room_controller.gd" id="1"]
-[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_320.tscn" id="2"]
-[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/ground_320.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_1280.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/ground_960.tscn" id="3"]
 [ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/atlases/07_barricada_e_posto_comando.png" id="4"]
 [ext_resource type="Texture2D" path="res://assets/fx/vfx_ocupacao_e_tiros.png" id="5"]
 [ext_resource type="Script" path="res://scripts/fx/atlas_strip_animator.gd" id="6"]
@@ -13,14 +13,15 @@
 [ext_resource type="PackedScene" path="res://scenes/enemies/pistoleiro.tscn" id="11_pistoleiro"]
 
 [sub_resource type="RectangleShape2D" id="RoomShape"]
-size = Vector2(320, 180)
+size = Vector2(960, 480)
 
 [node name="PostoDeComando" type="Node2D"]
 script = ExtResource("1")
 room_id = &"posto"
 display_name = "12 POSTO DE COMANDO"
-local_bounds = Rect2(0, 0, 320, 180)
-camera_bounds = Rect2(0, -60, 320, 300)
+local_bounds = Rect2(0, -120, 960, 480)
+camera_bounds = Rect2(0, -120, 960, 480)
+authored_composition_width = 320.0
 
 [node name="Environment" type="Node2D" parent="."]
 
@@ -160,7 +161,7 @@ default_color = Color(0.22, 0.15, 0.11, 0.72)
 position = Vector2(18, 138)
 
 [node name="RIGHT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances"]
-position = Vector2(302, 138)
+position = Vector2(942, 138)
 
 [node name="EnemySpawns" type="Node2D" parent="Gameplay"]
 
@@ -183,7 +184,7 @@ patrol_radius = 30.0
 [node name="Triggers" type="Node2D" parent="Gameplay"]
 
 [node name="RoomArea" type="Area2D" parent="Gameplay/Triggers"]
-position = Vector2(160, 90)
+position = Vector2(480, 120)
 collision_layer = 0
 collision_mask = 2
 

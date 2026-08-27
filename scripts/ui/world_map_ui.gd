@@ -79,7 +79,7 @@ func _ready() -> void:
 
 func _build_toast() -> void:
 	_toast = Label.new()
-	_toast.position = Vector2(70, 14)
+	_toast.position = Vector2(230, 104)
 	_toast.size = Vector2(180, 30)
 	_toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_toast.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -127,11 +127,11 @@ func _front_end_hidden() -> bool:
 
 func _draw_map(canvas: Control) -> void:
 	canvas.draw_rect(Rect2(Vector2.ZERO, canvas.size), Color(0.025, 0.018, 0.015, 0.92), true)
-	canvas.draw_rect(Rect2(13, 13, 294, 154), Color("211713"), true)
-	canvas.draw_rect(Rect2(13, 13, 294, 154), Color("b87936"), false, 2.0)
-	canvas.draw_string(PIXEL_FONT, Vector2(22, 28), "MAPA DA VILA DO UMBUZEIRO", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("ffd681"))
-	canvas.draw_string(PIXEL_FONT, Vector2(22, 40), "M / ESC  FECHAR", HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color("bda47b"))
-	var origin := Vector2(23, 43)
+	canvas.draw_rect(Rect2(173, 103, 294, 154), Color("211713"), true)
+	canvas.draw_rect(Rect2(173, 103, 294, 154), Color("b87936"), false, 2.0)
+	canvas.draw_string(PIXEL_FONT, Vector2(182, 118), "MAPA DA VILA DO UMBUZEIRO", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("ffd681"))
+	canvas.draw_string(PIXEL_FONT, Vector2(182, 130), "M / ESC  FECHAR", HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color("bda47b"))
+	var origin := Vector2(183, 133)
 	var step := Vector2(27, 27)
 	for connection in CONNECTIONS:
 		var a: StringName = connection[0]
@@ -169,8 +169,8 @@ func _draw_legend(canvas: Control) -> void:
 	var abilities_text := "HABILIDADES: "
 	abilities_text += "PEDRA ✓  " if GameState.abilities.get("wall_jump", false) else "PEDRA ?  "
 	abilities_text += "POEIRA ✓" if GameState.abilities.get("dash", false) else "POEIRA ?"
-	canvas.draw_string(PIXEL_FONT, Vector2(22, 155), abilities_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color("8bd6bf"))
-	canvas.draw_string(PIXEL_FONT, Vector2(190, 155), "◆ SEGREDOS %d" % GameState.discovered_secrets.size(), HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color("d9b35e"))
+	canvas.draw_string(PIXEL_FONT, Vector2(182, 245), abilities_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color("8bd6bf"))
+	canvas.draw_string(PIXEL_FONT, Vector2(350, 245), "◆ SEGREDOS %d" % GameState.discovered_secrets.size(), HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color("d9b35e"))
 
 
 func _is_connection_known(a: StringName, b: StringName) -> bool:

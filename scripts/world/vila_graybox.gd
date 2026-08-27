@@ -19,19 +19,19 @@ const POCO_DO_ROMAOZINHO_SCENE := preload("res://scenes/world/vila_umbuzeiro/roo
 const BARRICADA_DA_COMPANHIA_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/barricada_da_companhia.tscn")
 
 const ROOMS := [
-	{"id": &"casa_nilo", "name": "01 CASA DE NILO", "width": 320.0, "function": "Origem e controles"},
-	{"id": &"rua_cinzas", "name": "02 RUA DAS CINZAS", "width": 640.0, "function": "Primeiro combate"},
-	{"id": &"igreja_velha", "name": "03 IGREJA VELHA", "width": 320.0, "function": "Trauma e checkpoint"},
-	{"id": &"telhados", "name": "04 TELHADOS DA VILA", "width": 640.0, "function": "Plataforma"},
-	{"id": &"praca_umbu", "name": "05 PRAÇA DO UMBU", "width": 640.0, "function": "Landmark e hub"},
-	{"id": &"barracos", "name": "06 BARRACOS QUEIMADOS", "width": 640.0, "function": "Controle de área"},
-	{"id": &"armazem", "name": "07 ARMAZÉM TOMADO", "width": 640.0, "function": "Combate interno"},
-	{"id": &"patio", "name": "08 PÁTIO DO ARMAZÉM", "width": 640.0, "function": "Arena de domínio"},
-	{"id": &"beco", "name": "09 BECO DOS SAQUEADORES", "width": 320.0, "function": "Emboscada"},
-	{"id": &"poco", "name": "10 POÇO DO ROMÃOZINHO", "width": 320.0, "function": "Opcional e bloqueado"},
-	{"id": &"barricada", "name": "11 BARRICADA DA COMPANHIA", "width": 640.0, "function": "Gate e elite"},
-	{"id": &"posto", "name": "12 POSTO DE COMANDO", "width": 320.0, "function": "Pré-boss e lore"},
-	{"id": &"arena", "name": "13 ARENA DE ZÉ TRANCA", "width": 640.0, "function": "Boss tutorial"},
+	{"id": &"casa_nilo", "name": "01 CASA DE NILO", "width": 960.0, "function": "Origem, retorno e segredo"},
+	{"id": &"rua_cinzas", "name": "02 RUA DAS CINZAS", "width": 1280.0, "function": "Primeiro combate"},
+	{"id": &"igreja_velha", "name": "03 IGREJA VELHA", "width": 960.0, "function": "Trauma, checkpoint e rota vertical"},
+	{"id": &"telhados", "name": "04 TELHADOS DA VILA", "width": 1280.0, "function": "Rota arquitetônica elevada"},
+	{"id": &"praca_umbu", "name": "05 PRAÇA DO UMBU", "width": 1280.0, "function": "Landmark e hub"},
+	{"id": &"barracos", "name": "06 BARRACOS QUEIMADOS", "width": 1280.0, "function": "Controle de área"},
+	{"id": &"armazem", "name": "07 ARMAZÉM TOMADO", "width": 1280.0, "function": "Combate interno"},
+	{"id": &"patio", "name": "08 PÁTIO DO ARMAZÉM", "width": 1280.0, "function": "Arena de domínio"},
+	{"id": &"beco", "name": "09 BECO DOS SAQUEADORES", "width": 960.0, "function": "Emboscada"},
+	{"id": &"poco", "name": "10 POÇO DO ROMÃOZINHO", "width": 960.0, "function": "Opcional e bloqueado"},
+	{"id": &"barricada", "name": "11 BARRICADA DA COMPANHIA", "width": 1280.0, "function": "Gate e elite"},
+	{"id": &"posto", "name": "12 POSTO DE COMANDO", "width": 960.0, "function": "Pré-boss e lore"},
+	{"id": &"arena", "name": "13 ARENA DE ZÉ TRANCA", "width": 1280.0, "function": "Boss tutorial"},
 ]
 
 var room_bounds: Dictionary = {}
@@ -51,7 +51,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if player == null:
 		player = get_tree().get_first_node_in_group("player") as NiloPlayer
-	if player != null and player.global_position.y > 280.0 and not player.is_dead:
+	if player != null and player.global_position.y > 420.0 and not player.is_dead:
 		player.respawn_at_checkpoint()
 
 
@@ -63,14 +63,14 @@ func get_room_center(room_id: StringName) -> Vector2:
 func _build_rooms() -> void:
 	var cursor_x := 0.0
 	for room in ROOMS:
-		var bounds := Rect2(cursor_x, 0.0, room.width, 180.0)
+		var bounds := Rect2(cursor_x, 0.0, room.width, 360.0)
 		room_bounds[room.id] = bounds
 		var production_scene := _production_scene_for(room.id)
 		_add_production_room(bounds, production_scene)
 		cursor_x += room.width
 	world_width = cursor_x
-	_add_solid(Rect2(-24.0, -40.0, 24.0, 240.0))
-	_add_solid(Rect2(world_width, -40.0, 24.0, 240.0))
+	_add_solid(Rect2(-24.0, -120.0, 24.0, 480.0))
+	_add_solid(Rect2(world_width, -120.0, 24.0, 480.0))
 
 
 func _add_production_room(bounds: Rect2, scene: PackedScene) -> void:
@@ -170,7 +170,7 @@ func _build_metroidvania_routes() -> void:
 	dash_pickup.display_name = "PASSO DA POEIRA"
 	dash_pickup.description = "C PARA ATRAVESSAR SELOS E VÃOS"
 	add_child(dash_pickup)
-	dash_pickup.position = Vector2(roofs.position.x + 250.0, 72.0)
+	dash_pickup.position = Vector2(roofs.position.x + 890.0, 72.0)
 
 	# Segredo na casa inicial: só abre no retorno com Pedra + Poeira.
 	_add_traversal_platform(Vector2(home.position.x + 176.0, 112.0), Vector2(42.0, 7.0), false)
@@ -189,8 +189,8 @@ func _build_metroidvania_routes() -> void:
 	heart_upgrade.position = Vector2(home.position.x + 292.0, 57.0)
 
 	# Rota alternativa: Praça -> fundos do Armazém. Abre nos dois sentidos.
-	_add_connector(&"praca_armazem_alto", Vector2(square.position.x + 525.0, 125.0), Vector2(warehouse.position.x + 500.0, 125.0), &"dash", "TRILHA ALTA", &"armazem")
-	_add_connector(&"praca_armazem_alto", Vector2(warehouse.position.x + 500.0, 125.0), Vector2(square.position.x + 525.0, 125.0), &"", "VOLTAR À PRAÇA", &"praca_umbu", true)
+	_add_connector(&"praca_armazem_alto", Vector2(square.position.x + 1165.0, 125.0), Vector2(warehouse.position.x + 1140.0, 125.0), &"dash", "TRILHA ALTA", &"armazem")
+	_add_connector(&"praca_armazem_alto", Vector2(warehouse.position.x + 1140.0, 125.0), Vector2(square.position.x + 1165.0, 125.0), &"", "VOLTAR À PRAÇA", &"praca_umbu", true)
 
 	# Atalho tardio: aberto pelo lado do Poço, devolve rapidamente à Igreja.
 	_add_connector(&"poco_igreja_cripta", Vector2(well.position.x + 160.0, 112.0), Vector2(church.position.x + 40.0, 130.0), &"wall_jump", "DESCER À CRIPTA", &"igreja_velha")

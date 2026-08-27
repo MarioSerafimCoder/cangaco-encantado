@@ -1,8 +1,8 @@
 [gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/room_controller.gd" id="1"]
-[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_640.tscn" id="2"]
-[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/ground_640.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_1280.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/ground_1280.tscn" id="3"]
 [ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/atlases/08_arena_ze_tranca.png" id="4"]
 [ext_resource type="Texture2D" path="res://assets/fx/vfx_ocupacao_e_tiros.png" id="5"]
 [ext_resource type="Script" path="res://scripts/fx/atlas_strip_animator.gd" id="6"]
@@ -12,14 +12,15 @@
 [ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/fillers/ossos_01.tres" id="10"]
 
 [sub_resource type="RectangleShape2D" id="RoomShape"]
-size = Vector2(640, 180)
+size = Vector2(1280, 480)
 
 [node name="ArenaZeTranca" type="Node2D"]
 script = ExtResource("1")
 room_id = &"arena"
 display_name = "13 ARENA DE ZÉ TRANCA"
-local_bounds = Rect2(0, 0, 640, 180)
-camera_bounds = Rect2(0, -60, 640, 300)
+local_bounds = Rect2(0, -120, 1280, 480)
+camera_bounds = Rect2(0, -120, 1280, 480)
+authored_composition_width = 640.0
 
 [node name="Environment" type="Node2D" parent="."]
 
@@ -175,7 +176,7 @@ default_color = Color(0.16, 0.11, 0.09, 0.55)
 position = Vector2(18, 138)
 
 [node name="RIGHT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances"]
-position = Vector2(622, 138)
+position = Vector2(1262, 138)
 
 [node name="EnemySpawns" type="Node2D" parent="Gameplay"]
 
@@ -188,7 +189,7 @@ spawn_id = &"arena_ze_tranca"
 [node name="Triggers" type="Node2D" parent="Gameplay"]
 
 [node name="RoomArea" type="Area2D" parent="Gameplay/Triggers"]
-position = Vector2(320, 90)
+position = Vector2(640, 120)
 collision_layer = 0
 collision_mask = 2
 

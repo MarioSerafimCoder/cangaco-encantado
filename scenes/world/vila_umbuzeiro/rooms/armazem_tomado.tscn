@@ -1,8 +1,8 @@
 [gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/room_controller.gd" id="1"]
-[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_640.tscn" id="2"]
-[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/ground_640.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_1280.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/ground_1280.tscn" id="3"]
 [ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/atlases/05_armazem_e_patio.png" id="4"]
 [ext_resource type="Script" path="res://scripts/world/enemy_spawn.gd" id="5"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/saqueador.tscn" id="6"]
@@ -11,7 +11,7 @@
 [ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/06_elementos_atmosfericos.png" id="9"]
 
 [sub_resource type="RectangleShape2D" id="RoomShape"]
-size = Vector2(640, 180)
+size = Vector2(1280, 480)
 [sub_resource type="RectangleShape2D" id="ShelfShapeA"]
 size = Vector2(86, 8)
 [sub_resource type="RectangleShape2D" id="ShelfShapeB"]
@@ -21,8 +21,9 @@ size = Vector2(96, 8)
 script = ExtResource("1")
 room_id = &"armazem"
 display_name = "07 ARMAZÉM TOMADO"
-local_bounds = Rect2(0, 0, 640, 180)
-camera_bounds = Rect2(0, -60, 640, 300)
+local_bounds = Rect2(0, -120, 1280, 480)
+camera_bounds = Rect2(0, -120, 1280, 480)
+authored_composition_width = 640.0
 
 [node name="Environment" type="Node2D" parent="."]
 [node name="Parallax" parent="Environment" instance=ExtResource("2")]
@@ -96,7 +97,7 @@ shape = SubResource("ShelfShapeB")
 [node name="LEFT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances"]
 position = Vector2(18, 138)
 [node name="RIGHT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances"]
-position = Vector2(622, 138)
+position = Vector2(1262, 138)
 [node name="EnemySpawns" type="Node2D" parent="Gameplay"]
 [node name="Saqueador" type="Marker2D" parent="Gameplay/EnemySpawns"]
 position = Vector2(180, 132)
@@ -110,7 +111,7 @@ enemy_scene = ExtResource("7")
 spawn_id = &"armazem_pistoleiro"
 [node name="Triggers" type="Node2D" parent="Gameplay"]
 [node name="RoomArea" type="Area2D" parent="Gameplay/Triggers"]
-position = Vector2(320, 90)
+position = Vector2(640, 120)
 collision_layer = 0
 collision_mask = 2
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Triggers/RoomArea"]

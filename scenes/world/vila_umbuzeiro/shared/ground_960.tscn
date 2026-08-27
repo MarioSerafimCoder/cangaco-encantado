@@ -1,0 +1,81 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/03_sistema_de_chao_e_transicoes.png" id="1_ground"]
+[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_7/rua_chao_continuo.png" id="2_road"]
+
+[sub_resource type="RectangleShape2D" id="GroundShape"]
+size = Vector2(960, 210)
+
+[node name="Ground" type="Node2D"]
+
+[node name="RoadSurface" type="Sprite2D" parent="."]
+position = Vector2(480, 142)
+scale = Vector2(0.44199, 0.16)
+z_index = -1
+texture_filter = 1
+texture = ExtResource("2_road")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(0, 273, 2172, 100)
+
+[node name="GroundSpriteA" type="Sprite2D" parent="."]
+position = Vector2(160, 205)
+scale = Vector2(0.772727, 0.727273)
+texture_filter = 1
+texture = ExtResource("1_ground")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(13, 216, 440, 180)
+
+[node name="GroundSpriteB" type="Sprite2D" parent="."]
+position = Vector2(480, 205)
+scale = Vector2(0.772727, 0.727273)
+texture_filter = 1
+texture = ExtResource("1_ground")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(13, 216, 440, 180)
+
+[node name="GroundSpriteC" type="Sprite2D" parent="."]
+position = Vector2(800, 205)
+scale = Vector2(0.772727, 0.727273)
+texture_filter = 1
+texture = ExtResource("1_ground")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(13, 216, 440, 180)
+
+[node name="DeepGroundA" type="Sprite2D" parent="."]
+position = Vector2(160, 335)
+scale = Vector2(0.772727, 0.727273)
+texture_filter = 1
+texture = ExtResource("1_ground")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(13, 216, 440, 180)
+
+[node name="DeepGroundB" type="Sprite2D" parent="."]
+position = Vector2(480, 335)
+scale = Vector2(0.772727, 0.727273)
+texture_filter = 1
+texture = ExtResource("1_ground")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(13, 216, 440, 180)
+
+[node name="DeepGroundC" type="Sprite2D" parent="."]
+position = Vector2(800, 335)
+scale = Vector2(0.772727, 0.727273)
+texture_filter = 1
+texture = ExtResource("1_ground")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(13, 216, 440, 180)
+
+[node name="GroundCollision" type="StaticBody2D" parent="."]
+position = Vector2(480, 255)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GroundCollision"]
+shape = SubResource("GroundShape")

@@ -19,7 +19,6 @@ var _crouch_applied := false
 var _camera_shake_remaining := 0.0
 var _camera_shake_strength := 0.0
 var _camera_shake_offset := Vector2.ZERO
-var _camera_look_ahead := Vector2.ZERO
 
 
 func _ready() -> void:
@@ -234,19 +233,9 @@ func _update_camera_shake(delta: float) -> void:
 
 
 func _update_camera_framing(delta: float) -> void:
-	var speed_ratio := clampf(absf(velocity.x) / maxf(config.move_speed, 1.0), 0.0, 1.0)
-	var horizontal_target := facing * lerpf(8.0, 20.0, smoothstep(0.0, 1.0, speed_ratio)) if speed_ratio > 0.08 else 0.0
-	var vertical_target := 0.0
-	if not is_on_floor() and velocity.y > 100.0:
-		vertical_target = lerpf(2.0, 11.0, clampf((velocity.y - 100.0) / 340.0, 0.0, 1.0))
-		if Input.is_action_pressed("move_down"):
-			vertical_target += 4.0
-	elif not is_on_floor() and velocity.y < -170.0:
-		vertical_target = -2.0
-	var target := Vector2(horizontal_target, vertical_target)
-	var responsiveness := 1.0 - exp(-delta * 4.6)
-	_camera_look_ahead = _camera_look_ahead.lerp(target, responsiveness)
-	camera.offset = Vector2(round(_camera_look_ahead.x), round(_camera_look_ahead.y)) + _camera_shake_offset
+	# CameraDirector owns composition and look-ahead; the player contributes only shake.
+	var responsiveness := 1.0 - exp(-delta * 18.0)
+	camera.offset = camera.offset.lerp(_camera_shake_offset, responsiveness).round()
 
 
 func _update_locomotion_fx(landed: bool, vertical_speed: float) -> void:
