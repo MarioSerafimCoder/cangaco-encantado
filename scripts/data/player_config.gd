@@ -5,7 +5,6 @@ extends Resource
 @export var move_speed := 120.0
 @export_range(0.2, 1.0) var walk_speed_multiplier := 0.58
 @export_range(0.1, 5.0) var run_hold_duration := 2.0
-@export_range(1.0, 2.0) var sprint_speed_multiplier := 1.35
 @export var ground_acceleration := 1400.0
 @export var ground_deceleration := 1800.0
 @export_range(0.0, 1.0) var air_control := 0.75

@@ -79,7 +79,7 @@ func _on_body_exited(body: Node) -> void:
 
 func _refresh_prompt() -> void:
 	var unlocked := _can_use()
-	_prompt.text = "[%s] %s" % [InputBootstrap.interact_prompt(), display_name] if unlocked else ("ATALHO FECHADO" if locked_until_opened or not required_flag.is_empty() else "REQUER %s" % _ability_name())
+	_prompt.text = InputGlyphResolver.prompt(&"interact", display_name) if unlocked else ("ATALHO FECHADO" if locked_until_opened or not required_flag.is_empty() else "REQUER %s" % _ability_name())
 	_prompt.visible = true
 
 

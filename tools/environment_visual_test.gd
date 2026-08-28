@@ -45,7 +45,6 @@ func _capture_room(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: 
 	camera.limit_bottom = 240
 	camera.reset_smoothing()
 	hud.room_fade = 0.0
-	hud.world_fade = 0.0
 	hud.help_fade = 0.0
 	await _wait_frames(3)
 	await _capture(OUTPUT_DIRECTORY.path_join(file_name))

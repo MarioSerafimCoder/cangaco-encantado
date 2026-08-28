@@ -4,7 +4,17 @@ extends CanvasLayer
 const PIXEL_FONT := preload("res://assets/ui/fonts/Tiny5-Regular.ttf")
 const CATALOG_PATH := "res://resources/shop/area_01_shop.json"
 const UI_ATLAS := preload("res://assets/area_01/ui/dialogo_loja_atlas.png")
+const SHOP_ICON_ATLAS := preload("res://assets/ui/generated_0_4_2/atlas_itens_loja.png")
 const SHOP_ORNAMENT := Rect2(390, 305, 535, 145)
+const SHOP_ICON_CELL := Vector2(418.0, 627.0)
+const SHOP_ICON_INDEX := {
+	&"carga_cabaca": 0,
+	&"municao_pistola": 1,
+	&"municao_rifle": 2,
+	&"mapa_vila": 3,
+	&"medalha_antiga": 4,
+}
+const UI_THEME := preload("res://assets/ui/themes/cangaco_ui_theme.tres")
 
 var is_open := false
 var shop_id: StringName
@@ -33,6 +43,7 @@ func open(id: StringName, on_close := Callable()) -> void:
 	shop_id = id
 	_on_close = on_close
 	_root.visible = true
+	NotificationManager.set_suppressed(true)
 	_refresh()
 	EventBus.shop_opened.emit(shop_id)
 
@@ -42,6 +53,7 @@ func close() -> void:
 		return
 	is_open = false
 	_root.visible = false
+	NotificationManager.set_suppressed(false)
 	EventBus.shop_closed.emit(shop_id)
 	if _on_close.is_valid():
 		_on_close.call()
@@ -56,7 +68,10 @@ func _unhandled_input(event: InputEvent) -> void:
 func _process(_delta: float) -> void:
 	if not is_open or _controls_label == null:
 		return
-	_controls_label.text = "D-PAD  SELECIONAR   A  COMPRAR   B  FECHAR" if InputBootstrap.last_input_was_gamepad else "W/S  SELECIONAR   ENTER  COMPRAR   ESC  FECHAR"
+	_controls_label.text = "%s COMPRAR     %s FECHAR" % [
+		InputGlyphResolver.label_for_action(&"ui_accept"),
+		InputGlyphResolver.label_for_action(&"pause"),
+	]
 
 
 func _load_catalog() -> void:
@@ -69,7 +84,12 @@ func _load_catalog() -> void:
 		_catalog = parsed
 
 
-func _refresh() -> void:
+func _refresh(preferred_item_id: StringName = &"") -> void:
+	if preferred_item_id.is_empty():
+		for existing in _items.get_children():
+			if existing is Button and existing.has_focus():
+				preferred_item_id = StringName(existing.get_meta("item_id", ""))
+				break
 	for child in _items.get_children():
 		_items.remove_child(child)
 		child.queue_free()
@@ -78,18 +98,37 @@ func _refresh() -> void:
 	for item in definition.get("items", []):
 		var button := Button.new()
 		var sold_out := bool(item.get("unique", false)) and bool(GameState.purchased_items.get(String(item.id), false))
-		button.text = "%s     %s" % [String(item.name), "ESGOTADO" if sold_out else "◆ %d" % int(item.price)]
+		var item_id := StringName(item.get("id", ""))
+		button.text = String(item.name)
+		button.set_meta("item_id", item_id)
+		button.icon = _shop_icon(item_id)
+		button.expand_icon = true
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.disabled = sold_out
-		button.custom_minimum_size = Vector2(286, 19)
+		button.custom_minimum_size = Vector2(190, 19)
 		button.add_theme_font_override("font", PIXEL_FONT)
 		button.add_theme_font_size_override("font_size", 9)
 		_apply_item_button_theme(button)
 		button.focus_entered.connect(_describe.bind(item))
 		button.mouse_entered.connect(_describe.bind(item))
 		button.pressed.connect(_buy.bind(item))
+		var price_label := Label.new()
+		price_label.position = Vector2(136, 3)
+		price_label.size = Vector2(49, 13)
+		price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		price_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		price_label.add_theme_font_override("font", PIXEL_FONT)
+		price_label.add_theme_font_size_override("font_size", 7)
+		price_label.text = "ESGOTADO" if sold_out else "◆ %d" % int(item.price)
+		button.add_child(price_label)
 		_items.add_child(button)
 	if _items.get_child_count() > 0:
-		(_items.get_child(0) as Button).grab_focus.call_deferred()
+		var focus_target := _items.get_child(0) as Button
+		for candidate in _items.get_children():
+			if StringName(candidate.get_meta("item_id", "")) == preferred_item_id and not candidate.disabled:
+				focus_target = candidate as Button
+				break
+		focus_target.grab_focus.call_deferred()
 
 
 func _describe(item: Dictionary) -> void:
@@ -113,7 +152,7 @@ func _buy(item: Dictionary) -> void:
 	_apply_immediate_effect(item_id)
 	_feedback.text = "COMPRA REALIZADA."
 	EventBus.request_autosave.emit(&"shop_purchase")
-	_refresh.call_deferred()
+	_refresh.call_deferred(item_id)
 
 
 func _apply_immediate_effect(item_id: StringName) -> void:
@@ -132,6 +171,7 @@ func _apply_immediate_effect(item_id: StringName) -> void:
 func _build_ui() -> void:
 	_root = Control.new()
 	_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_root.theme = UI_THEME
 	add_child(_root)
 	var overlay := ColorRect.new()
 	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -139,8 +179,8 @@ func _build_ui() -> void:
 	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
 	_root.add_child(overlay)
 	var panel := Panel.new()
-	panel.position = Vector2(148, 70)
-	panel.size = Vector2(344, 220)
+	panel.position = Vector2(90, 70)
+	panel.size = Vector2(460, 220)
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(0.035, 0.026, 0.02, 0.96)
 	style.border_color = Color("816044")
@@ -156,26 +196,29 @@ func _build_ui() -> void:
 	ornament_texture.atlas = UI_ATLAS
 	ornament_texture.region = SHOP_ORNAMENT
 	ornament.texture = ornament_texture
-	ornament.position = Vector2(172, 20)
+	ornament.position = Vector2(230, 20)
 	ornament.scale = Vector2(160.0 / SHOP_ORNAMENT.size.x, 42.0 / SHOP_ORNAMENT.size.y)
 	ornament.modulate.a = 0.42
 	ornament.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	panel.add_child(ornament)
-	var title := _label(panel, Vector2(20, 12), Vector2(304, 20), 13, Color("dfbd82"))
+	var title := _label(panel, Vector2(20, 12), Vector2(420, 20), 13, Color("dfbd82"))
 	title.z_index = 2
 	title.text = "MERCADOR DA PRAÇA"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_currency_label = _label(panel, Vector2(24, 36), Vector2(296, 16), 9, Color("f3e8d1"))
+	_currency_label = _label(panel, Vector2(24, 36), Vector2(412, 16), 9, Color("f3e8d1"))
+	_currency_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_items = VBoxContainer.new()
-	_items.position = Vector2(29, 56)
-	_items.size = Vector2(286, 106)
+	_items.position = Vector2(24, 56)
+	_items.size = Vector2(190, 108)
 	_items.add_theme_constant_override("separation", 2)
 	panel.add_child(_items)
-	_description = _label(panel, Vector2(24, 166), Vector2(296, 24), 8, Color("d6c6ab"))
+	var description_title := _label(panel, Vector2(235, 56), Vector2(201, 13), 8, Color("dfbd82"))
+	description_title.text = "DESCRIÇÃO"
+	_description = _label(panel, Vector2(235, 73), Vector2(201, 82), 9, Color("d6c6ab"))
 	_description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_feedback = _label(panel, Vector2(24, 191), Vector2(296, 12), 8, Color("dca76d"))
+	_feedback = _label(panel, Vector2(235, 160), Vector2(201, 20), 8, Color("dca76d"))
 	_feedback.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_controls_label = _label(panel, Vector2(20, 205), Vector2(304, 10), 6, Color("a99272"))
+	_controls_label = _label(panel, Vector2(20, 201), Vector2(420, 12), 7, Color("a99272"))
 	_controls_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 
@@ -201,6 +244,17 @@ func _apply_item_button_theme(button: Button) -> void:
 	button.add_theme_stylebox_override("focus", _button_style(Color("3d2b1df2"), Color("e2aa58"), 2))
 	button.add_theme_stylebox_override("pressed", _button_style(Color("d3a15a"), Color("f0ce8e"), 1))
 	button.add_theme_stylebox_override("disabled", _button_style(Color("17120fb8"), Color("493b2e"), 1))
+
+
+func _shop_icon(item_id: StringName) -> AtlasTexture:
+	var index := int(SHOP_ICON_INDEX.get(item_id, 0))
+	var texture := AtlasTexture.new()
+	texture.atlas = SHOP_ICON_ATLAS
+	texture.region = Rect2(
+		Vector2(index % 3, floori(float(index) / 3.0)) * SHOP_ICON_CELL,
+		SHOP_ICON_CELL
+	)
+	return texture
 
 
 func _button_style(background: Color, border: Color, width: int) -> StyleBoxFlat:

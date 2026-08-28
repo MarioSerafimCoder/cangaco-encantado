@@ -56,10 +56,8 @@ func _validate_continuous_run(nilo: NiloPlayer) -> void:
 			var expected := -(1.0 - contact_amount) * lerpf(0.08, 0.46, visual.smoothed_speed_ratio)
 			if absf(visual.bob_offset - expected) > 0.035:
 				bob_matches_phase = false
-	Input.action_press("sprint")
-	await _wait_physics_frames(10)
-	var sprint_reached_target := absf(nilo.velocity.x) > nilo.config.move_speed * 1.20
-	Input.action_release("sprint")
+	var automatic_run_speed := absf(nilo.velocity.x)
+	var jump_did_not_accelerate := automatic_run_speed <= nilo.config.move_speed * 1.05 and not InputMap.has_action("sprint")
 	Input.action_release("move_right")
 	if seen_walk_frames.size() != 4:
 		failures.append("Caminhada deveria percorrer 4 frames antes da corrida; observados: %s" % [seen_walk_frames.keys()])
@@ -73,8 +71,10 @@ func _validate_continuous_run(nilo: NiloPlayer) -> void:
 		failures.append("Bob visual deixou de derivar do mesmo run_phase da animação.")
 	if visual.foot_contact_count - start_contacts < 2:
 		failures.append("Corrida não registrou contatos de pé suficientes para sincronizar poeira.")
-	if not sprint_reached_target:
-		failures.append("Segurar Espaço durante a corrida não ativou a velocidade acelerada.")
+	if automatic_run_speed < nilo.config.move_speed * 0.9:
+		failures.append("A corrida automática não alcançou a velocidade esperada.")
+	if not jump_did_not_accelerate:
+		failures.append("Espaço ainda acelerou horizontalmente durante a corrida.")
 
 
 func _validate_idle_breath_and_blink(nilo: NiloPlayer) -> void:
@@ -283,15 +283,14 @@ func _validate_temporary_hud() -> void:
 	var hud := $Main/HUD as GameHUD
 	# A moldura atual ganhou três pixels para separar o ornamento do nome da sala,
 	# sem voltar ao painel alto da versão 0.2.1.
-	if hud.world_panel.size.y > 17.0 or hud.room_panel.size.y > 22.0:
+	if hud.currency_panel.custom_minimum_size.y > 17.0 or hud.room_panel.size.y > 22.0:
 		failures.append("HUD contextual excedeu a altura compacta definida para a interface atual.")
-	hud.world_fade = 0.0
 	hud.room_fade = 0.0
 	hud.help_fade = 0.0
 
 
 func _release_test_inputs() -> void:
-	for action in ["move_left", "move_right", "move_up", "move_down", "jump", "sprint", "crouch", "melee", "shoot_pistol", "shoot_rifle", "special_attack"]:
+	for action in ["move_left", "move_right", "move_up", "move_down", "jump", "crouch", "melee", "shoot_pistol", "shoot_rifle", "special_attack"]:
 		Input.action_release(action)
 
 

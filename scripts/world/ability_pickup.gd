@@ -70,7 +70,7 @@ func _collect() -> void:
 func _on_body_entered(body: Node) -> void:
 	if body is NiloPlayer:
 		_player_inside = body
-		_prompt.text = "[%s] %s" % [InputBootstrap.interact_prompt(), display_name]
+		_prompt.text = InputGlyphResolver.prompt(&"interact", "ADQUIRIR %s" % display_name)
 		_prompt.visible = true
 
 

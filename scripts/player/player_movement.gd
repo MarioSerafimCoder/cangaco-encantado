@@ -38,9 +38,7 @@ func physics_step(body: CharacterBody2D, delta: float, movement_locked: bool) ->
 	if movement_locked:
 		input_axis = 0.0
 	_update_run_intent(input_axis, delta, movement_locked or crouching)
-	var sprinting := running_active and Input.is_action_pressed("sprint")
-	var run_scale := config.sprint_speed_multiplier if sprinting else 1.0
-	var speed_scale := config.crouch_speed_multiplier if crouching else (run_scale if running_active else config.walk_speed_multiplier)
+	var speed_scale := config.crouch_speed_multiplier if crouching else (1.0 if running_active else config.walk_speed_multiplier)
 	var target_speed := input_axis * config.move_speed * speed_scale
 	var acceleration := config.ground_acceleration if grounded_before_move else config.ground_acceleration * config.air_control
 	if is_zero_approx(input_axis):
@@ -100,7 +98,6 @@ func debug_snapshot() -> Dictionary:
 		"crouching": crouching,
 		"movement_hold_time": movement_hold_time,
 		"running": running_active,
-		"sprinting": running_active and Input.is_action_pressed("sprint"),
 		"dash_remaining": dash_remaining,
 		"dash_cooldown": dash_cooldown_remaining,
 	}

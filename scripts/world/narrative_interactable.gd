@@ -5,6 +5,7 @@ const PIXEL_FONT := preload("res://assets/ui/fonts/Tiny5-Regular.ttf")
 
 @export var dialogue_id: StringName
 @export var persistent_flag: StringName
+@export var interaction_verb := "EXAMINAR"
 
 var player_inside: NiloPlayer
 var prompt: Label
@@ -49,7 +50,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if player_inside == null:
 		return
-	prompt.text = "[%s]" % InputBootstrap.interact_prompt()
+	prompt.text = InputGlyphResolver.prompt(&"interact", interaction_verb)
 	if Input.is_action_just_pressed("interact"):
 		var director := get_tree().get_first_node_in_group("dialogue_director") as DialogueDirector
 		if director != null:

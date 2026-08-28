@@ -13,7 +13,6 @@ Abra o projeto no Godot e pressione **F6** para executar a cena atual ou **F5** 
 | Direção para cima | `W` ou `↑` | Combina com mira ou facão. |
 | Direção para baixo | `S` ou `↓` | Fast fall no ar e ataque descendente. |
 | Pular | `Espaço` | Segure para um salto mais alto; solte cedo para salto curto. |
-| Acelerar a corrida | Segure `Espaço` enquanto corre | Aumenta a velocidade em 35%; ao iniciar no chão, Nilo também salta. |
 | Agachar | `Ctrl` | Reduz a altura e a velocidade de Nilo enquanto está no chão. |
 | Salto de parede | `Espaço` junto à parede | Disponível depois de obter o Passo da Pedra na Igreja Velha. |
 | Investida | `C` | Disponível depois de obter o Passo da Poeira nos Telhados; atravessa vãos e selos próprios. |
@@ -40,9 +39,11 @@ O rifle causa mais dano de postura que a pistola, enquanto o ataque especial é 
 |---|---|---|
 | Usar Cabaça de Água | `Q` | Inicia cura de 2 HP; receber dano durante 1,1 s interrompe o uso. |
 | Interagir | `E` | Conversa, examina, compra, ativa portas, atalhos e outros objetos próximos. |
-| Abrir/fechar Diário de Nilo | `M` | Reúne mapa, itens, habilidades e amuletos. Use `A`/`D` para trocar de aba. |
+| Abrir/fechar Diário de Nilo | `M` | Reúne mapa, itens, habilidades e amuletos. Use `Q`/`E` para trocar de aba e setas para selecionar salas. |
 | Pausar/continuar | `Esc` | Abre o menu de pausa; pressione novamente para continuar ou voltar da tela atual. |
 | Mostrar/ocultar debug | `F3` | Exibe estado, posição, velocidade e formas técnicas de hitbox. Começa desligado. |
 | Liberar a Vila (debug) | `F12` | Muda o estado para `LIBERATED` e salva. |
 
 Checkpoints restauram vida, munição e as duas cargas da Cabaça. Ao morrer, Nilo retorna ao último checkpoint ativado.
+
+No gamepad, use o analógico ou D-pad para navegar, `A` para confirmar, `B` para voltar, `LB`/`RB` para trocar abas, `View/Back` para o Diário e `Start` para pausar. Os prompts mudam automaticamente conforme o último dispositivo utilizado.

@@ -2,27 +2,32 @@ class_name GameHUD
 extends CanvasLayer
 
 const ROOM_PANEL_TEXTURE := preload("res://assets/ui/hud/room_banner.tres")
-const WORLD_PANEL_TEXTURE := preload("res://assets/ui/hud/world_plaque.tres")
 const HELP_PANEL_TEXTURE := preload("res://assets/ui/hud/help_banner.tres")
 const PIXEL_FONT := preload("res://assets/ui/fonts/Tiny5-Regular.ttf")
+const INPUT_GLYPH_SCENE := preload("res://scenes/ui/components/input_glyph.tscn")
+const CURRENCY_SCENE := preload("res://scenes/ui/components/currency_counter.tscn")
 
 var player_status: PlayerStatusHUD
 var room_panel: Panel
 var room_label: Label
-var world_panel: Panel
-var world_label: Label
+var currency_panel: PanelContainer
+var currency_label: Label
 var debug_panel: Panel
 var debug_label: Label
 var boss_status: BossStatusHUD
 var help_panel: Panel
 var help_label: Label
+var help_prompt_row: HBoxContainer
 var player: NiloPlayer
 var room_fade := 0.0
-var world_fade := 0.0
-var help_fade := 6.0
+var help_fade := 0.0
 var debug_visible := false
 var opening_guide_active := false
 var opening_guide_stage := 0
+var _tutorial_id: StringName
+var _tutorial_action: StringName
+var _tutorial_verb := ""
+var _last_health := -1
 
 
 func _ready() -> void:
@@ -34,12 +39,10 @@ func _ready() -> void:
 	EventBus.player_ammo_changed.connect(_on_ammo_changed)
 	EventBus.player_heal_charges_changed.connect(_on_heals_changed)
 	EventBus.room_entered.connect(_on_room_entered)
-	EventBus.world_state_changed.connect(_on_world_changed)
 	_on_health_changed(GameState.player_health, 5)
 	_on_ammo_changed(&"pistol", 8, 8)
 	_on_ammo_changed(&"rifle", 4, 4)
 	_on_heals_changed(GameState.heal_charges, 2)
-	_on_world_changed(&"vila_umbuzeiro", WorldState.get_region_state(&"vila_umbuzeiro"))
 	EventBus.currency_changed.connect(_on_currency_changed)
 
 
@@ -64,13 +67,11 @@ func _process(delta: float) -> void:
 			]
 		_update_boss_bar()
 	room_fade = maxf(0.0, room_fade - delta)
-	world_fade = maxf(0.0, world_fade - delta)
 	if not opening_guide_active:
 		help_fade = maxf(0.0, help_fade - delta)
 	elif not get_tree().paused:
-		_update_opening_guide()
+		_update_context_tutorial()
 	_apply_temporary_visibility(room_panel, room_fade)
-	_apply_temporary_visibility(world_panel, world_fade)
 	_apply_temporary_visibility(help_panel, help_fade)
 
 
@@ -83,9 +84,12 @@ func _build_hud() -> void:
 	player_status = PlayerStatusHUD.new()
 	add_child(player_status)
 
-	world_panel = _make_panel(Rect2(542.0, 4.0, 94.0, 16.0), Color("241d1acc"), Color("b88042"), WORLD_PANEL_TEXTURE)
-	world_label = _make_label(world_panel, Vector2(3.0, 3.0), Vector2(88.0, 10.0), 6, Color("f2d49a"))
-	world_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	currency_panel = CURRENCY_SCENE.instantiate()
+	currency_panel.position = Vector2(574.0, 4.0)
+	currency_panel.size = Vector2(62.0, 16.0)
+	add_child(currency_panel)
+	currency_label = currency_panel.get_node("Value") as Label
+	currency_label.text = "◆ %03d" % GameState.currency
 
 	debug_panel = _make_panel(Rect2(524.0, 23.0, 112.0, 31.0), Color("101417df"), Color("5a8290"))
 	debug_label = _make_label(debug_panel, Vector2(5.0, 3.0), Vector2(103.0, 25.0), 6, Color("bce8ee"))
@@ -107,9 +111,17 @@ func _build_hud() -> void:
 
 	help_panel = _make_panel(Rect2(192.0, 332.0, 256.0, 23.0), Color("171311c9"), Color("6e5337"), HELP_PANEL_TEXTURE)
 	help_label = _make_label(help_panel, Vector2(5.0, 2.0), Vector2(246.0, 19.0), 6, Color("d8c39e"))
-	help_label.text = "A/D MOVER | ESPAÇO PULAR/ACELERAR | E INTERAGIR\nJ FACÃO | K PISTOLA | L RIFLE | I ESPECIAL | M MENU"
+	help_label.text = "ONBOARDING CONTEXTUAL\nUM COMANDO POR VEZ"
+	help_label.visible = false
 	help_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	help_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	help_prompt_row = HBoxContainer.new()
+	help_prompt_row.position = Vector2(28, 2)
+	help_prompt_row.size = Vector2(200, 19)
+	help_prompt_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	help_prompt_row.add_theme_constant_override("separation", 5)
+	help_panel.add_child(help_prompt_row)
+	help_panel.visible = false
 
 
 func _update_boss_bar() -> void:
@@ -166,6 +178,9 @@ func _make_label(parent: Control, position_value: Vector2, size_value: Vector2, 
 
 func _on_health_changed(current: int, maximum: int) -> void:
 	player_status.set_health(current, maximum)
+	if _last_health >= 0 and current < _last_health and not GameState.tutorial_learned(&"heal"):
+		_begin_context_tutorial(&"heal", &"heal", "USAR CABAÇA")
+	_last_health = current
 
 
 func _on_ammo_changed(weapon_id: StringName, current: int, maximum: int) -> void:
@@ -184,34 +199,71 @@ func _on_room_entered(room_id: StringName, display_name: String) -> void:
 			GameState.set_dialogue_flag(&"opening_house_exited", true)
 		opening_guide_active = false
 		help_fade = 0.0
-
-
-func _on_world_changed(region_id: StringName, state: StringName) -> void:
-	if region_id != &"vila_umbuzeiro":
-		return
-	var liberated := state == WorldState.LIBERATED
-	world_label.text = "VILA LIBERTADA" if liberated else "VILA OCUPADA"
-	world_label.add_theme_color_override("font_color", Color("9ee39b") if liberated else Color("f2b36f"))
-	world_fade = 3.2 if liberated else 2.2
+		_queue_room_tutorial(room_id)
 
 
 func _on_currency_changed(current: int) -> void:
-	world_label.text = "◆ %d" % current
-	world_label.add_theme_color_override("font_color", Color("e4c181"))
-	world_fade = 1.8
+	currency_label.text = "◆ %03d" % current
+	var tween := create_tween()
+	tween.tween_property(currency_panel, "modulate", Color("ffe099"), 0.08)
+	tween.tween_property(currency_panel, "modulate", Color.WHITE, 0.18)
 
 
 func begin_opening_guide() -> void:
 	if GameState.current_room_id != &"casa_nilo" or bool(GameState.dialogue_flags.get("opening_house_exited", false)):
 		return
+	if not GameState.tutorial_learned(&"move"):
+		opening_guide_stage = 0
+		_begin_context_tutorial(&"move", &"move_right", "MOVER")
+
+
+func _update_context_tutorial() -> void:
+	if _tutorial_id == &"move":
+		if absf(Input.get_axis("move_left", "move_right")) > 0.2:
+			_complete_context_tutorial()
+	elif not _tutorial_action.is_empty() and Input.is_action_just_pressed(_tutorial_action):
+		_complete_context_tutorial()
+
+
+func _begin_context_tutorial(tutorial_id: StringName, action: StringName, verb: String) -> void:
+	if GameState.tutorial_learned(tutorial_id) or not _tutorial_id.is_empty():
+		return
+	_tutorial_id = tutorial_id
+	_tutorial_action = action
+	_tutorial_verb = verb
 	opening_guide_active = true
-	opening_guide_stage = 0
 	help_fade = 999.0
-	help_label.text = "A/D MOVER   E INTERAGIR   ENCONTRE A SAÍDA"
+	for child in help_prompt_row.get_children():
+		child.queue_free()
+	if tutorial_id == &"move" and not InputBootstrap.last_input_was_gamepad:
+		help_prompt_row.add_child((INPUT_GLYPH_SCENE.instantiate() as InputGlyph).setup(&"move_left", ""))
+		help_prompt_row.add_child((INPUT_GLYPH_SCENE.instantiate() as InputGlyph).setup(&"move_right", verb))
+	else:
+		help_prompt_row.add_child((INPUT_GLYPH_SCENE.instantiate() as InputGlyph).setup(action, verb))
 	help_panel.visible = true
 
 
-func _update_opening_guide() -> void:
-	if opening_guide_stage == 0 and absf(Input.get_axis("move_left", "move_right")) > 0.2:
+func _complete_context_tutorial() -> void:
+	GameState.mark_tutorial_learned(_tutorial_id)
+	if _tutorial_id == &"move":
 		opening_guide_stage = 1
-		help_label.text = "SIGA PARA A DIREITA   E ABRIR A PORTA"
+	_tutorial_id = &""
+	_tutorial_action = &""
+	_tutorial_verb = ""
+	opening_guide_active = false
+	help_fade = 0.0
+	help_panel.visible = false
+
+
+func _queue_room_tutorial(room_id: StringName) -> void:
+	match room_id:
+		&"rua_cinzas":
+			_begin_context_tutorial(&"jump", &"jump", "PULAR")
+		&"barracos":
+			_begin_context_tutorial(&"melee", &"melee", "ATACAR COM FACÃO")
+		&"praca_umbu":
+			_begin_context_tutorial(&"pistol", &"shoot_pistol", "ATIRAR COM PISTOLA")
+		&"igreja_velha":
+			_begin_context_tutorial(&"rifle", &"shoot_rifle", "ATIRAR COM RIFLE")
+		&"posto":
+			_begin_context_tutorial(&"special", &"special_attack", "ATAQUE ESPECIAL")

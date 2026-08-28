@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/input_glyph.gd" id="1_script"]
+[ext_resource type="Theme" path="res://assets/ui/themes/cangaco_ui_theme.tres" id="2_theme"]
+
+[node name="InputGlyph" type="HBoxContainer"]
+theme = ExtResource("2_theme")
+theme_override_constants/separation = 2
+script = ExtResource("1_script")
+
+[node name="Icon" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(22, 18)
+layout_mode = 2
+texture_filter = 1
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="Verb" type="Label" parent="."]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "INTERAGIR"
+vertical_alignment = 1

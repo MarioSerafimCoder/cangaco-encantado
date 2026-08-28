@@ -10,7 +10,7 @@ func _ready() -> void:
 	SaveManager.autosave_enabled = false
 	GameState.reset_new_game()
 	WorldState.reset_new_game()
-	EventBus.world_state_changed.emit(&"vila_umbuzeiro", WorldState.OCCUPIED)
+	EventBus.currency_changed.emit(GameState.currency)
 	var main := $Main
 	var world := main.get_node("VilaDoUmbuzeiro") as VilaGraybox
 	var nilo := main.get_node("Nilo") as NiloPlayer
@@ -24,8 +24,10 @@ func _ready() -> void:
 	_freeze_enemies()
 	await _capture_front_end(main)
 	await _capture_room(world, nilo, camera, hud, &"casa_nilo", "01_casa_de_nilo.png")
+	await _capture_context_tutorials(world, nilo, camera, hud)
 	await _capture_home_exit(world, nilo, camera, hud)
 	await _capture_street_clearance(world, nilo, camera, hud)
+	await _capture_hud_states(world, nilo, camera, hud)
 	await _capture_room(world, nilo, camera, hud, &"barracos", "02_vila_baixa.png")
 	await _capture_room(world, nilo, camera, hud, &"praca_umbu", "03_praca_do_umbu.png")
 	await _capture_shop(main, world, nilo, camera, hud)
@@ -36,6 +38,7 @@ func _ready() -> void:
 	await _capture_room(world, nilo, camera, hud, &"beco", "09_grutas.png")
 	await _capture_room(world, nilo, camera, hud, &"arena", "10_caverna_santuario.png")
 	await _capture_character_menu(main)
+	await _capture_notification()
 	SaveManager.autosave_enabled = true
 	if _capture_failed:
 		get_tree().quit(1)
@@ -75,7 +78,6 @@ func _capture_room(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: 
 	camera.position = Vector2.ZERO
 	camera.position_smoothing_enabled = false
 	hud.room_fade = 0.0
-	hud.world_fade = 0.0
 	hud.help_fade = 0.0
 	await _wait_frames(18)
 	await _capture(OUTPUT_DIRECTORY.path_join(file_name))
@@ -93,7 +95,6 @@ func _capture_home_exit(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, 
 	camera.position_smoothing_enabled = false
 	camera.reset_smoothing()
 	hud.room_fade = 0.0
-	hud.world_fade = 0.0
 	hud.help_fade = 0.0
 	await _wait_frames(16)
 	await _capture(OUTPUT_DIRECTORY.path_join("01b_porta_de_saida_da_casa.png"))
@@ -111,7 +112,6 @@ func _capture_street_clearance(world: VilaGraybox, nilo: NiloPlayer, camera: Cam
 	camera.position_smoothing_enabled = false
 	camera.reset_smoothing()
 	hud.room_fade = 0.0
-	hud.world_fade = 0.0
 	hud.help_fade = 0.0
 	await _wait_frames(16)
 	await _capture(OUTPUT_DIRECTORY.path_join("01c_rua_das_cinzas_sem_oclusao.png"))
@@ -143,6 +143,10 @@ func _capture_dialogue(main: Node, world: VilaGraybox, nilo: NiloPlayer, camera:
 		text_label.visible_characters = text_label.text.length()
 		await _wait_frames(2)
 		await _capture(OUTPUT_DIRECTORY.path_join("05_dialogo_na_praca.png"))
+		director.call("_advance")
+		await _wait_frames(3)
+		text_label.visible_characters = text_label.text.length()
+		await _capture(OUTPUT_DIRECTORY.path_join("05b_dialogo_com_escolhas.png"))
 		director.call("_finish")
 
 
@@ -159,7 +163,6 @@ func _position_in_square(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D,
 	camera.position_smoothing_enabled = false
 	camera.reset_smoothing()
 	hud.room_fade = 0.0
-	hud.world_fade = 0.0
 	hud.help_fade = 0.0
 	await _wait_frames(16)
 
@@ -171,12 +174,68 @@ func _capture_character_menu(main: Node) -> void:
 	menu.open_map()
 	# A revisão visual precisa continuar processando depois que a interface pausa o jogo.
 	get_tree().paused = false
-	menu.set("_tab", WorldMapUI.Tab.ABILITIES)
 	var canvas := menu.get("_canvas") as Control
+	menu.set("_tab", WorldMapUI.Tab.MAP)
 	canvas.queue_redraw()
 	await _wait_frames(4)
-	await _capture(OUTPUT_DIRECTORY.path_join("11_menu_habilidades_do_personagem.png"))
+	await _capture(OUTPUT_DIRECTORY.path_join("11a_diario_mapa.png"))
+	menu.set("_tab", WorldMapUI.Tab.ITEMS)
+	canvas.queue_redraw()
+	await _wait_frames(4)
+	await _capture(OUTPUT_DIRECTORY.path_join("11b_diario_itens.png"))
+	menu.set("_tab", WorldMapUI.Tab.ABILITIES)
+	canvas.queue_redraw()
+	await _wait_frames(4)
+	await _capture(OUTPUT_DIRECTORY.path_join("11c_diario_habilidades.png"))
+	menu.set("_tab", WorldMapUI.Tab.AMULETS)
+	canvas.queue_redraw()
+	await _wait_frames(4)
+	await _capture(OUTPUT_DIRECTORY.path_join("11d_diario_amuletos.png"))
 	menu.call("_close")
+
+
+func _capture_context_tutorials(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: GameHUD) -> void:
+	GameState.tutorial_flags.clear()
+	GameState.dialogue_flags["opening_house_exited"] = false
+	GameState.current_room_id = &"casa_nilo"
+	hud.begin_opening_guide()
+	await _wait_frames(3)
+	await _capture(OUTPUT_DIRECTORY.path_join("01d_tutorial_movimento.png"))
+	Input.action_press("move_right")
+	hud.call("_update_context_tutorial")
+	Input.action_release("move_right")
+	var exit_door: TransitionDoor
+	for candidate in world.find_children("*", "TransitionDoor", true, false):
+		if (candidate as TransitionDoor).destination_room == &"rua_cinzas":
+			exit_door = candidate
+			break
+	if exit_door != null:
+		nilo.global_position = exit_door.global_position
+		exit_door.call("_on_body_entered", nilo)
+		camera.reset_smoothing()
+		await _wait_frames(3)
+		await _capture(OUTPUT_DIRECTORY.path_join("01e_tutorial_interacao.png"))
+		exit_door.call("_on_body_exited", nilo)
+
+
+func _capture_hud_states(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: GameHUD) -> void:
+	await _capture_room(world, nilo, camera, hud, &"rua_cinzas", "02a_hud_normal.png")
+	hud.player_status.set_health(3, 5)
+	await _wait_frames(2)
+	await _capture(OUTPUT_DIRECTORY.path_join("02b_hud_apos_dano.png"))
+	hud.player_status.bind_player(nilo)
+	nilo.combat.reloading_weapon = &"pistol"
+	nilo.combat.reload_timer = nilo.combat.pistol_data.reload_time * 0.5
+	await _wait_frames(2)
+	await _capture(OUTPUT_DIRECTORY.path_join("02c_hud_durante_recarga.png"))
+	nilo.combat.reload_timer = 0.0
+	nilo.combat.reloading_weapon = &""
+
+
+func _capture_notification() -> void:
+	NotificationManager.enqueue("NOVA HABILIDADE\nPASSO DA PEDRA", 100, &"ability", 4.0)
+	await _wait_frames(4)
+	await _capture(OUTPUT_DIRECTORY.path_join("12_notificacao_nova_habilidade.png"))
 
 
 func _capture(path: String) -> void:

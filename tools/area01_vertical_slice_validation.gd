@@ -78,8 +78,13 @@ func _validate_home_opening(main: Node, world: VilaGraybox, player: NiloPlayer) 
 	# O runner restaura/resetta o estado depois que os filhos entram na árvore;
 	# reinicia aqui o mesmo guia que o fluxo real de Novo jogo aciona no boot.
 	hud.begin_opening_guide()
-	if not hud.opening_guide_active or not hud.help_label.text.contains("ENCONTRE A SAÍDA"):
-		failures.append("A abertura não orientou o jogador a encontrar a saída da casa.")
+	if not hud.opening_guide_active or hud.get("_tutorial_id") != &"move":
+		failures.append("A abertura não iniciou o tutorial contextual de movimento.")
+	Input.action_press("move_right")
+	hud.call("_update_context_tutorial")
+	Input.action_release("move_right")
+	if not GameState.tutorial_learned(&"move") or hud.opening_guide_active:
+		failures.append("O tutorial de movimento não avançou após a ação real.")
 	var exit_door: TransitionDoor
 	for candidate in world.find_children("*", "TransitionDoor", true, false):
 		if (candidate as TransitionDoor).destination_room == &"rua_cinzas":

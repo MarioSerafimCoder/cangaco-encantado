@@ -315,9 +315,9 @@ func _apply_visual_transform() -> void:
 	_apply_transition_transform()
 	_apply_recoil()
 	if _hurt_flash_remaining > 0.0:
-		self_modulate = Color(1.0, 0.52, 0.42, 1.0)
+		self_modulate = Color(1.0, 0.72, 0.62, 1.0) if SettingsManager.reduce_flashes else Color(1.0, 0.52, 0.42, 1.0)
 	elif _player.invulnerability_remaining > 0.0:
-		self_modulate.a = 0.72 if int(_player.invulnerability_remaining * 16.0) % 2 == 0 else 1.0
+		self_modulate.a = 0.82 if SettingsManager.reduce_flashes else (0.72 if int(_player.invulnerability_remaining * 16.0) % 2 == 0 else 1.0)
 
 
 func _apply_air_transform() -> void:

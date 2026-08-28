@@ -1,12 +1,13 @@
 extends Node
 
+signal input_device_changed(gamepad: bool)
+
 const KEYBOARD_BINDINGS := {
 	"move_left": [KEY_A, KEY_LEFT],
 	"move_right": [KEY_D, KEY_RIGHT],
 	"move_up": [KEY_W, KEY_UP],
 	"move_down": [KEY_S, KEY_DOWN],
 	"jump": [KEY_SPACE],
-	"sprint": [KEY_SPACE],
 	"crouch": [KEY_CTRL],
 	"melee": [KEY_J],
 	"shoot_pistol": [KEY_K],
@@ -24,7 +25,6 @@ const KEYBOARD_BINDINGS := {
 
 const JOYPAD_BUTTON_BINDINGS := {
 	"jump": JOY_BUTTON_A,
-	"sprint": JOY_BUTTON_A,
 	"crouch": JOY_BUTTON_LEFT_STICK,
 	"melee": JOY_BUTTON_X,
 	"shoot_rifle": JOY_BUTTON_RIGHT_SHOULDER,
@@ -53,17 +53,30 @@ func _enter_tree() -> void:
 	_add_joy_axis_if_missing("move_down", JOY_AXIS_LEFT_Y, 1.0)
 	_add_joy_axis_if_missing("aim", JOY_AXIS_TRIGGER_LEFT, 1.0)
 	_add_joy_axis_if_missing("shoot_pistol", JOY_AXIS_TRIGGER_RIGHT, 1.0)
+	_add_joy_button_if_missing("move_left", JOY_BUTTON_DPAD_LEFT)
+	_add_joy_button_if_missing("move_right", JOY_BUTTON_DPAD_RIGHT)
+	_add_joy_button_if_missing("move_up", JOY_BUTTON_DPAD_UP)
+	_add_joy_button_if_missing("move_down", JOY_BUTTON_DPAD_DOWN)
+	_ensure_action("ui_accept")
+	_ensure_action("ui_cancel")
+	_add_key_if_missing("ui_accept", KEY_ENTER)
+	_add_key_if_missing("ui_cancel", KEY_ESCAPE)
+	_add_joy_button_if_missing("ui_accept", JOY_BUTTON_A)
+	_add_joy_button_if_missing("ui_cancel", JOY_BUTTON_B)
 
 
 func _input(event: InputEvent) -> void:
+	var previous := last_input_was_gamepad
 	if event is InputEventJoypadButton or event is InputEventJoypadMotion:
 		last_input_was_gamepad = true
 	elif event is InputEventKey or event is InputEventMouseButton:
 		last_input_was_gamepad = false
+	if previous != last_input_was_gamepad:
+		input_device_changed.emit(last_input_was_gamepad)
 
 
 func interact_prompt() -> String:
-	return "Y" if last_input_was_gamepad else "E"
+	return InputGlyphResolver.label_for_action(&"interact")
 
 
 func _ensure_action(action: StringName) -> void:

@@ -18,7 +18,6 @@ func _ready() -> void:
 	camera.reset_smoothing()
 	await _wait_frames(10)
 	hud.room_fade = 0.0
-	hud.world_fade = 0.0
 	hud.help_fade = 0.0
 	await _capture(output_directory.path_join("heroi_parado_respirando.png"))
 	nilo.visual.set("_life_elapsed", 4.16)
@@ -30,7 +29,6 @@ func _ready() -> void:
 	camera.reset_smoothing()
 	await _wait_frames(20)
 	hud.room_fade = 0.0
-	hud.world_fade = 0.0
 	hud.help_fade = 0.0
 	Input.action_press("move_right")
 	await _wait_frames(18)
@@ -176,7 +174,6 @@ func _capture_room(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: 
 	camera.reset_smoothing()
 	await _wait_frames(2)
 	hud.room_fade = 0.0
-	hud.world_fade = 0.0
 	hud.help_fade = 0.0
 	await _wait_frames(2)
 	await _capture(path)

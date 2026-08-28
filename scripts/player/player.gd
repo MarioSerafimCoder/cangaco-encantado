@@ -219,7 +219,7 @@ func add_camera_shake(strength: float, duration: float) -> void:
 		_camera_shake_strength = 0.0
 		_camera_shake_offset = Vector2.ZERO
 		return
-	_camera_shake_strength = maxf(_camera_shake_strength, strength)
+	_camera_shake_strength = maxf(_camera_shake_strength, strength * SettingsManager.screen_shake_scale)
 	_camera_shake_remaining = maxf(_camera_shake_remaining, duration)
 
 
@@ -279,7 +279,7 @@ func _draw() -> void:
 	var visual := get_node_or_null("Visual") as Sprite2D
 	if visual != null and visual.texture != null:
 		return
-	var flash := invulnerability_remaining > 0.0 and int(invulnerability_remaining * 18.0) % 2 == 0
+	var flash := not SettingsManager.reduce_flashes and invulnerability_remaining > 0.0 and int(invulnerability_remaining * 18.0) % 2 == 0
 	if flash:
 		return
 	var body_height := 14.0 if _crouch_applied else 24.0

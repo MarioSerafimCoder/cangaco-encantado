@@ -5,6 +5,7 @@ const PIXEL_FONT := preload("res://assets/ui/fonts/Tiny5-Regular.ttf")
 const UI_ATLAS := preload("res://assets/area_01/ui/dialogo_loja_atlas.png")
 const TOP_ORNAMENT := Rect2(178, 30, 900, 260)
 const BOTTOM_ORNAMENT := Rect2(395, 304, 575, 145)
+const DIALOGUE_BOX_SCENE := preload("res://scenes/ui/components/dialogue_box.tscn")
 
 @export_range(20.0, 70.0) var characters_per_second := 38.0
 
@@ -40,11 +41,13 @@ func start(dialogue_key: StringName, npc: NPCActor = null) -> bool:
 	if selected.is_empty():
 		return false
 	active = true
+	characters_per_second = SettingsManager.text_characters_per_second()
 	dialogue_id = dialogue_key
 	speaker_npc = npc
 	lines = selected
 	line_index = 0
 	_root.visible = true
+	NotificationManager.set_suppressed(true)
 	_lock_world(true)
 	_show_line()
 	EventBus.dialogue_started.emit(dialogue_id, speaker_npc)
@@ -54,8 +57,8 @@ func start(dialogue_key: StringName, npc: NPCActor = null) -> bool:
 func _process(delta: float) -> void:
 	if not active:
 		return
-	_continue_label.text = "[%s] CONTINUAR" % InputBootstrap.interact_prompt()
-	_continue_label.position.y = 77.0 + round(sin(Time.get_ticks_msec() * 0.006) * 1.0)
+	_continue_label.text = InputGlyphResolver.prompt(&"interact", "CONTINUAR")
+	_continue_label.position.y = 91.0 + round(sin(Time.get_ticks_msec() * 0.006) * 1.0)
 	if _text_label.visible_characters >= _text_label.text.length():
 		_continue_label.visible = _choice_box.get_child_count() == 0
 		return
@@ -90,7 +93,12 @@ func _show_line() -> void:
 	var choices: Array = line.get("choices", [])
 	if not choices.is_empty():
 		_text_label.visible_characters = _text_label.text.length()
+		_text_label.size.y = 31.0
+		_choice_box.visible = true
 		_build_choices(choices)
+	else:
+		_text_label.size.y = 60.0
+		_choice_box.visible = false
 
 
 func _advance() -> void:
@@ -108,6 +116,7 @@ func _finish() -> void:
 	var finished_npc := speaker_npc
 	active = false
 	_root.visible = false
+	NotificationManager.set_suppressed(false)
 	_lock_world(false)
 	if finished_npc != null:
 		finished_npc.on_dialogue_finished()
@@ -182,55 +191,22 @@ func _build_ui() -> void:
 	_overlay.color = Color(0.02, 0.015, 0.012, 0.16)
 	_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
 	_root.add_child(_overlay)
-	_panel = Panel.new()
-	_panel.position = Vector2(112, 44)
-	_panel.size = Vector2(416, 96)
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.035, 0.027, 0.02, 0.82)
-	style.border_color = Color("7f6548")
-	style.set_border_width_all(1)
-	style.corner_radius_top_left = 5
-	style.corner_radius_top_right = 5
-	style.corner_radius_bottom_left = 5
-	style.corner_radius_bottom_right = 5
-	style.shadow_color = Color(0, 0, 0, 0.55)
-	style.shadow_size = 4
-	_panel.add_theme_stylebox_override("panel", style)
+	_panel = DIALOGUE_BOX_SCENE.instantiate()
 	_root.add_child(_panel)
 	var top := Sprite2D.new()
 	var top_texture := AtlasTexture.new()
 	top_texture.atlas = UI_ATLAS
 	top_texture.region = TOP_ORNAMENT
 	top.texture = top_texture
-	top.position = Vector2(208, 4)
+	top.position = Vector2(240, 4)
 	top.scale = Vector2(184.0 / TOP_ORNAMENT.size.x, 50.0 / TOP_ORNAMENT.size.y)
 	top.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_panel.add_child(top)
-	_name_label = _label(Vector2(22, 18), Vector2(372, 14), 8, Color("d8b87f"))
-	_text_label = _label(Vector2(22, 34), Vector2(372, 40), 9, Color("f3e8d1"))
-	_text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_continue_label = _label(Vector2(296, 77), Vector2(98, 12), 7, Color("d8b87f"))
-	_continue_label.text = "[%s] CONTINUAR" % InputBootstrap.interact_prompt()
-	_continue_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_choice_box = VBoxContainer.new()
-	_choice_box.position = Vector2(82, 50)
-	_choice_box.size = Vector2(252, 40)
-	_choice_box.add_theme_constant_override("separation", 2)
-	_panel.add_child(_choice_box)
-
-
-func _label(position_value: Vector2, size_value: Vector2, font_size: int, color: Color) -> Label:
-	var label := Label.new()
-	label.position = position_value
-	label.size = size_value
-	label.add_theme_font_override("font", PIXEL_FONT)
-	label.add_theme_font_size_override("font_size", font_size)
-	label.add_theme_color_override("font_color", color)
-	label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.9))
-	label.add_theme_constant_override("shadow_offset_x", 1)
-	label.add_theme_constant_override("shadow_offset_y", 1)
-	_panel.add_child(label)
-	return label
+	_name_label = _panel.get_node("Speaker") as Label
+	_text_label = _panel.get_node("Text") as Label
+	_continue_label = _panel.get_node("Continue") as Label
+	_choice_box = _panel.get_node("Choices") as VBoxContainer
+	_continue_label.text = InputGlyphResolver.prompt(&"interact", "CONTINUAR")
 
 
 func _apply_choice_button_theme(button: Button) -> void:

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Theme" path="res://assets/ui/themes/cangaco_ui_theme.tres" id="1_theme"]
+
+[node name="PixelPanel" type="PanelContainer"]
+theme = ExtResource("1_theme")

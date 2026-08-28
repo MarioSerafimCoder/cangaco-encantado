@@ -34,6 +34,8 @@ var purchased_items: Dictionary = {}
 var npc_states: Dictionary = {}
 var dialogue_flags: Dictionary = {}
 var area_states := {"area_01_vila_umbuzeiro": "INTRO"}
+var tutorial_flags: Dictionary = {}
+var current_objective := "ENCONTRE QUEM SOBREVIVEU AO ATAQUE"
 
 
 func _ready() -> void:
@@ -65,13 +67,15 @@ func reset_new_game() -> void:
 	npc_states.clear()
 	dialogue_flags.clear()
 	area_states = {"area_01_vila_umbuzeiro": "INTRO"}
+	tutorial_flags.clear()
+	current_objective = "ENCONTRE QUEM SOBREVIVEU AO ATAQUE"
 	for ability in abilities:
 		abilities[ability] = false
 
 
 func to_dictionary() -> Dictionary:
 	return {
-		"version": 3,
+		"version": 4,
 		"checkpoint_id": String(checkpoint_id),
 		"checkpoint_position": [checkpoint_position.x, checkpoint_position.y],
 		"player_health": player_health,
@@ -90,6 +94,8 @@ func to_dictionary() -> Dictionary:
 		"npc_states": npc_states.duplicate(true),
 		"dialogue_flags": dialogue_flags.duplicate(true),
 		"area_states": area_states.duplicate(true),
+		"tutorial_flags": tutorial_flags.duplicate(true),
+		"current_objective": current_objective,
 	}
 
 
@@ -117,6 +123,8 @@ func apply_dictionary(data: Dictionary) -> void:
 	npc_states = data.get("npc_states", {}).duplicate(true)
 	dialogue_flags = data.get("dialogue_flags", {}).duplicate(true)
 	area_states = data.get("area_states", {"area_01_vila_umbuzeiro": "INTRO"}).duplicate(true)
+	tutorial_flags = data.get("tutorial_flags", {}).duplicate(true)
+	current_objective = String(data.get("current_objective", "ENCONTRE QUEM SOBREVIVEU AO ATAQUE"))
 
 
 func add_currency(amount: int) -> void:
@@ -149,6 +157,26 @@ func inventory_amount(category: StringName, item_id: StringName) -> int:
 func set_dialogue_flag(flag_id: StringName, value := true) -> void:
 	dialogue_flags[String(flag_id)] = value
 	EventBus.request_autosave.emit(&"dialogue")
+
+
+func mark_tutorial_learned(tutorial_id: StringName) -> void:
+	if bool(tutorial_flags.get(String(tutorial_id), false)):
+		return
+	tutorial_flags[String(tutorial_id)] = true
+	EventBus.request_autosave.emit(&"tutorial")
+
+
+func tutorial_learned(tutorial_id: StringName) -> bool:
+	return bool(tutorial_flags.get(String(tutorial_id), false))
+
+
+func set_current_objective(text: String) -> void:
+	if text == current_objective:
+		EventBus.objective_changed.emit(text)
+		return
+	current_objective = text
+	EventBus.objective_changed.emit(text)
+	EventBus.request_autosave.emit(&"objective")
 
 
 func _on_checkpoint_activated(new_id: StringName, new_position: Vector2) -> void:

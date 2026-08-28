@@ -57,7 +57,7 @@ func _on_body_exited(body: Node) -> void:
 
 
 func _draw() -> void:
-	draw_string(ThemeDB.fallback_font, Vector2(-22.0, -24.0), "ATALHO" if opened else "ABRIR [E]", HORIZONTAL_ALIGNMENT_LEFT, -1.0, 8, Color.WHITE)
+	draw_string(ThemeDB.fallback_font, Vector2(-30.0, -24.0), "ATALHO" if opened else InputGlyphResolver.prompt(&"interact", "ABRIR"), HORIZONTAL_ALIGNMENT_LEFT, -1.0, 8, Color.WHITE)
 
 
 func _refresh_visual() -> void:

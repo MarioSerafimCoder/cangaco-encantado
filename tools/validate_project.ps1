@@ -22,6 +22,10 @@ $requiredFiles = @(
 	'autoload/settings_manager.gd',
 	'assets/ui/fonts/Tiny5-Regular.ttf',
 	'assets/ui/fonts/OFL-Tiny5.txt',
+	'assets/ui/themes/cangaco_ui_theme.tres',
+	'scenes/ui/components/input_glyph.tscn',
+	'scenes/ui/components/notification_toast.tscn',
+	'tools/ui_ux_polish_validation.tscn',
     'README.md',
     'docs/IMPLEMENTATION.md',
     'docs/ROOM_PRODUCTION_PIPELINE.md',
@@ -38,7 +42,7 @@ foreach ($relativePath in $requiredFiles) {
 
 $projectText = Get-Content -Raw -LiteralPath (Join-Path $projectRoot 'project.godot')
 $requiredActions = @(
-    'move_left', 'move_right', 'move_up', 'move_down', 'jump', 'sprint', 'crouch',
+    'move_left', 'move_right', 'move_up', 'move_down', 'jump', 'crouch',
     'melee', 'shoot_pistol', 'shoot_rifle', 'special_attack', 'aim', 'heal',
     'interact', 'pause', 'toggle_debug'
 )
@@ -70,6 +74,15 @@ foreach ($file in $playerScripts) {
     if ($content -match 'Input\.is_key_pressed|InputEventKey') {
         $errors.Add("Leitura de tecla hardcoded em $($file.Name)")
     }
+}
+
+if ($projectText -match '(?m)^sprint=') {
+    $errors.Add('A ação conflitante sprint ainda existe no InputMap.')
+}
+
+$runtimeText = ($textFiles | ForEach-Object { Get-Content -Raw -LiteralPath $_.FullName }) -join "`n"
+if ($runtimeText -match 'AudioStreamPlayer') {
+    $errors.Add('Um AudioStreamPlayer foi adicionado durante a etapa sem áudio.')
 }
 
 $referenceImages = @(Get-ChildItem -LiteralPath (Join-Path $projectRoot 'assets/source/reference') -File -Filter '*.png')

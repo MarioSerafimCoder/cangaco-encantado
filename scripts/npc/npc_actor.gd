@@ -53,13 +53,13 @@ func _ready() -> void:
 	sprite.z_index = 6
 	add_child(sprite)
 	prompt = Label.new()
-	prompt.position = Vector2(-25, -49)
-	prompt.size = Vector2(50, 14)
+	prompt.position = Vector2(-48, -49)
+	prompt.size = Vector2(96, 14)
 	prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	prompt.add_theme_font_override("font", PIXEL_FONT)
 	prompt.add_theme_font_size_override("font_size", 8)
 	prompt.add_theme_color_override("font_color", Color("ffe6ad"))
-	prompt.text = "[%s]" % InputBootstrap.interact_prompt()
+	prompt.text = InputGlyphResolver.prompt(&"interact", "CONVERSAR")
 	prompt.visible = false
 	add_child(prompt)
 	body_entered.connect(_on_body_entered)
@@ -75,7 +75,7 @@ func _process(delta: float) -> void:
 	if player_inside != null:
 		facing = signf(player_inside.global_position.x - global_position.x)
 		sprite.flip_h = facing < 0
-		prompt.text = "[%s]" % InputBootstrap.interact_prompt()
+		prompt.text = InputGlyphResolver.prompt(&"interact", "CONVERSAR")
 		if Input.is_action_just_pressed("interact"):
 			_interact()
 	elif idle_walk_radius > 0.0:

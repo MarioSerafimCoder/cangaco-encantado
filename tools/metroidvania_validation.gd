@@ -72,12 +72,12 @@ func _validate_map(map_ui: WorldMapUI) -> void:
 		failures.append("Os comandos de mapa ou investida não foram registrados.")
 	if map_ui.TAB_NAMES.size() != 4:
 		failures.append("O diário do personagem não contém mapa, itens, habilidades e amuletos.")
-	if not InputMap.has_action("sprint"):
-		failures.append("A corrida acelerada com Espaço não foi registrada.")
+	if InputMap.has_action("sprint"):
+		failures.append("A ação conflitante de aceleração manual ainda existe.")
 
 
 func _validate_persistence_schema() -> void:
 	var data := GameState.to_dictionary()
-	for key in ["visited_rooms", "current_room_id", "permanent_upgrades", "max_health_bonus", "abilities", "opened_shortcuts"]:
+	for key in ["visited_rooms", "current_room_id", "permanent_upgrades", "max_health_bonus", "abilities", "opened_shortcuts", "tutorial_flags", "current_objective"]:
 		if not data.has(key):
 			failures.append("O save não persiste o campo de exploração: %s." % key)

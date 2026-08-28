@@ -88,8 +88,11 @@ func _validate_secondary_interfaces(main: Node) -> void:
 	var dialogue_panel := director.get("_panel") as Panel
 	var dialogue_text := director.get("_text_label") as Label
 	var continue_label := director.get("_continue_label") as Label
-	if dialogue_panel == null or dialogue_panel.size.y > 100.0:
+	if dialogue_panel == null or dialogue_panel.size.y > 116.0:
 		failures.append("Caixa de diálogo voltou a ocupar altura excessiva da tela.")
+	var choice_box := director.get("_choice_box") as VBoxContainer
+	if dialogue_text != null and choice_box != null and choice_box.visible and dialogue_text.position.y + dialogue_text.size.y > choice_box.position.y:
+		failures.append("Texto do diálogo invade a área reservada às escolhas.")
 	if dialogue_text == null or dialogue_text.get_theme_font("font").resource_path != "res://assets/ui/fonts/Tiny5-Regular.ttf":
 		failures.append("Diálogo não usa a fonte pixel art do jogo.")
 	if continue_label == null or not continue_label.text.contains("CONTINUAR"):

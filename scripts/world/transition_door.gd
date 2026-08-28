@@ -53,6 +53,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if _player == null or _transitioning:
 		return
+	_prompt.text = InputGlyphResolver.prompt(&"interact", display_name)
 	if Input.is_action_just_pressed("interact"):
 		_transition()
 
@@ -68,7 +69,7 @@ func _build_prompt() -> void:
 	_prompt.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.95))
 	_prompt.add_theme_constant_override("shadow_offset_x", 1)
 	_prompt.add_theme_constant_override("shadow_offset_y", 1)
-	_prompt.text = "[%s] %s" % [InputBootstrap.interact_prompt(), display_name]
+	_prompt.text = InputGlyphResolver.prompt(&"interact", display_name)
 	_prompt.visible = false
 	add_child(_prompt)
 

@@ -71,7 +71,6 @@ func _prepare_player(target: Vector2) -> void:
 	camera.reset_smoothing()
 	await _wait_frames(18)
 	hud.room_fade = 0.0
-	hud.world_fade = 0.0
 	hud.help_fade = 0.0
 	await _wait_frames(2)
 

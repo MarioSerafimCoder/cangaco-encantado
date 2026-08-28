@@ -60,6 +60,7 @@ func _on_game_entered() -> void:
 	var hud := get_node_or_null("HUD") as GameHUD
 	if hud != null:
 		hud.begin_opening_guide()
+	GameState.set_current_objective(GameState.current_objective)
 	_screen_fade.modulate.a = 1.0
 	var tween := create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 	tween.tween_interval(0.12)

@@ -21,7 +21,9 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 [autoload]
 
 InputBootstrap="*res://autoload/input_bootstrap.gd"
+InputGlyphResolver="*res://autoload/input_glyph_resolver.gd"
 EventBus="*res://autoload/event_bus.gd"
+NotificationManager="*res://autoload/notification_manager.gd"
 GameState="*res://autoload/game_state.gd"
 WorldState="*res://autoload/world_state.gd"
 SaveManager="*res://autoload/save_manager.gd"
@@ -56,10 +58,6 @@ move_down={
 "events": []
 }
 jump={
-"deadzone": 0.3,
-"events": []
-}
-sprint={
 "deadzone": 0.3,
 "events": []
 }

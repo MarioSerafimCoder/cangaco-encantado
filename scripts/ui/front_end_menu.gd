@@ -7,17 +7,27 @@ enum Mode { HIDDEN, TITLE, PAUSE, SETTINGS, CONTROLS, CONFIRM_NEW_GAME }
 
 const PIXEL_FONT := preload("res://assets/ui/fonts/Tiny5-Regular.ttf")
 const PANEL_TEXTURE := preload("res://assets/ui/hud/status_panel.tres")
+const MENU_BACKGROUND := preload("res://assets/ui/generated_0_4_2/fundo_menu_principal.png")
+const GAME_LOGO := preload("res://assets/ui/generated_0_4_2/logo_cangaco_encantado.png")
+const COMMAND_ATLAS := preload("res://assets/ui/generated_0_4_2/atlas_comandos.png")
+const UI_THEME := preload("res://assets/ui/themes/cangaco_ui_theme.tres")
+const MENU_BUTTON_SCENE := preload("res://scenes/ui/components/menu_button.tscn")
 
 var mode := Mode.HIDDEN
 var action_buttons: Dictionary = {}
 var session_started := false
 
 var _root: Control
+var _background_fill: ColorRect
+var _backdrop: TextureRect
+var _dimmer: ColorRect
+var _logo: TextureRect
 var _frame: NinePatchRect
 var _content: VBoxContainer
 var _title: Label
 var _subtitle: Label
 var _submenu_origin := Mode.TITLE
+var _controls_from_settings := false
 
 
 func _ready() -> void:
@@ -33,15 +43,17 @@ func show_title(_initial := true) -> void:
 	_root.visible = true
 	get_tree().paused = true
 	_set_game_hud_visible(false)
+	NotificationManager.set_suppressed(true)
+	_set_title_art_visible(true)
 	_set_standard_layout()
-	_set_heading("CANGAÇO ENCANTADO", "UMA LENDA DO SERTÃO")
+	_set_heading("", "UMA LENDA DO SERTÃO")
 	_clear_content()
 	_add_button(&"continue", "CONTINUAR", _continue_game, not session_started and not SaveManager.has_save())
 	_add_button(&"new_game", "NOVO JOGO", _request_new_game)
-	_add_button(&"settings", "CONFIGURAÇÕES", _open_settings)
-	_add_button(&"controls", "CONTROLES", _open_controls)
+	_add_button(&"settings", "OPÇÕES", _open_settings)
 	_add_button(&"quit", "SAIR", _quit_game)
 	_focus_first_available()
+	_animate_open()
 
 
 func show_pause() -> void:
@@ -51,17 +63,18 @@ func show_pause() -> void:
 	_root.visible = true
 	get_tree().paused = true
 	_set_game_hud_visible(true)
+	NotificationManager.set_suppressed(true)
+	_set_title_art_visible(false)
 	_set_pause_layout()
 	_set_heading("JOGO PAUSADO", "A LENDA ESPERA")
 	_clear_content()
 	_add_button(&"continue", "RETOMAR", enter_game)
 	_add_button(&"map", "DIÁRIO / MAPA", _open_map)
-	_add_button(&"new_game", "NOVO JOGO", _request_new_game)
-	_add_button(&"settings", "CONFIGURAÇÕES", _open_settings)
-	_add_button(&"controls", "CONTROLES", _open_controls)
-	_add_button(&"title", "MENU INICIAL", _return_to_title)
+	_add_button(&"settings", "OPÇÕES", _open_settings)
+	_add_button(&"title", "MENU PRINCIPAL", _return_to_title)
 	_add_button(&"quit", "SAIR", _quit_game)
 	_focus_first_available()
+	_animate_open()
 
 
 func enter_game() -> void:
@@ -69,6 +82,7 @@ func enter_game() -> void:
 	session_started = true
 	_root.visible = false
 	_set_game_hud_visible(true)
+	NotificationManager.set_suppressed(false)
 	get_tree().paused = false
 	var viewport := get_viewport()
 	if viewport.gui_get_focus_owner() != null:
@@ -96,14 +110,42 @@ func _build_shell() -> void:
 	_root.name = "MenuRoot"
 	_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_root.mouse_filter = Control.MOUSE_FILTER_STOP
+	_root.theme = UI_THEME
 	add_child(_root)
 
-	var dim := ColorRect.new()
-	dim.name = "Dimmer"
-	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	dim.color = Color(0.035, 0.022, 0.018, 0.82)
-	dim.mouse_filter = Control.MOUSE_FILTER_STOP
-	_root.add_child(dim)
+	_background_fill = ColorRect.new()
+	_background_fill.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_background_fill.color = Color("17100d")
+	_background_fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_root.add_child(_background_fill)
+
+	_backdrop = TextureRect.new()
+	_backdrop.name = "MenuBackground"
+	_backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_backdrop.texture = MENU_BACKGROUND
+	_backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	_backdrop.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_root.add_child(_backdrop)
+
+	_dimmer = ColorRect.new()
+	_dimmer.name = "Dimmer"
+	_dimmer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_dimmer.color = Color(0.035, 0.022, 0.018, 0.38)
+	_dimmer.mouse_filter = Control.MOUSE_FILTER_STOP
+	_root.add_child(_dimmer)
+
+	_logo = TextureRect.new()
+	_logo.name = "GameLogo"
+	_logo.position = Vector2(200.0, 5.0)
+	_logo.size = Vector2(240.0, 135.0)
+	_logo.texture = GAME_LOGO
+	_logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_logo.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_logo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_root.add_child(_logo)
 
 	var top_glow := ColorRect.new()
 	top_glow.position = Vector2(0.0, 0.0)
@@ -136,6 +178,8 @@ func _build_shell() -> void:
 
 
 func _set_standard_layout() -> void:
+	_title.position = Vector2(188.0, 101.0)
+	_subtitle.position = Vector2(195.0, 123.0)
 	_content.add_theme_constant_override("separation", 2)
 	_frame.position = Vector2(236.0, 136.0)
 	_frame.size = Vector2(168.0, 126.0)
@@ -144,6 +188,8 @@ func _set_standard_layout() -> void:
 
 
 func _set_pause_layout() -> void:
+	_title.position = Vector2(188.0, 101.0)
+	_subtitle.position = Vector2(195.0, 123.0)
 	_content.add_theme_constant_override("separation", 1)
 	_frame.position = Vector2(236.0, 132.0)
 	_frame.size = Vector2(168.0, 142.0)
@@ -152,6 +198,8 @@ func _set_pause_layout() -> void:
 
 
 func _set_wide_layout() -> void:
+	_title.position = Vector2(188.0, 101.0)
+	_subtitle.position = Vector2(195.0, 123.0)
 	_content.add_theme_constant_override("separation", 3)
 	_frame.position = Vector2(188.0, 132.0)
 	_frame.size = Vector2(264.0, 132.0)
@@ -159,12 +207,24 @@ func _set_wide_layout() -> void:
 	_content.size = Vector2(234.0, 98.0)
 
 
-func _set_settings_layout() -> void:
+func _set_controls_layout() -> void:
+	_title.position = Vector2(188.0, 43.0)
+	_subtitle.position = Vector2(195.0, 63.0)
 	_content.add_theme_constant_override("separation", 2)
-	_frame.position = Vector2(232.0, 124.0)
-	_frame.size = Vector2(176.0, 164.0)
-	_content.position = Vector2(248.0, 139.0)
-	_content.size = Vector2(144.0, 140.0)
+	_frame.position = Vector2(188.0, 76.0)
+	_frame.size = Vector2(264.0, 252.0)
+	_content.position = Vector2(203.0, 86.0)
+	_content.size = Vector2(234.0, 232.0)
+
+
+func _set_settings_layout() -> void:
+	_title.position = Vector2(188.0, 43.0)
+	_subtitle.position = Vector2(195.0, 63.0)
+	_content.add_theme_constant_override("separation", 2)
+	_frame.position = Vector2(210.0, 76.0)
+	_frame.size = Vector2(220.0, 252.0)
+	_content.position = Vector2(226.0, 87.0)
+	_content.size = Vector2(188.0, 230.0)
 
 
 func _set_heading(title_text: String, subtitle_text: String) -> void:
@@ -180,7 +240,7 @@ func _clear_content() -> void:
 
 
 func _add_button(id: StringName, text_value: String, callback: Callable, disabled := false) -> Button:
-	var button := Button.new()
+	var button := MENU_BUTTON_SCENE.instantiate() as Button
 	button.name = String(id)
 	button.text = text_value
 	button.custom_minimum_size = Vector2(136.0, 15.0)
@@ -287,10 +347,12 @@ func _start_new_game() -> void:
 
 
 func _open_settings() -> void:
-	_submenu_origin = Mode.PAUSE if session_started else Mode.TITLE
+	if mode not in [Mode.SETTINGS, Mode.CONTROLS]:
+		_submenu_origin = Mode.PAUSE if session_started else Mode.TITLE
 	mode = Mode.SETTINGS
+	_set_title_art_visible(_submenu_origin == Mode.TITLE)
 	_set_settings_layout()
-	_set_heading("CONFIGURAÇÕES", "AJUSTES DA EXPERIÊNCIA")
+	_set_heading("OPÇÕES", "AJUSTES DA EXPERIÊNCIA")
 	_build_settings_content()
 
 
@@ -300,7 +362,10 @@ func _build_settings_content() -> void:
 	_add_button(&"fullscreen", "TELA CHEIA: %s" % _yes_no(SettingsManager.fullscreen), _toggle_fullscreen)
 	_add_button(&"resolution", "RESOLUÇÃO: %s" % SettingsManager.resolution_label(), _cycle_resolution)
 	_add_button(&"vsync", "VSYNC: %s" % _yes_no(SettingsManager.vsync_enabled), _toggle_vsync)
-	_add_button(&"screen_shake", "TREMOR DE CÂMERA: %s" % _yes_no(SettingsManager.screen_shake_enabled), _toggle_screen_shake)
+	_add_button(&"screen_shake", "TREMOR: %s" % SettingsManager.screen_shake_label(), _cycle_screen_shake)
+	_add_button(&"reduce_flashes", "REDUZIR FLASH: %s" % _yes_no(SettingsManager.reduce_flashes), _toggle_reduce_flashes)
+	_add_button(&"vibration", "VIBRAÇÃO: %s" % _yes_no(SettingsManager.vibration_enabled), _toggle_vibration)
+	_add_button(&"text_speed", "TEXTO: %s" % SettingsManager.text_speed_label(), _cycle_text_speed)
 	_add_button(&"controls", "VER CONTROLES", _open_controls)
 	_add_button(&"back", "VOLTAR", _return_from_submenu)
 	_focus_first_available()
@@ -324,8 +389,23 @@ func _toggle_fullscreen() -> void:
 	_build_settings_content()
 
 
-func _toggle_screen_shake() -> void:
-	SettingsManager.set_screen_shake_enabled(not SettingsManager.screen_shake_enabled)
+func _cycle_screen_shake() -> void:
+	SettingsManager.cycle_screen_shake_scale()
+	_build_settings_content()
+
+
+func _toggle_reduce_flashes() -> void:
+	SettingsManager.set_reduce_flashes(not SettingsManager.reduce_flashes)
+	_build_settings_content()
+
+
+func _toggle_vibration() -> void:
+	SettingsManager.set_vibration_enabled(not SettingsManager.vibration_enabled)
+	_build_settings_content()
+
+
+func _cycle_text_speed() -> void:
+	SettingsManager.cycle_text_speed()
 	_build_settings_content()
 
 
@@ -340,27 +420,37 @@ func _toggle_vsync() -> void:
 
 
 func _open_controls() -> void:
+	_controls_from_settings = mode == Mode.SETTINGS
 	if mode not in [Mode.SETTINGS, Mode.CONTROLS]:
 		_submenu_origin = Mode.PAUSE if session_started else Mode.TITLE
 	mode = Mode.CONTROLS
-	_set_wide_layout()
+	_set_title_art_visible(false)
+	_set_controls_layout()
 	_set_heading("CONTROLES", "TECLADO E CONTROLE")
 	_clear_content()
-	for line in [
-		"A / D  MOVER E CORRER     J  FACÃO",
-		"ESPAÇO  PULAR / ACELERAR  K  PISTOLA",
-		"CTRL  AGACHAR             L  RIFLE",
-		"SHIFT + W / S  MIRAR      I  ATAQUE ESPECIAL",
-		"Q  USAR CABAÇA            E  INTERAGIR",
-		"C  INVESTIDA              M  DIÁRIO",
-		"ESC / START  PAUSAR E VOLTAR",
-	]:
-		_add_info_line(line, Color("efd7aa"), 6)
+	var atlas_preview := TextureRect.new()
+	atlas_preview.custom_minimum_size = Vector2(224.0, 168.0)
+	atlas_preview.texture = COMMAND_ATLAS
+	atlas_preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	atlas_preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	atlas_preview.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	atlas_preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_content.add_child(atlas_preview)
+	_add_info_line("J FACÃO   K PISTOLA   L RIFLE   I ATAQUE ESPECIAL", Color("efd7aa"), 6)
+	_add_info_line("Q CURA   E INTERAGIR   C INVESTIDA   M MAPA", Color("efd7aa"), 6)
+	_add_info_line("ESC / START  PAUSAR E VOLTAR", Color("bda47b"), 6)
 	_add_button(&"back", "VOLTAR", _return_from_submenu)
 	_focus_first_available()
 
 
 func _return_from_submenu() -> void:
+	if mode == Mode.CONTROLS and _controls_from_settings:
+		_controls_from_settings = false
+		mode = Mode.SETTINGS
+		_set_settings_layout()
+		_set_heading("OPÇÕES", "AJUSTES DA EXPERIÊNCIA")
+		_build_settings_content()
+		return
 	if _submenu_origin == Mode.PAUSE:
 		mode = Mode.HIDDEN
 		show_pause()
@@ -376,7 +466,7 @@ func _open_map() -> void:
 	enter_game()
 	var map_ui := get_parent().get_node_or_null("WorldMap") as WorldMapUI
 	if map_ui != null:
-		map_ui.open_map()
+		map_ui.open_map(true)
 
 
 func _quit_game() -> void:
@@ -391,3 +481,24 @@ func _set_game_hud_visible(value: bool) -> void:
 	var hud := get_parent().get_node_or_null("HUD") as CanvasLayer
 	if hud != null:
 		hud.visible = value
+
+
+func _set_title_art_visible(value: bool) -> void:
+	_background_fill.visible = value
+	_backdrop.visible = value
+	_logo.visible = value
+	_title.visible = not value
+	_subtitle.visible = true
+	_dimmer.color = Color(0.035, 0.022, 0.018, 0.38 if value else 0.82)
+
+
+func _animate_open() -> void:
+	_root.modulate.a = 0.0
+	_frame.position.y = round(_frame.position.y + 3.0)
+	_content.position.y = round(_content.position.y + 3.0)
+	var target_y: float = roundf(_frame.position.y - 3.0)
+	var target_content_y: float = roundf(_content.position.y - 3.0)
+	var tween := create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tween.tween_property(_root, "modulate:a", 1.0, 0.12)
+	tween.parallel().tween_property(_frame, "position:y", target_y, 0.12)
+	tween.parallel().tween_property(_content, "position:y", target_content_y, 0.12)

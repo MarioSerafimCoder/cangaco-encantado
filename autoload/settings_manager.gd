@@ -7,6 +7,10 @@ var fullscreen := false
 var screen_shake_enabled := true
 var vsync_enabled := true
 var resolution_index := 2
+var vibration_enabled := true
+var screen_shake_scale := 1.0
+var reduce_flashes := false
+var text_speed_index := 1
 const WINDOW_RESOLUTIONS := [Vector2i(1280, 720), Vector2i(1600, 900), Vector2i(1920, 1080)]
 
 
@@ -30,6 +34,10 @@ func load_settings() -> void:
 	screen_shake_enabled = bool(parsed.get("screen_shake_enabled", true))
 	vsync_enabled = bool(parsed.get("vsync_enabled", true))
 	resolution_index = clampi(int(parsed.get("resolution_index", 2)), 0, WINDOW_RESOLUTIONS.size() - 1)
+	vibration_enabled = bool(parsed.get("vibration_enabled", true))
+	screen_shake_scale = clampf(float(parsed.get("screen_shake_scale", 1.0)), 0.0, 1.0)
+	reduce_flashes = bool(parsed.get("reduce_flashes", false))
+	text_speed_index = clampi(int(parsed.get("text_speed_index", 1)), 0, 3)
 
 
 func save_settings() -> bool:
@@ -43,6 +51,10 @@ func save_settings() -> bool:
 		"screen_shake_enabled": screen_shake_enabled,
 		"vsync_enabled": vsync_enabled,
 		"resolution_index": resolution_index,
+		"vibration_enabled": vibration_enabled,
+		"screen_shake_scale": screen_shake_scale,
+		"reduce_flashes": reduce_flashes,
+		"text_speed_index": text_speed_index,
 	}, "  "))
 	file.close()
 	return true
@@ -75,6 +87,41 @@ func set_fullscreen(value: bool) -> void:
 func set_screen_shake_enabled(value: bool) -> void:
 	screen_shake_enabled = value
 	save_settings()
+
+
+func set_vibration_enabled(value: bool) -> void:
+	vibration_enabled = value
+	save_settings()
+
+
+func cycle_screen_shake_scale() -> void:
+	var values := [1.0, 0.5, 0.25, 0.0]
+	var index := values.find(screen_shake_scale)
+	screen_shake_scale = values[(index + 1) % values.size()] if index >= 0 else 0.5
+	screen_shake_enabled = screen_shake_scale > 0.0
+	save_settings()
+
+
+func set_reduce_flashes(value: bool) -> void:
+	reduce_flashes = value
+	save_settings()
+
+
+func cycle_text_speed() -> void:
+	text_speed_index = (text_speed_index + 1) % 4
+	save_settings()
+
+
+func text_speed_label() -> String:
+	return ["LENTA", "NORMAL", "RÁPIDA", "INSTANTÂNEA"][text_speed_index]
+
+
+func text_characters_per_second() -> float:
+	return [22.0, 38.0, 64.0, 10000.0][text_speed_index]
+
+
+func screen_shake_label() -> String:
+	return ["DESLIGADO", "REDUZIDO", "MÉDIO", "COMPLETO"][clampi(int(round(screen_shake_scale * 3.0)), 0, 3)]
 
 
 func set_vsync_enabled(value: bool) -> void:

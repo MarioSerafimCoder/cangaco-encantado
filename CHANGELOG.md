@@ -1,5 +1,23 @@
 # Changelog
 
+## UI/UX Polish — 0.4.2
+
+- Criado Theme central inspirado em couro, madeira, areia, ferrugem e ouro envelhecido, além de componentes reutilizáveis para painel, botão, glyph, toast, moeda e diálogo.
+- Menu inicial passou a usar a composição visual e o logotipo oficiais; ações foram simplificadas para Continuar, Novo jogo, Opções e Sair.
+- Menu de pausa foi reduzido a Retomar, Diário, Opções, Menu Principal e Sair.
+- Configurações agora incluem vibração, intensidade de tremor, redução de flashes e velocidade do texto, preservando volume, fullscreen, resolução e VSync.
+- Criado `InputGlyphResolver`, com troca automática entre teclado e gamepad e atlas gráfico central para prompts contextuais.
+- Espaço/A deixou de acelerar a corrida e voltou a ser exclusivo do salto; a corrida automática após dois segundos foi preservada.
+- Banner permanente de controles foi substituído por onboarding contextual, progressivo e persistente no save.
+- Moeda ganhou contador próprio; estado da região, objetivo, habilidades, segredos, relatos e melhorias usam fila de notificações com prioridade.
+- Diálogo passou para caixa horizontal inferior, reserva espaço para escolhas e respeita a velocidade de texto configurada.
+- Loja ganhou colunas reais, ícones, preço separado, descrição legível e preservação de foco após compra.
+- Diário preserva sua origem, retorna ao Pause quando aberto pelo Pause, permite selecionar salas e mostra detalhes sem revelar áreas desconhecidas.
+- Abas de itens, habilidades e amuletos receberam iconografia, nomes curados e proteção contra spoilers.
+- Save avançou para a versão 4 mantendo defaults compatíveis com saves anteriores.
+- Adicionada validação específica do passe de UI/UX e atualizadas as suítes de game feel, menu, HUD, Área 01 e metroidvania.
+- Nenhum sistema ou asset de áudio foi adicionado nesta etapa.
+
 ## Correção de escala, travessia e diário — 0.4.1
 
 - A Casa de Nilo foi reduzida para uma sala de 640 px, com móveis menores, porta destacada e nenhum NPC fora de contexto no interior.
@@ -11,7 +29,7 @@
 - Telhados deixou de misturar duas composições sobrepostas; todas as coberturas visíveis agora são plataformas.
 - As laterais superiores das casas aceitam o quique depois de obter o Passo da Pedra, e obstáculos próximos formam rotas de acesso.
 - Cactos decorativos e a entrada da Cripta foram reduzidos para a escala de Nilo.
-- Segurar Espaço durante a corrida ativa uma aceleração de 35%, mantendo o salto no mesmo botão.
+- A versão 0.4.1 ainda permitia aceleração ao segurar Espaço; esse conflito foi removido na 0.4.2.
 - M abre o Diário de Nilo com abas de mapa, itens, habilidades e amuletos; A/D alterna as abas.
 - A revisão visual oficial passou a incluir o menu de habilidades do personagem.
 - Diálogos agora aplicam a fonte pixel art, ocupam menos tela e mostram a tecla de avanço; a loja ganhou foco temático, comandos visíveis e espaçamento sem sobreposição.
