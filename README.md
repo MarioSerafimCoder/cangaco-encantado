@@ -29,6 +29,7 @@ Consulte também o [manual detalhado de teclado](docs/CONTROLS.md).
 | Ação | Teclado | Gamepad |
 |---|---|---|
 | Andar/correr após 2 s | A/D ou setas | Analógico esquerdo |
+| Acelerar a corrida | Segurar Espaço durante a corrida | A durante a corrida |
 | Mirar verticalmente | Shift + W/S | LT + analógico |
 | Pular | Espaço | A |
 | Agachar | Ctrl | Clique do analógico esquerdo |
@@ -38,7 +39,7 @@ Consulte também o [manual detalhado de teclado](docs/CONTROLS.md).
 | Ataque especial | I | LB |
 | Curar | Q | B |
 | Interagir | E | Y |
-| Abrir mapa | M | View/Back |
+| Abrir diário (mapa, itens, habilidades e amuletos) | M | View/Back |
 | Pausar | Esc | Start |
 | Mostrar/ocultar debug técnico | F3 | - |
 | Liberar a Vila (debug) | F12 | - |
@@ -48,12 +49,12 @@ Os scripts de gameplay usam somente ações do `InputMap`; nenhum controle depen
 ## Vertical slice atual
 
 - Treze salas contínuas formam a macroárea: Casa de Nilo, Rua das Cinzas, Vila Baixa, Praça, Igreja, Telhados, Cripta, Subterrâneo, Grutas, Poço, Caverna Rasa, Caverna Profunda e Santuário.
-- Nilo possui locomoção chibi, caminhada, corrida após dois segundos, salto variável, salto de parede, investida e câmera 640x360 com transições suaves.
+- Nilo possui locomoção chibi, caminhada, corrida após dois segundos, aceleração ao segurar Espaço, salto variável, salto de parede, investida e câmera 640x360 com transições suaves.
 - Combate completo com pistola, rifle, facão, especial, postura, antecipação inimiga, linha de visão e projéteis bloqueados pelo cenário.
 - Oito moradores têm diálogo contextual; a Praça funciona como centro seguro e abriga uma loja com cinco itens.
 - Moeda, inventário, compras únicas, estados de NPC, diálogos, habilidades, atalhos, colecionáveis e sala atual persistem no save.
 - Quatro cordéis e um coração permanente recompensam exploração, rotas altas e retorno com novas habilidades.
-- Três checkpoints, atalhos persistentes, caminhos verticais e mapa navegável sustentam a estrutura de metroidvania.
+- Três checkpoints, atalhos persistentes, caminhos verticais e um diário navegável com mapa, itens, habilidades e amuletos sustentam a estrutura de metroidvania.
 - A manifestação no Santuário conclui a Área 01, remove encontros hostis e libera um retorno rápido à Praça e uma saída segura do beta.
 - HUD, menu inicial, pausa, configurações, controles, diálogo e loja usam linguagem visual em pixel art.
 - Os ambientes usam sprites rasterizados; volumes simples permanecem apenas como colisão invisível, não como arte exibida.

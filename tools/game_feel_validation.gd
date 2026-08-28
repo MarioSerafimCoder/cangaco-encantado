@@ -56,6 +56,10 @@ func _validate_continuous_run(nilo: NiloPlayer) -> void:
 			var expected := -(1.0 - contact_amount) * lerpf(0.08, 0.46, visual.smoothed_speed_ratio)
 			if absf(visual.bob_offset - expected) > 0.035:
 				bob_matches_phase = false
+	Input.action_press("sprint")
+	await _wait_physics_frames(10)
+	var sprint_reached_target := absf(nilo.velocity.x) > nilo.config.move_speed * 1.20
+	Input.action_release("sprint")
 	Input.action_release("move_right")
 	if seen_walk_frames.size() != 4:
 		failures.append("Caminhada deveria percorrer 4 frames antes da corrida; observados: %s" % [seen_walk_frames.keys()])
@@ -69,6 +73,8 @@ func _validate_continuous_run(nilo: NiloPlayer) -> void:
 		failures.append("Bob visual deixou de derivar do mesmo run_phase da animação.")
 	if visual.foot_contact_count - start_contacts < 2:
 		failures.append("Corrida não registrou contatos de pé suficientes para sincronizar poeira.")
+	if not sprint_reached_target:
+		failures.append("Segurar Espaço durante a corrida não ativou a velocidade acelerada.")
 
 
 func _validate_idle_breath_and_blink(nilo: NiloPlayer) -> void:
@@ -285,7 +291,7 @@ func _validate_temporary_hud() -> void:
 
 
 func _release_test_inputs() -> void:
-	for action in ["move_left", "move_right", "move_up", "move_down", "jump", "crouch", "melee", "shoot_pistol", "shoot_rifle", "special_attack"]:
+	for action in ["move_left", "move_right", "move_up", "move_down", "jump", "sprint", "crouch", "melee", "shoot_pistol", "shoot_rifle", "special_attack"]:
 		Input.action_release(action)
 
 

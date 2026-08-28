@@ -201,7 +201,7 @@ func _draw_heal_progress() -> void:
 	var track := Rect2(109.0, 30.0, 21.0, 3.0)
 	draw_rect(track, Color("171411"), true)
 	draw_rect(Rect2(track.position, Vector2(track.size.x * progress, track.size.y)), Color("62d98f"), true)
-	draw_line(Vector2(track.position.x + track.size.x * progress, 42.0), Vector2(track.position.x + track.size.x * progress, 47.0), Color("d9ffd8"), 1.0)
+	draw_line(Vector2(track.position.x + track.size.x * progress, 29.0), Vector2(track.position.x + track.size.x * progress, 34.0), Color("d9ffd8"), 1.0)
 
 
 func _draw_reload_indicator(center: Vector2, progress: float, radius: float) -> void:

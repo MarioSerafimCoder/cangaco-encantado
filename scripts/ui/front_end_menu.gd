@@ -51,11 +51,11 @@ func show_pause() -> void:
 	_root.visible = true
 	get_tree().paused = true
 	_set_game_hud_visible(true)
-	_set_standard_layout()
+	_set_pause_layout()
 	_set_heading("JOGO PAUSADO", "A LENDA ESPERA")
 	_clear_content()
 	_add_button(&"continue", "RETOMAR", enter_game)
-	_add_button(&"map", "MAPA", _open_map)
+	_add_button(&"map", "DIÁRIO / MAPA", _open_map)
 	_add_button(&"new_game", "NOVO JOGO", _request_new_game)
 	_add_button(&"settings", "CONFIGURAÇÕES", _open_settings)
 	_add_button(&"controls", "CONTROLES", _open_controls)
@@ -141,6 +141,14 @@ func _set_standard_layout() -> void:
 	_frame.size = Vector2(168.0, 126.0)
 	_content.position = Vector2(252.0, 146.0)
 	_content.size = Vector2(136.0, 106.0)
+
+
+func _set_pause_layout() -> void:
+	_content.add_theme_constant_override("separation", 1)
+	_frame.position = Vector2(236.0, 132.0)
+	_frame.size = Vector2(168.0, 142.0)
+	_content.position = Vector2(252.0, 142.0)
+	_content.size = Vector2(136.0, 123.0)
 
 
 func _set_wide_layout() -> void:
@@ -340,11 +348,11 @@ func _open_controls() -> void:
 	_clear_content()
 	for line in [
 		"A / D  MOVER E CORRER     J  FACÃO",
-		"ESPAÇO  PULAR             K  PISTOLA",
+		"ESPAÇO  PULAR / ACELERAR  K  PISTOLA",
 		"CTRL  AGACHAR             L  RIFLE",
 		"SHIFT + W / S  MIRAR      I  ATAQUE ESPECIAL",
 		"Q  USAR CABAÇA            E  INTERAGIR",
-		"C  INVESTIDA              M  MAPA",
+		"C  INVESTIDA              M  DIÁRIO",
 		"ESC / START  PAUSAR E VOLTAR",
 	]:
 		_add_info_line(line, Color("efd7aa"), 6)

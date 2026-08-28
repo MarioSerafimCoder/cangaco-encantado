@@ -38,7 +38,7 @@ foreach ($relativePath in $requiredFiles) {
 
 $projectText = Get-Content -Raw -LiteralPath (Join-Path $projectRoot 'project.godot')
 $requiredActions = @(
-    'move_left', 'move_right', 'move_up', 'move_down', 'jump', 'crouch',
+    'move_left', 'move_right', 'move_up', 'move_down', 'jump', 'sprint', 'crouch',
     'melee', 'shoot_pistol', 'shoot_rifle', 'special_attack', 'aim', 'heal',
     'interact', 'pause', 'toggle_debug'
 )

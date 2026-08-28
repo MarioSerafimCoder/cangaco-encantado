@@ -40,7 +40,7 @@ const CAVE_WATER_REGION := Rect2(95, 750, 665, 225)
 const CAVE_BRIDGE_REGION := Rect2(812, 744, 630, 230)
 
 const ROOMS := [
-	{"id": &"casa_nilo", "name": "01 CASA DE NILO", "width": 960.0, "function": "Origem, retorno e segredo"},
+	{"id": &"casa_nilo", "name": "01 CASA DE NILO", "width": 640.0, "function": "Origem, retorno e segredo"},
 	{"id": &"rua_cinzas", "name": "02 RUA DAS CINZAS", "width": 1280.0, "function": "Primeiro combate"},
 	{"id": &"barracos", "name": "03 VILA BAIXA", "width": 1280.0, "function": "Traversal e conflito"},
 	{"id": &"praca_umbu", "name": "04 PRAÇA DO UMBU", "width": 1280.0, "function": "Hub, comércio e moradores"},
@@ -117,6 +117,7 @@ func _add_production_room(bounds: Rect2, scene: PackedScene) -> void:
 	elif room.room_id == &"casa_nilo":
 		room.suppress_authored_environment = true
 	add_child(room)
+	_normalize_room_art(room)
 	if room.suppress_authored_environment:
 		_hide_authored_ground(room)
 	if room.room_id == &"casa_nilo":
@@ -129,42 +130,57 @@ func _add_production_room(bounds: Rect2, scene: PackedScene) -> void:
 
 func _build_area01_composition() -> void:
 	var home: Rect2 = room_bounds[&"casa_nilo"]
-	_add_prop(CASA_INTERIOR_ATLAS, Rect2(28, 105, 455, 330), home.position.x + 150, 150, 175, 116, 10, -3)
-	_add_prop(CASA_INTERIOR_ATLAS, Rect2(500, 120, 240, 300), home.position.x + 350, 150, 92, 70, 8, -3)
-	_add_prop(CASA_INTERIOR_ATLAS, Rect2(805, 145, 395, 275), home.position.x + 535, 150, 145, 105, 8, -3)
-	_add_prop(CASA_INTERIOR_ATLAS, Rect2(90, 560, 280, 170), home.position.x + 310, 150, 88, 0, 0, 2)
-	_add_prop(CASA_INTERIOR_ATLAS, Rect2(245, 780, 460, 180), home.position.x + 560, 112, 175, 0, 0, -2)
-	_add_prop(CASA_INTERIOR_ATLAS, Rect2(55, 750, 120, 205), home.position.x + 730, 150, 45, 0, 0, 2)
-	_add_narrative(CASA_INTERIOR_ATLAS, Rect2(1210, 20, 300, 380), home.position.x + 255, 108, 66, &"lembranca_nilo")
+	_add_prop(CASA_INTERIOR_ATLAS, Rect2(28, 105, 455, 330), home.position.x + 88, 150, 108, 76, 8, -3)
+	_add_prop(CASA_INTERIOR_ATLAS, Rect2(500, 120, 240, 300), home.position.x + 218, 150, 58, 42, 7, -3)
+	_add_prop(CASA_INTERIOR_ATLAS, Rect2(805, 145, 395, 275), home.position.x + 344, 150, 98, 72, 7, -3)
+	_add_prop(CASA_INTERIOR_ATLAS, Rect2(90, 560, 280, 170), home.position.x + 172, 112, 46, 0, 0, 2)
+	_add_prop(CASA_INTERIOR_ATLAS, Rect2(245, 780, 460, 180), home.position.x + 430, 112, 108, 0, 0, -2)
+	_add_prop(CASA_INTERIOR_ATLAS, Rect2(55, 750, 120, 205), home.position.x + 486, 150, 28, 0, 0, 2)
+	_add_narrative(CASA_INTERIOR_ATLAS, Rect2(1210, 20, 300, 380), home.position.x + 164, 112, 43, &"lembranca_nilo")
 	_add_home_doors(home)
 
 	var street: Rect2 = room_bounds[&"rua_cinzas"]
-	_add_prop(TRAVERSAL_ATLAS, Rect2(55, 145, 590, 265), street.position.x + 300, 150, 230, 180, 10, -1)
-	_add_prop(TRAVERSAL_ATLAS, Rect2(35, 665, 310, 300), street.position.x + 570, 150, 165, 145, 8, -1)
-	_add_prop(TRAVERSAL_ATLAS, Rect2(365, 650, 350, 315), street.position.x + 790, 150, 175, 140, 8, -2)
-	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), street.position.x + 1040, 150, 105, 82, 8, -1)
+	# Obstáculos baixos, legíveis e alcançáveis com o salto básico. As bases ficam
+	# presas à linha do chão e a colisão acompanha exatamente a parte caminhável.
+	_add_prop(TRAVERSAL_ATLAS, Rect2(55, 145, 590, 265), street.position.x + 300, 150, 120, 102, 8, -1, 45)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), street.position.x + 510, 150, 48, 40, 8, -1)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(35, 665, 310, 300), street.position.x + 690, 150, 118, 100, 8, -1)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(695, 135, 565, 295), street.position.x + 900, 150, 112, 94, 8, -1, 44)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), street.position.x + 1090, 150, 48, 40, 8, -1)
 
 	var lower: Rect2 = room_bounds[&"barracos"]
-	_add_prop(ARCHITECTURE_ATLAS, Rect2(50, 75, 270, 325), lower.position.x + 180, 150, 210, 150, 8, -6)
-	_add_prop(ARCHITECTURE_ATLAS, Rect2(335, 65, 575, 340), lower.position.x + 540, 150, 330, 245, 8, -7)
-	_add_prop(TRAVERSAL_ATLAS, Rect2(695, 135, 565, 295), lower.position.x + 840, 150, 220, 175, 10, -1)
-	_add_prop(ARCHITECTURE_ATLAS, Rect2(965, 45, 505, 355), lower.position.x + 1090, 150, 280, 220, 8, -7)
+	_add_roofed_building(Rect2(50, 75, 270, 325), lower.position.x + 145, 150, 150, 122)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), lower.position.x + 275, 150, 48, 40, 8, -1)
+	_add_roofed_building(Rect2(965, 45, 505, 355), lower.position.x + 470, 150, 225, 190)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(695, 135, 565, 295), lower.position.x + 660, 150, 108, 90, 8, -1, 43)
+	_add_roofed_building(Rect2(50, 75, 270, 325), lower.position.x + 830, 150, 150, 122)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), lower.position.x + 960, 150, 48, 40, 8, -1)
+	_add_roofed_building(Rect2(965, 45, 505, 355), lower.position.x + 1120, 150, 205, 170)
 
 	var square: Rect2 = room_bounds[&"praca_umbu"]
-	_add_prop(ARCHITECTURE_ATLAS, Rect2(35, 425, 530, 280), square.position.x + 960, 150, 280, 0, 0, -8)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), square.position.x + 820, 150, 48, 40, 8, -1)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), square.position.x + 870, 150, 52, 43, 8, -1)
+	_add_roofed_building(Rect2(35, 425, 530, 280), square.position.x + 960, 150, 280, 232)
 	_add_prop(TRAVERSAL_ATLAS, Rect2(1110, 405, 340, 215), square.position.x + 1140, 150, 150, 120, 8, -2)
 	_add_narrative(ARCHITECTURE_ATLAS, Rect2(1070, 400, 250, 310), square.position.x + 1165, 150, 125, &"saida_beta")
 
 	var church: Rect2 = room_bounds[&"igreja_velha"]
-	_add_prop(ARCHITECTURE_ATLAS, Rect2(590, 420, 440, 290), church.position.x + 520, 150, 220, 0, 0, -7)
-	_add_prop(ARCHITECTURE_ATLAS, Rect2(1070, 400, 250, 310), church.position.x + 810, 150, 145, 0, 0, -7)
-	_add_prop(UNDERGROUND_ATLAS, Rect2(30, 55, 340, 345), church.position.x + 700, 150, 170, 0, 0, -4)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), church.position.x + 380, 150, 48, 40, 8, -1)
+	_add_roofed_building(Rect2(590, 420, 440, 290), church.position.x + 520, 150, 220, 182)
+	_add_roofed_building(Rect2(1070, 400, 250, 310), church.position.x + 810, 150, 145, 116)
+	_add_prop(UNDERGROUND_ATLAS, Rect2(30, 55, 340, 345), church.position.x + 700, 150, 112, 0, 0, -4)
 
 	var roofs: Rect2 = room_bounds[&"telhados"]
-	_add_prop(ARCHITECTURE_ATLAS, Rect2(50, 75, 270, 325), roofs.position.x + 720, 150, 190, 145, 8, -6)
-	_add_prop(TRAVERSAL_ATLAS, Rect2(35, 665, 310, 300), roofs.position.x + 550, 150, 150, 125, 8, -1)
-	_add_prop(ARCHITECTURE_ATLAS, Rect2(335, 65, 575, 340), roofs.position.x + 940, 150, 310, 235, 8, -7)
-	_add_prop(TRAVERSAL_ATLAS, Rect2(365, 650, 350, 315), roofs.position.x + 1125, 150, 160, 135, 8, -1)
+	# Uma única rota arquitetônica coerente: toda cobertura tem colisão e cada vão
+	# possui um degrau visual (caixa, carroça ou varanda) antes do salto seguinte.
+	_add_roofed_building(Rect2(50, 75, 270, 325), roofs.position.x + 120, 150, 150, 122)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), roofs.position.x + 245, 150, 48, 40, 8, -1)
+	_add_roofed_building(Rect2(965, 45, 505, 355), roofs.position.x + 405, 150, 220, 184)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(35, 665, 310, 300), roofs.position.x + 575, 150, 116, 96, 8, -1)
+	_add_roofed_building(Rect2(50, 75, 270, 325), roofs.position.x + 720, 150, 148, 120)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(695, 135, 565, 295), roofs.position.x + 850, 150, 108, 90, 8, -1, 43)
+	_add_roofed_building(Rect2(965, 45, 505, 355), roofs.position.x + 1040, 150, 220, 184)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(365, 650, 350, 315), roofs.position.x + 1200, 150, 112, 92, 8, -1)
 
 	_build_underground_composition()
 
@@ -216,17 +232,29 @@ func _add_npc(id: StringName, name_value: String, dialogue: StringName, atlas_in
 	npc.display_name = name_value
 	npc.dialogue_id = dialogue
 	npc.atlas_index = atlas_index
+	npc.room_id = room_id
 	npc.idle_walk_radius = walk_radius
 	add_child(npc)
 	var bounds: Rect2 = room_bounds[room_id]
 	npc.position = Vector2(bounds.position.x + local_x, 138)
 
 
-func _add_prop(texture: Texture2D, region: Rect2, x: float, baseline: float, target_width: float, walkable_width: float, walkable_height: float, z: int) -> AtlasWorldProp:
-	var prop := AtlasWorldProp.new().configure(texture, region, target_width, walkable_width, walkable_height, z)
+func _add_prop(texture: Texture2D, region: Rect2, x: float, baseline: float, target_width: float, walkable_width: float, walkable_height: float, z: int, surface_height := -1.0) -> AtlasWorldProp:
+	var prop := AtlasWorldProp.new().configure(texture, region, target_width, walkable_width, walkable_height, z, surface_height)
 	add_child(prop)
 	prop.position = Vector2(x, baseline)
 	return prop
+
+
+func _add_roofed_building(region: Rect2, x: float, baseline: float, target_width: float, roof_width: float) -> AtlasWorldProp:
+	var building := _add_prop(ARCHITECTURE_ATLAS, region, x, baseline, target_width, roof_width, 8.0, -7)
+	var roof_y := baseline - building.visual_height
+	var wall_height := minf(70.0, maxf(42.0, baseline - roof_y - 34.0))
+	# As laterais superiores tornam as fachadas superfícies de quique depois que
+	# Passo da Pedra é adquirido, sem fechar a circulação no nível da rua.
+	_add_solid(Rect2(x - target_width * 0.5, roof_y + 5.0, 6.0, wall_height))
+	_add_solid(Rect2(x + target_width * 0.5 - 6.0, roof_y + 5.0, 6.0, wall_height))
+	return building
 
 
 func _add_narrative(texture: Texture2D, region: Rect2, x: float, baseline: float, target_width: float, dialogue: StringName) -> void:
@@ -321,6 +349,13 @@ func _build_metroidvania_routes() -> void:
 	_add_traversal_platform(Vector2(church.position.x + 278.0, 54.0), Vector2(64.0, 8.0), true)
 	_add_traversal_platform(Vector2(roofs.position.x + 18.0, 75.0), Vector2(54.0, 8.0), false)
 
+	# Fachadas autorais da Praça e da Igreja também obedecem à regra global:
+	# qualquer telhado visível oferece um topo físico e uma rota de aproximação.
+	_add_invisible_roof(Rect2(square.position.x + 7.0, 70.0, 102.0, 8.0), 46.0)
+	_add_invisible_roof(Rect2(square.position.x + 72.0, 70.0, 106.0, 8.0), 46.0)
+	_add_invisible_roof(Rect2(square.position.x + 519.0, 35.0, 126.0, 8.0), 64.0)
+	_add_invisible_roof(Rect2(church.position.x + 68.0, 18.0, 196.0, 8.0), 72.0)
+
 	# A habilidade de investida fica na rota alta, visível antes de ser alcançada.
 	var dash_pickup := AbilityPickup.new()
 	dash_pickup.ability_id = &"dash"
@@ -380,6 +415,12 @@ func _add_traversal_platform(at: Vector2, size: Vector2, stone_style: bool, reve
 	platform.position = at
 
 
+func _add_invisible_roof(rect: Rect2, wall_height: float) -> void:
+	_add_solid(rect)
+	_add_solid(Rect2(rect.position.x, rect.position.y + 4.0, 6.0, wall_height))
+	_add_solid(Rect2(rect.end.x - 6.0, rect.position.y + 4.0, 6.0, wall_height))
+
+
 func _add_lore_collectible(id: StringName, display_name: String, at: Vector2) -> void:
 	var collectible := LoreCollectible.new()
 	collectible.collectible_id = id
@@ -394,19 +435,45 @@ func _hide_authored_ground(room: RoomController) -> void:
 		ground.visible = false
 
 
+func _normalize_room_art(room: RoomController) -> void:
+	# Os cactos antigos foram desenhados na escala de ilustração e dominavam o
+	# personagem. A redução preserva a base no chão em vez de fazê-los flutuar.
+	for candidate in room.find_children("*Cacto*", "Sprite2D", true, false):
+		var cactus := candidate as Sprite2D
+		var old_height := cactus.texture.get_height() * absf(cactus.scale.y) if cactus.texture != null else 0.0
+		cactus.scale *= 0.68
+		cactus.position.y += old_height * 0.16
+
+	if room.room_id != &"telhados":
+		return
+	# Telhados possuía duas composições sobrepostas. Mantemos o parallax e o chão,
+	# mas substituímos as fachadas/varais e colisões antigas pela rota dinâmica.
+	for path in ["Environment/Architecture", "Environment/Foreground"]:
+		var old_layer := room.get_node_or_null(path) as CanvasItem
+		if old_layer != null:
+			old_layer.visible = false
+	var geometry := room.get_node_or_null("Geometry")
+	if geometry != null:
+		for old_roof in geometry.get_children():
+			if old_roof.name != &"Ground":
+				old_roof.process_mode = Node.PROCESS_MODE_DISABLED
+				if old_roof is CollisionObject2D:
+					(old_roof as CollisionObject2D).collision_layer = 0
+
+
 func _add_home_backdrop(bounds: Rect2) -> void:
 	_add_gradient_backdrop(bounds, Color("5a4130"), Color("211711"))
 	# A arquitetura precisa ficar acima dos parallax das salas vizinhas. Sem isso,
 	# a rua atravessava visualmente a parede quando a câmera se aproximava da porta.
-	_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_WALL_REGION, bounds.get_center().x, 150.0, 920.0, 0.0, 0.0, -9)
-	_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_LEFT_WALL_REGION, bounds.position.x + 52.0, 150.0, 118.0, 0.0, 0.0, -8)
-	_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_RIGHT_WALL_REGION, bounds.end.x - 52.0, 150.0, 118.0, 0.0, 0.0, -8)
-	_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_CEILING_REGION, bounds.get_center().x, 0.0, 920.0, 0.0, 0.0, -7)
+	_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_WALL_REGION, bounds.get_center().x, 150.0, 620.0, 0.0, 0.0, -9)
+	_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_LEFT_WALL_REGION, bounds.position.x + 36.0, 150.0, 78.0, 0.0, 0.0, -8)
+	_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_RIGHT_WALL_REGION, bounds.end.x - 36.0, 150.0, 78.0, 0.0, 0.0, -8)
+	_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_CEILING_REGION, bounds.get_center().x, 0.0, 620.0, 0.0, 0.0, -7)
 	# Usa apenas o centro retangular do piso e sobrepõe levemente os módulos.
 	# As bordas em perspectiva do sprite completo deixavam uma fenda escura.
-	for index in 3:
+	for index in 2:
 		_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_FLOOR_REGION, bounds.position.x + 160.0 + index * 320.0, 242.0, 324.0, 0.0, 0.0, -6)
-	_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_WINDOW_REGION, bounds.position.x + 680.0, 115.0, 105.0, 0.0, 0.0, -4)
+	_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_WINDOW_REGION, bounds.position.x + 424.0, 115.0, 76.0, 0.0, 0.0, -4)
 
 
 func _add_cave_backdrop(bounds: Rect2, deep: bool) -> void:

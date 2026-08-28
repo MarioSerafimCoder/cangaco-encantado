@@ -10,7 +10,7 @@ Para revisar a Área 01 completa em 1920x1080, execute:
 res://tools/area01_visual_review.tscn
 ```
 
-Ela sobrescreve `area_01_vertical_slice/` com onze capturas nomeadas, incluindo a composição geral e a porta de saída da Casa de Nilo, Vila Baixa, Praça, loja, diálogo, Igreja, Telhados, Subterrâneo, Grutas e Santuário. Esse é o conjunto visual oficial do vertical slice 0.4.0.
+Ela sobrescreve `area_01_vertical_slice/` com quinze capturas nomeadas, incluindo menu inicial, pausa, composição geral e porta de saída da Casa de Nilo, Rua das Cinzas sem oclusão, Vila Baixa, Praça, loja, diálogo, Igreja, Telhados, Subterrâneo, Grutas, Santuário e o diário do personagem. Esse é o conjunto visual oficial do vertical slice 0.4.1.
 
 Execute a cena Godot:
 

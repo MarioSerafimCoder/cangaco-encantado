@@ -70,6 +70,10 @@ func _validate_map(map_ui: WorldMapUI) -> void:
 		failures.append("O mapa não representa rotas alternativas e verticais.")
 	if not InputMap.has_action("map") or not InputMap.has_action("dash"):
 		failures.append("Os comandos de mapa ou investida não foram registrados.")
+	if map_ui.TAB_NAMES.size() != 4:
+		failures.append("O diário do personagem não contém mapa, itens, habilidades e amuletos.")
+	if not InputMap.has_action("sprint"):
+		failures.append("A corrida acelerada com Espaço não foi registrada.")
 
 
 func _validate_persistence_schema() -> void:
@@ -77,4 +81,3 @@ func _validate_persistence_schema() -> void:
 	for key in ["visited_rooms", "current_room_id", "permanent_upgrades", "max_health_bonus", "abilities", "opened_shortcuts"]:
 		if not data.has(key):
 			failures.append("O save não persiste o campo de exploração: %s." % key)
-

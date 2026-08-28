@@ -2,6 +2,8 @@ extends Node
 
 const OUTPUT_DIRECTORY := "res://prints_do_jogo/area_01_vertical_slice"
 
+var _capture_failed := false
+
 
 func _ready() -> void:
 	await get_tree().process_frame
@@ -20,8 +22,10 @@ func _ready() -> void:
 		fade.modulate.a = 0.0
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUTPUT_DIRECTORY))
 	_freeze_enemies()
+	await _capture_front_end(main)
 	await _capture_room(world, nilo, camera, hud, &"casa_nilo", "01_casa_de_nilo.png")
 	await _capture_home_exit(world, nilo, camera, hud)
+	await _capture_street_clearance(world, nilo, camera, hud)
 	await _capture_room(world, nilo, camera, hud, &"barracos", "02_vila_baixa.png")
 	await _capture_room(world, nilo, camera, hud, &"praca_umbu", "03_praca_do_umbu.png")
 	await _capture_shop(main, world, nilo, camera, hud)
@@ -31,9 +35,28 @@ func _ready() -> void:
 	await _capture_room(world, nilo, camera, hud, &"patio", "08_subterraneo.png")
 	await _capture_room(world, nilo, camera, hud, &"beco", "09_grutas.png")
 	await _capture_room(world, nilo, camera, hud, &"arena", "10_caverna_santuario.png")
+	await _capture_character_menu(main)
 	SaveManager.autosave_enabled = true
+	if _capture_failed:
+		get_tree().quit(1)
+		return
 	print("AREA01_VISUAL_REVIEW_OK: %s" % ProjectSettings.globalize_path(OUTPUT_DIRECTORY))
 	get_tree().quit()
+
+
+func _capture_front_end(main: Node) -> void:
+	var menu := main.get_node("FrontEndMenu") as FrontEndMenu
+	menu.show_title()
+	# A cena de revisão precisa continuar processando enquanto o menu pausa o jogo.
+	get_tree().paused = false
+	await _wait_frames(4)
+	await _capture(OUTPUT_DIRECTORY.path_join("00_menu_inicial.png"))
+	menu.enter_game()
+	menu.show_pause()
+	get_tree().paused = false
+	await _wait_frames(4)
+	await _capture(OUTPUT_DIRECTORY.path_join("00b_menu_de_pausa.png"))
+	menu.enter_game()
 
 
 func _capture_room(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: GameHUD, room_id: StringName, file_name: String) -> void:
@@ -41,6 +64,7 @@ func _capture_room(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: 
 	nilo.narrative_locked = false
 	nilo.state_machine.request(PlayerStateMachine.State.IDLE, 0.0, true)
 	nilo.global_position = world.get_room_center(room_id)
+	EventBus.room_entered.emit(room_id, "")
 	nilo.velocity = Vector2.ZERO
 	camera.reset_smoothing()
 	var bounds: Rect2 = world.room_bounds[room_id]
@@ -75,6 +99,24 @@ func _capture_home_exit(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, 
 	await _capture(OUTPUT_DIRECTORY.path_join("01b_porta_de_saida_da_casa.png"))
 
 
+func _capture_street_clearance(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: GameHUD) -> void:
+	var bounds: Rect2 = world.room_bounds[&"rua_cinzas"]
+	nilo.global_position = Vector2(bounds.position.x + 135.0, 138.0)
+	nilo.velocity = Vector2.ZERO
+	camera.limit_left = roundi(bounds.position.x)
+	camera.limit_right = roundi(bounds.end.x)
+	camera.limit_top = -120
+	camera.limit_bottom = 360
+	camera.position = Vector2.ZERO
+	camera.position_smoothing_enabled = false
+	camera.reset_smoothing()
+	hud.room_fade = 0.0
+	hud.world_fade = 0.0
+	hud.help_fade = 0.0
+	await _wait_frames(16)
+	await _capture(OUTPUT_DIRECTORY.path_join("01c_rua_das_cinzas_sem_oclusao.png"))
+
+
 func _capture_shop(main: Node, world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: GameHUD) -> void:
 	await _position_in_square(world, nilo, camera, hud)
 	var director := main.get_node("DialogueDirector") as DialogueDirector
@@ -107,6 +149,7 @@ func _capture_dialogue(main: Node, world: VilaGraybox, nilo: NiloPlayer, camera:
 func _position_in_square(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: GameHUD) -> void:
 	var bounds: Rect2 = world.room_bounds[&"praca_umbu"]
 	nilo.global_position = Vector2(bounds.position.x + 610, 138)
+	EventBus.room_entered.emit(&"praca_umbu", "")
 	nilo.velocity = Vector2.ZERO
 	camera.limit_left = roundi(bounds.position.x)
 	camera.limit_right = roundi(bounds.end.x)
@@ -121,13 +164,40 @@ func _position_in_square(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D,
 	await _wait_frames(16)
 
 
+func _capture_character_menu(main: Node) -> void:
+	var menu := main.get_node("WorldMap") as WorldMapUI
+	GameState.abilities["wall_jump"] = true
+	GameState.add_inventory_item(&"important_items", &"medalha_antiga", 1)
+	menu.open_map()
+	# A revisão visual precisa continuar processando depois que a interface pausa o jogo.
+	get_tree().paused = false
+	menu.set("_tab", WorldMapUI.Tab.ABILITIES)
+	var canvas := menu.get("_canvas") as Control
+	canvas.queue_redraw()
+	await _wait_frames(4)
+	await _capture(OUTPUT_DIRECTORY.path_join("11_menu_habilidades_do_personagem.png"))
+	menu.call("_close")
+
+
 func _capture(path: String) -> void:
+	if _capture_failed:
+		return
 	for attempt in 3:
-		var image := get_viewport().get_texture().get_image()
+		var viewport_texture := get_viewport().get_texture()
+		if viewport_texture == null:
+			_capture_failed = true
+			push_error("O renderizador ativo não disponibilizou textura para a revisão visual.")
+			return
+		var image := viewport_texture.get_image()
+		if image == null:
+			_capture_failed = true
+			push_error("O renderizador ativo não disponibilizou imagem para a revisão visual.")
+			return
 		if image.save_png(ProjectSettings.globalize_path(path)) == OK:
 			return
 		if attempt < 2:
 			await get_tree().create_timer(0.12).timeout
+	_capture_failed = true
 	push_error("Falha ao gerar screenshot: %s" % path)
 
 

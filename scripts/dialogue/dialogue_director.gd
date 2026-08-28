@@ -54,7 +54,8 @@ func start(dialogue_key: StringName, npc: NPCActor = null) -> bool:
 func _process(delta: float) -> void:
 	if not active:
 		return
-	_continue_label.position.y = 89.0 + round(sin(Time.get_ticks_msec() * 0.006) * 2.0)
+	_continue_label.text = "[%s] CONTINUAR" % InputBootstrap.interact_prompt()
+	_continue_label.position.y = 77.0 + round(sin(Time.get_ticks_msec() * 0.006) * 1.0)
 	if _text_label.visible_characters >= _text_label.text.length():
 		_continue_label.visible = _choice_box.get_child_count() == 0
 		return
@@ -133,9 +134,10 @@ func _build_choices(choices: Array) -> void:
 	for choice in choices:
 		var button := Button.new()
 		button.text = String(choice.get("text", "CONTINUAR"))
-		button.custom_minimum_size = Vector2(240, 18)
+		button.custom_minimum_size = Vector2(252, 17)
 		button.add_theme_font_override("font", PIXEL_FONT)
 		button.add_theme_font_size_override("font_size", 8)
+		_apply_choice_button_theme(button)
 		button.pressed.connect(_on_choice.bind(choice))
 		_choice_box.add_child(button)
 	if _choice_box.get_child_count() > 0:
@@ -181,8 +183,8 @@ func _build_ui() -> void:
 	_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
 	_root.add_child(_overlay)
 	_panel = Panel.new()
-	_panel.position = Vector2(102, 31)
-	_panel.size = Vector2(436, 112)
+	_panel.position = Vector2(112, 44)
+	_panel.size = Vector2(416, 96)
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(0.035, 0.027, 0.02, 0.82)
 	style.border_color = Color("7f6548")
@@ -200,18 +202,19 @@ func _build_ui() -> void:
 	top_texture.atlas = UI_ATLAS
 	top_texture.region = TOP_ORNAMENT
 	top.texture = top_texture
-	top.position = Vector2(218, 4)
-	top.scale = Vector2(200.0 / TOP_ORNAMENT.size.x, 58.0 / TOP_ORNAMENT.size.y)
+	top.position = Vector2(208, 4)
+	top.scale = Vector2(184.0 / TOP_ORNAMENT.size.x, 50.0 / TOP_ORNAMENT.size.y)
 	top.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_panel.add_child(top)
-	_name_label = _label(Vector2(25, 21), Vector2(386, 16), 9, Color("d8b87f"))
-	_text_label = _label(Vector2(25, 39), Vector2(386, 54), 11, Color("f3e8d1"))
+	_name_label = _label(Vector2(22, 18), Vector2(372, 14), 8, Color("d8b87f"))
+	_text_label = _label(Vector2(22, 34), Vector2(372, 40), 9, Color("f3e8d1"))
 	_text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_continue_label = _label(Vector2(399, 89), Vector2(18, 14), 9, Color("c59a63"))
-	_continue_label.text = "◆"
+	_continue_label = _label(Vector2(296, 77), Vector2(98, 12), 7, Color("d8b87f"))
+	_continue_label.text = "[%s] CONTINUAR" % InputBootstrap.interact_prompt()
+	_continue_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_choice_box = VBoxContainer.new()
-	_choice_box.position = Vector2(95, 58)
-	_choice_box.size = Vector2(246, 48)
+	_choice_box.position = Vector2(82, 50)
+	_choice_box.size = Vector2(252, 40)
 	_choice_box.add_theme_constant_override("separation", 2)
 	_panel.add_child(_choice_box)
 
@@ -220,6 +223,7 @@ func _label(position_value: Vector2, size_value: Vector2, font_size: int, color:
 	var label := Label.new()
 	label.position = position_value
 	label.size = size_value
+	label.add_theme_font_override("font", PIXEL_FONT)
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", color)
 	label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.9))
@@ -227,6 +231,31 @@ func _label(position_value: Vector2, size_value: Vector2, font_size: int, color:
 	label.add_theme_constant_override("shadow_offset_y", 1)
 	_panel.add_child(label)
 	return label
+
+
+func _apply_choice_button_theme(button: Button) -> void:
+	button.add_theme_color_override("font_color", Color("e9dcc5"))
+	button.add_theme_color_override("font_hover_color", Color("fff0c7"))
+	button.add_theme_color_override("font_focus_color", Color("fff0c7"))
+	button.add_theme_color_override("font_pressed_color", Color("1d130d"))
+	button.add_theme_stylebox_override("normal", _button_style(Color("241a13dc"), Color("6e5337"), 1))
+	button.add_theme_stylebox_override("hover", _button_style(Color("3a291ce8"), Color("b6864c"), 1))
+	button.add_theme_stylebox_override("focus", _button_style(Color("3a291cf2"), Color("e1aa59"), 2))
+	button.add_theme_stylebox_override("pressed", _button_style(Color("d5a45d"), Color("f0ce8e"), 1))
+
+
+func _button_style(background: Color, border: Color, width: int) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = background
+	style.border_color = border
+	style.set_border_width_all(width)
+	style.corner_radius_top_left = 2
+	style.corner_radius_top_right = 2
+	style.corner_radius_bottom_left = 2
+	style.corner_radius_bottom_right = 2
+	style.content_margin_left = 6.0
+	style.content_margin_right = 6.0
+	return style
 
 
 func _clear_choices() -> void:

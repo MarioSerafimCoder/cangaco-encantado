@@ -10,7 +10,7 @@ func _ready() -> void:
 	await get_tree().process_frame
 	var rooms := get_tree().get_nodes_in_group("production_rooms")
 	var expected_rooms := {
-		&"casa_nilo": 960.0,
+		&"casa_nilo": 640.0,
 		&"rua_cinzas": 1280.0,
 		&"igreja_velha": 960.0,
 		&"telhados": 1280.0,
@@ -36,6 +36,7 @@ func _ready() -> void:
 		_validate_entrances(room)
 		_validate_geometry(room)
 		_validate_parallax(room)
+		_validate_foreground_safety(room)
 		_validate_world_state(room)
 	for room_id in expected_rooms:
 		if not by_id.has(room_id):
@@ -56,6 +57,9 @@ func _ready() -> void:
 	if by_id.has(&"arena"):
 		_validate_spawns(by_id[&"arena"], 0)
 	_validate_no_hybrid_decorator()
+	var world := $Main/VilaDoUmbuzeiro as VilaGraybox
+	_validate_dynamic_traversal(world)
+	await _validate_representative_platform_landings(world)
 	await _validate_camera_director(by_id)
 	_validate_visual_cohesion(rooms)
 	_validate_character_shadows()
@@ -152,6 +156,16 @@ func _validate_parallax_paths(room: RoomController, expected: Dictionary) -> voi
 			failures.append("Ratio inesperado na camada %s." % path)
 
 
+func _validate_foreground_safety(room: RoomController) -> void:
+	var foreground := room.get_node_or_null("Environment/Foreground") as CanvasItem
+	if foreground == null:
+		return
+	for candidate in foreground.find_children("*", "Sprite2D", true, false):
+		var sprite := candidate as Sprite2D
+		if sprite.texture != null and sprite.texture.get_width() >= 240 and sprite.z_index >= 0:
+			failures.append("Sala %s possui sprite grande de primeiro plano capaz de ocultar portas, NPCs ou o herói (z=%d)." % [room.room_id, sprite.z_index])
+
+
 func _validate_world_state(room: RoomController) -> void:
 	var occupied := room.get_node("Environment/OccupiedOnly") as CanvasItem
 	var liberated := room.get_node("Environment/LiberatedOnly") as CanvasItem
@@ -198,6 +212,81 @@ func _validate_no_hybrid_decorator() -> void:
 		failures.append("O compositor híbrido global ainda está ativo depois da migração.")
 
 
+func _validate_dynamic_traversal(world: VilaGraybox) -> void:
+	var minimums := {&"rua_cinzas": 5, &"barracos": 7, &"telhados": 8}
+	for room_id in minimums:
+		var bounds: Rect2 = world.room_bounds[room_id]
+		var walkable_count := 0
+		for candidate in world.find_children("*", "AtlasWorldProp", false, false):
+			var prop := candidate as AtlasWorldProp
+			if not bounds.has_point(prop.position) or prop.collision_layer == 0:
+				continue
+			walkable_count += 1
+			var collision: CollisionShape2D
+			for child in prop.get_children():
+				if child is CollisionShape2D:
+					collision = child as CollisionShape2D
+					break
+			var shape := collision.shape as RectangleShape2D if collision != null else null
+			if shape == null:
+				failures.append("Prop caminhável sem colisão em %s." % room_id)
+				continue
+			var collision_top := collision.position.y - shape.size.y * 0.5
+			if absf(collision_top + prop.walkable_surface_height) > 0.25:
+				failures.append("Colisão de prop não acompanha a superfície caminhável em %s." % room_id)
+		if walkable_count < int(minimums[room_id]):
+			failures.append("Sala %s possui poucos obstáculos/telhados caminháveis: %d." % [room_id, walkable_count])
+	var upper_walls := 0
+	var roof_bounds: Rect2 = world.room_bounds[&"telhados"]
+	for rect in world.solid_rects:
+		if rect.position.x >= roof_bounds.position.x and rect.end.x <= roof_bounds.end.x and rect.end.y < 150.0:
+			upper_walls += 1
+	if upper_walls < 8:
+		failures.append("As fachadas de Telhados não oferecem laterais suficientes para o quique.")
+	for room_id in [&"praca_umbu", &"igreja_velha"]:
+		var bounds: Rect2 = world.room_bounds[room_id]
+		var roof_tops := 0
+		for rect in world.solid_rects:
+			if rect.position.x >= bounds.position.x and rect.end.x <= bounds.end.x and rect.position.y < 100.0 and rect.size.x >= 40.0 and rect.size.y <= 10.0:
+				roof_tops += 1
+		var minimum := 3 if room_id == &"praca_umbu" else 1
+		if roof_tops < minimum:
+			failures.append("Os telhados autorais de %s não possuem plataformas suficientes." % room_id)
+
+
+func _validate_representative_platform_landings(world: VilaGraybox) -> void:
+	var player := get_tree().get_first_node_in_group("player") as NiloPlayer
+	if player == null:
+		failures.append("Nilo não foi encontrado para testar pousos nas plataformas.")
+		return
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		enemy.process_mode = Node.PROCESS_MODE_DISABLED
+	var jump_height := player.config.jump_velocity * player.config.jump_velocity / (2.0 * player.config.gravity)
+	for room_id in [&"rua_cinzas", &"barracos", &"telhados"]:
+		var bounds: Rect2 = world.room_bounds[room_id]
+		var candidates: Array[AtlasWorldProp] = []
+		for candidate in world.find_children("*", "AtlasWorldProp", false, false):
+			var prop := candidate as AtlasWorldProp
+			if bounds.has_point(prop.position) and prop.collision_layer != 0 and prop.walkable_surface_height <= jump_height - 2.0:
+				candidates.append(prop)
+		if candidates.is_empty():
+			failures.append("Sala %s não oferece caixa/carroça alcançável pelo salto básico (%.1f px)." % [room_id, jump_height])
+			continue
+		candidates.sort_custom(func(a: AtlasWorldProp, b: AtlasWorldProp) -> bool: return a.walkable_surface_height < b.walkable_surface_height)
+		var prop := candidates[0]
+		player.narrative_locked = true
+		player.velocity = Vector2.ZERO
+		player.global_position = prop.global_position + Vector2(0.0, -prop.walkable_surface_height - 34.0)
+		for _frame in 60:
+			await get_tree().physics_frame
+			if player.is_on_floor():
+				break
+		var expected_y := prop.global_position.y - prop.walkable_surface_height - 12.0
+		if not player.is_on_floor() or absf(player.global_position.y - expected_y) > 0.8:
+			failures.append("Nilo não pousou corretamente na plataforma de %s; y %.2f, esperado %.2f." % [room_id, player.global_position.y, expected_y])
+	player.narrative_locked = false
+
+
 func _validate_camera_director(by_id: Dictionary) -> void:
 	var main := $Main
 	var director := main.get_node_or_null("CameraDirector") as CameraDirector
@@ -206,9 +295,9 @@ func _validate_camera_director(by_id: Dictionary) -> void:
 		failures.append("Gerenciador central de câmera não foi encontrado.")
 		return
 	player.set_physics_process(false)
-	player.global_position = Vector2(930, 138)
+	player.global_position = Vector2(610, 138)
 	await get_tree().physics_frame
-	player.global_position = Vector2(970, 138)
+	player.global_position = Vector2(650, 138)
 	await get_tree().physics_frame
 	var target := (by_id[&"rua_cinzas"] as RoomController).get_global_camera_bounds()
 	if not director.is_transitioning():

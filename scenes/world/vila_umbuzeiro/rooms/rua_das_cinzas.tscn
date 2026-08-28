@@ -228,18 +228,22 @@ polygon = PackedVector2Array(-3, -5, 3, -5, 4, 4, -4, 4)
 color = Color(0.96, 0.72, 0.29, 0.9)
 
 [node name="Foreground" type="Node2D" parent="Environment"]
-z_index = 12
+# A silhueta grande deve dar profundidade sem encobrir Nilo, NPCs, portas ou props.
+# Mantemos a paralaxe, mas atrás da arquitetura e da camada de gameplay.
+z_index = -10
 script = ExtResource("2_parallax")
 scroll_scale = Vector2(1.1, 1)
 
 [node name="Texture" type="Sprite2D" parent="Environment/Foreground"]
 position = Vector2(320, 8)
+z_index = -10
 texture_filter = 1
 texture = ExtResource("6_foreground")
 modulate = Color(0.63, 0.59, 0.55, 0.96)
 
 [node name="TextureEast" type="Sprite2D" parent="Environment/Foreground"]
 position = Vector2(960, 8)
+z_index = -10
 texture_filter = 1
 texture = ExtResource("6_foreground")
 modulate = Color(0.63, 0.59, 0.55, 0.96)

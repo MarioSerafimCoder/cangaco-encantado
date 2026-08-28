@@ -105,10 +105,11 @@ func _build_hud() -> void:
 	boss_status = BossStatusHUD.new()
 	add_child(boss_status)
 
-	help_panel = _make_panel(Rect2(192.0, 343.0, 256.0, 12.0), Color("171311c9"), Color("6e5337"), HELP_PANEL_TEXTURE)
-	help_label = _make_label(help_panel, Vector2(3.0, 1.0), Vector2(250.0, 9.0), 5, Color("d8c39e"))
-	help_label.text = "A/D MOVER  ESPAÇO PULAR  J FACÃO  K PISTOLA  L RIFLE  I ESPECIAL"
+	help_panel = _make_panel(Rect2(192.0, 332.0, 256.0, 23.0), Color("171311c9"), Color("6e5337"), HELP_PANEL_TEXTURE)
+	help_label = _make_label(help_panel, Vector2(5.0, 2.0), Vector2(246.0, 19.0), 6, Color("d8c39e"))
+	help_label.text = "A/D MOVER | ESPAÇO PULAR/ACELERAR | E INTERAGIR\nJ FACÃO | K PISTOLA | L RIFLE | I ESPECIAL | M MENU"
 	help_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	help_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
 
 func _update_boss_bar() -> void:

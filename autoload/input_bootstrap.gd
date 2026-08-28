@@ -6,6 +6,7 @@ const KEYBOARD_BINDINGS := {
 	"move_up": [KEY_W, KEY_UP],
 	"move_down": [KEY_S, KEY_DOWN],
 	"jump": [KEY_SPACE],
+	"sprint": [KEY_SPACE],
 	"crouch": [KEY_CTRL],
 	"melee": [KEY_J],
 	"shoot_pistol": [KEY_K],
@@ -23,6 +24,7 @@ const KEYBOARD_BINDINGS := {
 
 const JOYPAD_BUTTON_BINDINGS := {
 	"jump": JOY_BUTTON_A,
+	"sprint": JOY_BUTTON_A,
 	"crouch": JOY_BUTTON_LEFT_STICK,
 	"melee": JOY_BUTTON_X,
 	"shoot_rifle": JOY_BUTTON_RIGHT_SHOULDER,

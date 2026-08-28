@@ -1,5 +1,24 @@
 # Changelog
 
+## Correção de escala, travessia e diário — 0.4.1
+
+- A Casa de Nilo foi reduzida para uma sala de 640 px, com móveis menores, porta destacada e nenhum NPC fora de contexto no interior.
+- NPCs agora aparecem e processam somente na sala à qual pertencem.
+- Carroças, caixas, varandas e fachadas externas foram reescaladas e assentadas na linha do chão.
+- Carroças e caixas passaram a ser obstáculos com topo físico, permitindo saltar e permanecer sobre eles.
+- A altura física das carroças passou a usar o estrado caminhável, sem prender a colisão ao pixel mais alto da carga; caixas e degraus básicos ficaram dentro do alcance real do salto.
+- Vila Baixa e Telhados receberam fachadas completas no lugar de casas flutuantes, incompletas ou cortadas.
+- Telhados deixou de misturar duas composições sobrepostas; todas as coberturas visíveis agora são plataformas.
+- As laterais superiores das casas aceitam o quique depois de obter o Passo da Pedra, e obstáculos próximos formam rotas de acesso.
+- Cactos decorativos e a entrada da Cripta foram reduzidos para a escala de Nilo.
+- Segurar Espaço durante a corrida ativa uma aceleração de 35%, mantendo o salto no mesmo botão.
+- M abre o Diário de Nilo com abas de mapa, itens, habilidades e amuletos; A/D alterna as abas.
+- A revisão visual oficial passou a incluir o menu de habilidades do personagem.
+- Diálogos agora aplicam a fonte pixel art, ocupam menos tela e mostram a tecla de avanço; a loja ganhou foco temático, comandos visíveis e espaçamento sem sobreposição.
+- O menu de pausa foi ampliado para acomodar as sete ações sem escapar da moldura, e a revisão visual passou a registrar menu inicial e pausa.
+- O teste de produção agora derruba Nilo sobre plataformas representativas e valida a altura exata do pouso em Rua, Vila Baixa e Telhados.
+- A árvore seca e os cactos panorâmicos da Rua foram movidos para trás da arquitetura e do gameplay, deixando porta, NPCs, Nilo e obstáculos sempre legíveis.
+
 ## Área 01 — vertical slice da Vila do Umbuzeiro — 0.4.0
 
 - As treze salas foram reorganizadas como uma macroárea coerente, com rotas horizontais, verticais, atalhos e retorno após adquirir habilidades.

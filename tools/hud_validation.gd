@@ -12,6 +12,7 @@ func _ready() -> void:
 	_validate_structure(hud)
 	_validate_player_feedback(hud, player)
 	await _validate_boss_bar(hud, player)
+	await _validate_secondary_interfaces($Main)
 	if failures.is_empty():
 		print("HUD_VALIDATION_OK")
 		get_tree().quit()
@@ -31,6 +32,8 @@ func _validate_structure(hud: GameHUD) -> void:
 		failures.append("Painel do jogador não reutiliza a moldura do atlas.")
 	if hud.boss_status.get_node_or_null("AtlasFrame") == null:
 		failures.append("Barra de chefe não reutiliza a moldura do atlas.")
+	if hud.help_panel.size.y < 20.0 or not hud.help_label.text.contains("\n"):
+		failures.append("Guia de controles voltou a comprimir todos os comandos em uma linha ilegível.")
 
 
 func _validate_player_feedback(hud: GameHUD, player: NiloPlayer) -> void:
@@ -75,3 +78,40 @@ func _validate_boss_bar(hud: GameHUD, player: NiloPlayer) -> void:
 		failures.append("Medidor de postura do chefe não recebeu a alteração esperada.")
 	hud.boss_status.hide_boss()
 	boss.queue_free()
+
+
+func _validate_secondary_interfaces(main: Node) -> void:
+	var director := main.get_node_or_null("DialogueDirector") as DialogueDirector
+	if director == null:
+		failures.append("DialogueDirector não foi encontrado para validar a interface narrativa.")
+		return
+	var dialogue_panel := director.get("_panel") as Panel
+	var dialogue_text := director.get("_text_label") as Label
+	var continue_label := director.get("_continue_label") as Label
+	if dialogue_panel == null or dialogue_panel.size.y > 100.0:
+		failures.append("Caixa de diálogo voltou a ocupar altura excessiva da tela.")
+	if dialogue_text == null or dialogue_text.get_theme_font("font").resource_path != "res://assets/ui/fonts/Tiny5-Regular.ttf":
+		failures.append("Diálogo não usa a fonte pixel art do jogo.")
+	if continue_label == null or not continue_label.text.contains("CONTINUAR"):
+		failures.append("Diálogo não comunica a tecla para continuar.")
+	var shop := director.get("_shop_ui") as ShopUI
+	if shop == null:
+		failures.append("ShopUI não foi criada pelo fluxo de diálogo.")
+		return
+	shop.open(&"mercador_vila")
+	await get_tree().process_frame
+	var shop_root := shop.get("_root") as Control
+	var shop_panel := shop_root.get_child(1) as Panel if shop_root != null and shop_root.get_child_count() > 1 else null
+	if shop_panel == null or shop_panel.size.y > 220.0:
+		failures.append("Loja voltou a ocupar altura excessiva da tela.")
+	var items := shop.get("_items") as VBoxContainer
+	if items == null or items.get_child_count() == 0:
+		failures.append("Loja não apresentou itens compráveis.")
+	else:
+		var first_button := items.get_child(0) as Button
+		if not first_button.has_theme_stylebox_override("focus"):
+			failures.append("Seleção da loja voltou a usar o contorno padrão do Godot.")
+	var controls := shop.get("_controls_label") as Label
+	if controls == null or not controls.text.contains("FECHAR"):
+		failures.append("Loja não exibe os comandos de navegação e fechamento.")
+	shop.close()

@@ -10,6 +10,7 @@ const BASE_SCALE := 0.075
 @export var npc_id: StringName
 @export var display_name := "MORADOR"
 @export var dialogue_id: StringName
+@export var room_id: StringName
 @export_range(0, 7) var atlas_index := 0
 @export var idle_walk_radius := 0.0
 
@@ -63,6 +64,8 @@ func _ready() -> void:
 	add_child(prompt)
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
+	EventBus.room_entered.connect(_on_room_entered)
+	_refresh_room_visibility(GameState.current_room_id)
 
 
 func _process(delta: float) -> void:
@@ -103,3 +106,18 @@ func _on_body_exited(body: Node) -> void:
 	if body == player_inside:
 		player_inside = null
 		prompt.visible = false
+
+
+func _on_room_entered(active_room_id: StringName, _display_name: String) -> void:
+	_refresh_room_visibility(active_room_id)
+
+
+func _refresh_room_visibility(active_room_id: StringName) -> void:
+	var active := room_id.is_empty() or room_id == active_room_id
+	visible = active
+	set_process(active)
+	set_deferred("monitoring", active)
+	if not active:
+		player_inside = null
+		if prompt != null:
+			prompt.visible = false
