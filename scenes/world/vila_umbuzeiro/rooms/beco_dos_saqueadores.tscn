@@ -15,7 +15,7 @@ size = Vector2(960, 480)
 [node name="BecoDosSaqueadores" type="Node2D"]
 script = ExtResource("1")
 room_id = &"beco"
-display_name = "09 BECO DOS SAQUEADORES"
+display_name = "09 GRUTAS DA VILA"
 local_bounds = Rect2(0, -120, 960, 480)
 camera_bounds = Rect2(0, -120, 960, 480)
 authored_composition_width = 320.0

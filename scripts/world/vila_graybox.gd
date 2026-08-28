@@ -3,7 +3,6 @@ extends Node2D
 
 const SAQUEADOR_SCENE := preload("res://scenes/enemies/saqueador.tscn")
 const PISTOLEIRO_SCENE := preload("res://scenes/enemies/pistoleiro.tscn")
-const ZE_TRANCA_SCENE := preload("res://scenes/bosses/ze_tranca.tscn")
 const RUA_DAS_CINZAS_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/rua_das_cinzas.tscn")
 const TELHADOS_DA_VILA_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/telhados_da_vila.tscn")
 const PRACA_DO_UMBU_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/praca_do_umbu.tscn")
@@ -17,22 +16,47 @@ const PATIO_DO_ARMAZEM_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms
 const BECO_DOS_SAQUEADORES_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/beco_dos_saqueadores.tscn")
 const POCO_DO_ROMAOZINHO_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/poco_do_romaozinho.tscn")
 const BARRICADA_DA_COMPANHIA_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/barricada_da_companhia.tscn")
+const CASA_INTERIOR_ATLAS := preload("res://assets/area_01/environment/casa_nilo_interior_atlas.png")
+const CASA_ARCHITECTURE_ATLAS := preload("res://assets/area_01/environment/casa_nilo_arquitetura_atlas.png")
+const TRAVERSAL_ATLAS := preload("res://assets/area_01/environment/traversal_props_atlas.png")
+const ARCHITECTURE_ATLAS := preload("res://assets/area_01/environment/arquitetura_vila_atlas.png")
+const UNDERGROUND_ATLAS := preload("res://assets/area_01/environment/cripta_subterraneo_atlas.png")
+const CAVERN_ATLAS := preload("res://assets/area_01/environment/grutas_cavernas_atlas.png")
+const CAVERN_STRUCTURE_ATLAS := preload("res://assets/area_01/environment/cavernas_estrutura_atlas.png")
+const CAVE_FLOOR_REGION := Rect2(60, 150, 650, 270)
+const HOME_WALL_REGION := Rect2(302, 108, 910, 340)
+const HOME_LEFT_WALL_REGION := Rect2(28, 54, 196, 420)
+const HOME_RIGHT_WALL_REGION := Rect2(1283, 55, 205, 420)
+const HOME_CEILING_REGION := Rect2(207, 500, 1090, 108)
+const HOME_FLOOR_REGION := Rect2(90, 697, 500, 158)
+const HOME_DOOR_CLOSED_REGION := Rect2(693, 648, 235, 298)
+const HOME_DOOR_OPEN_REGION := Rect2(965, 647, 273, 300)
+const HOME_WINDOW_REGION := Rect2(1294, 672, 216, 238)
+const CAVE_WALL_REGION := Rect2(40, 34, 720, 320)
+const CAVE_CEILING_REGION := Rect2(804, 32, 695, 200)
+const UNDERGROUND_WALL_REGION := Rect2(720, 425, 510, 280)
+const CAVE_TUNNEL_REGION := Rect2(309, 387, 355, 325)
+const CAVE_WATER_REGION := Rect2(95, 750, 665, 225)
+const CAVE_BRIDGE_REGION := Rect2(812, 744, 630, 230)
 
 const ROOMS := [
 	{"id": &"casa_nilo", "name": "01 CASA DE NILO", "width": 960.0, "function": "Origem, retorno e segredo"},
 	{"id": &"rua_cinzas", "name": "02 RUA DAS CINZAS", "width": 1280.0, "function": "Primeiro combate"},
-	{"id": &"igreja_velha", "name": "03 IGREJA VELHA", "width": 960.0, "function": "Trauma, checkpoint e rota vertical"},
-	{"id": &"telhados", "name": "04 TELHADOS DA VILA", "width": 1280.0, "function": "Rota arquitetônica elevada"},
-	{"id": &"praca_umbu", "name": "05 PRAÇA DO UMBU", "width": 1280.0, "function": "Landmark e hub"},
-	{"id": &"barracos", "name": "06 BARRACOS QUEIMADOS", "width": 1280.0, "function": "Controle de área"},
-	{"id": &"armazem", "name": "07 ARMAZÉM TOMADO", "width": 1280.0, "function": "Combate interno"},
-	{"id": &"patio", "name": "08 PÁTIO DO ARMAZÉM", "width": 1280.0, "function": "Arena de domínio"},
-	{"id": &"beco", "name": "09 BECO DOS SAQUEADORES", "width": 960.0, "function": "Emboscada"},
-	{"id": &"poco", "name": "10 POÇO DO ROMÃOZINHO", "width": 960.0, "function": "Opcional e bloqueado"},
-	{"id": &"barricada", "name": "11 BARRICADA DA COMPANHIA", "width": 1280.0, "function": "Gate e elite"},
-	{"id": &"posto", "name": "12 POSTO DE COMANDO", "width": 960.0, "function": "Pré-boss e lore"},
-	{"id": &"arena", "name": "13 ARENA DE ZÉ TRANCA", "width": 1280.0, "function": "Boss tutorial"},
+	{"id": &"barracos", "name": "03 VILA BAIXA", "width": 1280.0, "function": "Traversal e conflito"},
+	{"id": &"praca_umbu", "name": "04 PRAÇA DO UMBU", "width": 1280.0, "function": "Hub, comércio e moradores"},
+	{"id": &"igreja_velha", "name": "05 IGREJA E CEMITÉRIO", "width": 960.0, "function": "Checkpoint, lore e cripta"},
+	{"id": &"telhados", "name": "06 TELHADOS DA VILA", "width": 1280.0, "function": "Rota arquitetônica elevada"},
+	{"id": &"armazem", "name": "07 CRIPTA DA IGREJA", "width": 1280.0, "function": "Entrada subterrânea"},
+	{"id": &"patio", "name": "08 SUBTERRÂNEO DA VILA", "width": 1280.0, "function": "Alvenaria e túneis"},
+	{"id": &"beco", "name": "09 GRUTAS", "width": 960.0, "function": "Pedra exposta e raízes"},
+	{"id": &"poco", "name": "10 POÇO DAS RAÍZES", "width": 960.0, "function": "Rota opcional e segredo"},
+	{"id": &"barricada", "name": "11 CAVERNA RASA", "width": 1280.0, "function": "Exploração natural"},
+	{"id": &"posto", "name": "12 CAVERNA PROFUNDA", "width": 960.0, "function": "Descida e atalho"},
+	{"id": &"arena", "name": "13 SANTUÁRIO ENCANTADO", "width": 1280.0, "function": "Descoberta sobrenatural"},
 ]
+
+const UNDERGROUND_ROOMS := [&"armazem", &"patio"]
+const CAVERN_ROOMS := [&"beco", &"poco", &"barricada", &"posto", &"arena"]
 
 var room_bounds: Dictionary = {}
 var solid_rects: Array[Rect2] = []
@@ -42,6 +66,8 @@ var player: NiloPlayer
 
 func _ready() -> void:
 	_build_rooms()
+	_build_area01_composition()
+	_build_npcs()
 	_build_gameplay()
 	_build_metroidvania_routes()
 	EventBus.world_state_changed.connect(_on_world_state_changed)
@@ -76,7 +102,139 @@ func _build_rooms() -> void:
 func _add_production_room(bounds: Rect2, scene: PackedScene) -> void:
 	var room := scene.instantiate() as RoomController
 	room.position = bounds.position
+	if room.room_id in UNDERGROUND_ROOMS:
+		room.occupied_tint = Color("7f8080")
+		room.liberated_tint = Color("8b8c88")
+		room.camera_profile = "underground"
+		room.suppress_authored_environment = true
+	elif room.room_id in CAVERN_ROOMS:
+		room.occupied_tint = Color("68666b")
+		room.liberated_tint = Color("77747a")
+		room.camera_profile = "cavern"
+		room.suppress_authored_environment = true
+	elif room.room_id == &"telhados":
+		room.camera_profile = "rooftops"
+	elif room.room_id == &"casa_nilo":
+		room.suppress_authored_environment = true
 	add_child(room)
+	if room.suppress_authored_environment:
+		_hide_authored_ground(room)
+	if room.room_id == &"casa_nilo":
+		_add_home_backdrop(bounds)
+	elif room.room_id in UNDERGROUND_ROOMS:
+		_add_cave_backdrop(bounds, false)
+	elif room.room_id in CAVERN_ROOMS:
+		_add_cave_backdrop(bounds, true)
+
+
+func _build_area01_composition() -> void:
+	var home: Rect2 = room_bounds[&"casa_nilo"]
+	_add_prop(CASA_INTERIOR_ATLAS, Rect2(28, 105, 455, 330), home.position.x + 150, 150, 175, 116, 10, -3)
+	_add_prop(CASA_INTERIOR_ATLAS, Rect2(500, 120, 240, 300), home.position.x + 350, 150, 92, 70, 8, -3)
+	_add_prop(CASA_INTERIOR_ATLAS, Rect2(805, 145, 395, 275), home.position.x + 535, 150, 145, 105, 8, -3)
+	_add_prop(CASA_INTERIOR_ATLAS, Rect2(90, 560, 280, 170), home.position.x + 310, 150, 88, 0, 0, 2)
+	_add_prop(CASA_INTERIOR_ATLAS, Rect2(245, 780, 460, 180), home.position.x + 560, 112, 175, 0, 0, -2)
+	_add_prop(CASA_INTERIOR_ATLAS, Rect2(55, 750, 120, 205), home.position.x + 730, 150, 45, 0, 0, 2)
+	_add_narrative(CASA_INTERIOR_ATLAS, Rect2(1210, 20, 300, 380), home.position.x + 255, 108, 66, &"lembranca_nilo")
+	_add_home_doors(home)
+
+	var street: Rect2 = room_bounds[&"rua_cinzas"]
+	_add_prop(TRAVERSAL_ATLAS, Rect2(55, 145, 590, 265), street.position.x + 300, 150, 230, 180, 10, -1)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(35, 665, 310, 300), street.position.x + 570, 150, 165, 145, 8, -1)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(365, 650, 350, 315), street.position.x + 790, 150, 175, 140, 8, -2)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), street.position.x + 1040, 150, 105, 82, 8, -1)
+
+	var lower: Rect2 = room_bounds[&"barracos"]
+	_add_prop(ARCHITECTURE_ATLAS, Rect2(50, 75, 270, 325), lower.position.x + 180, 150, 210, 150, 8, -6)
+	_add_prop(ARCHITECTURE_ATLAS, Rect2(335, 65, 575, 340), lower.position.x + 540, 150, 330, 245, 8, -7)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(695, 135, 565, 295), lower.position.x + 840, 150, 220, 175, 10, -1)
+	_add_prop(ARCHITECTURE_ATLAS, Rect2(965, 45, 505, 355), lower.position.x + 1090, 150, 280, 220, 8, -7)
+
+	var square: Rect2 = room_bounds[&"praca_umbu"]
+	_add_prop(ARCHITECTURE_ATLAS, Rect2(35, 425, 530, 280), square.position.x + 960, 150, 280, 0, 0, -8)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(1110, 405, 340, 215), square.position.x + 1140, 150, 150, 120, 8, -2)
+	_add_narrative(ARCHITECTURE_ATLAS, Rect2(1070, 400, 250, 310), square.position.x + 1165, 150, 125, &"saida_beta")
+
+	var church: Rect2 = room_bounds[&"igreja_velha"]
+	_add_prop(ARCHITECTURE_ATLAS, Rect2(590, 420, 440, 290), church.position.x + 520, 150, 220, 0, 0, -7)
+	_add_prop(ARCHITECTURE_ATLAS, Rect2(1070, 400, 250, 310), church.position.x + 810, 150, 145, 0, 0, -7)
+	_add_prop(UNDERGROUND_ATLAS, Rect2(30, 55, 340, 345), church.position.x + 700, 150, 170, 0, 0, -4)
+
+	var roofs: Rect2 = room_bounds[&"telhados"]
+	_add_prop(ARCHITECTURE_ATLAS, Rect2(50, 75, 270, 325), roofs.position.x + 720, 150, 190, 145, 8, -6)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(35, 665, 310, 300), roofs.position.x + 550, 150, 150, 125, 8, -1)
+	_add_prop(ARCHITECTURE_ATLAS, Rect2(335, 65, 575, 340), roofs.position.x + 940, 150, 310, 235, 8, -7)
+	_add_prop(TRAVERSAL_ATLAS, Rect2(365, 650, 350, 315), roofs.position.x + 1125, 150, 160, 135, 8, -1)
+
+	_build_underground_composition()
+
+
+func _build_underground_composition() -> void:
+	var crypt: Rect2 = room_bounds[&"armazem"]
+	_add_prop(UNDERGROUND_ATLAS, Rect2(25, 45, 350, 360), crypt.position.x + 180, 150, 220, 0, 0, -5)
+	_add_prop(UNDERGROUND_ATLAS, Rect2(390, 55, 330, 345), crypt.position.x + 470, 150, 240, 0, 0, -6)
+	_add_prop(UNDERGROUND_ATLAS, Rect2(755, 70, 350, 340), crypt.position.x + 760, 150, 220, 165, 8, -2)
+	_add_prop(UNDERGROUND_ATLAS, Rect2(1120, 90, 390, 310), crypt.position.x + 1080, 150, 230, 175, 8, -3)
+	var tunnels: Rect2 = room_bounds[&"patio"]
+	_add_prop(UNDERGROUND_ATLAS, Rect2(20, 450, 365, 220), tunnels.position.x + 180, 150, 220, 0, 0, -4)
+	_add_prop(UNDERGROUND_ATLAS, Rect2(410, 455, 330, 230), tunnels.position.x + 460, 150, 210, 0, 0, -4)
+	_add_prop(UNDERGROUND_ATLAS, Rect2(760, 505, 390, 180), tunnels.position.x + 760, 150, 260, 215, 8, -2)
+	_add_prop(UNDERGROUND_ATLAS, Rect2(1160, 470, 350, 220), tunnels.position.x + 1080, 150, 230, 180, 8, -2)
+	var grotto: Rect2 = room_bounds[&"beco"]
+	_add_prop(CAVERN_ATLAS, Rect2(60, 150, 650, 270), grotto.position.x + 280, 150, 430, 315, 10, -4)
+	_add_prop(CAVERN_ATLAS, Rect2(790, 70, 300, 360), grotto.position.x + 720, 150, 190, 0, 0, -5)
+	var roots: Rect2 = room_bounds[&"poco"]
+	_add_prop(CAVERN_ATLAS, Rect2(390, 470, 310, 210), roots.position.x + 210, 150, 210, 0, 0, -4)
+	_add_prop(CAVERN_STRUCTURE_ATLAS, CAVE_WATER_REGION, roots.position.x + 520, 150, 420, 300, 8, -3)
+	_add_prop(CAVERN_ATLAS, Rect2(1050, 485, 240, 190), roots.position.x + 780, 150, 150, 0, 0, -3)
+	var cave: Rect2 = room_bounds[&"barricada"]
+	_add_prop(CAVERN_STRUCTURE_ATLAS, CAVE_BRIDGE_REGION, cave.position.x + 300, 150, 360, 300, 10, -4)
+	_add_prop(CAVERN_ATLAS, Rect2(540, 710, 220, 280), cave.position.x + 600, 150, 155, 0, 0, -4)
+	_add_prop(CAVERN_ATLAS, Rect2(790, 700, 255, 290), cave.position.x + 920, 150, 180, 0, 0, -4)
+	var deep: Rect2 = room_bounds[&"posto"]
+	_add_prop(CAVERN_ATLAS, Rect2(60, 150, 650, 270), deep.position.x + 300, 150, 420, 310, 10, -4)
+	_add_prop(CAVERN_ATLAS, Rect2(805, 70, 285, 355), deep.position.x + 740, 150, 180, 0, 0, -4)
+	var sanctuary: Rect2 = room_bounds[&"arena"]
+	_add_prop(CAVERN_ATLAS, Rect2(45, 755, 420, 230), sanctuary.position.x + 260, 150, 300, 220, 10, -5)
+	_add_narrative(CAVERN_ATLAS, Rect2(1130, 715, 300, 280), sanctuary.position.x + 700, 150, 200, &"manifestacao")
+
+
+func _build_npcs() -> void:
+	_add_npc(&"dona_tereza", "DONA TEREZA", &"dona_tereza", 0, &"rua_cinzas", 120, 0)
+	_add_npc(&"raimundo", "RAIMUNDO", &"ferido", 1, &"rua_cinzas", 185, 0)
+	_add_npc(&"bento", "BENTO", &"artesao", 3, &"barracos", 610, 14)
+	_add_npc(&"anselmo", "SEU ANSELMO", &"mercador", 6, &"praca_umbu", 650, 0)
+	_add_npc(&"lia", "LIA", &"crianca", 4, &"praca_umbu", 440, 20)
+	_add_npc(&"tome", "IRMÃO TOMÉ", &"sacristao", 7, &"igreja_velha", 430, 0)
+	_add_npc(&"ze_lino", "ZÉ LINO", &"vigia", 1, &"telhados", 110, 0)
+	_add_npc(&"mariano", "MARIANO", &"viajante", 6, &"praca_umbu", 850, 18)
+
+
+func _add_npc(id: StringName, name_value: String, dialogue: StringName, atlas_index: int, room_id: StringName, local_x: float, walk_radius: float) -> void:
+	var npc := NPCActor.new()
+	npc.npc_id = id
+	npc.display_name = name_value
+	npc.dialogue_id = dialogue
+	npc.atlas_index = atlas_index
+	npc.idle_walk_radius = walk_radius
+	add_child(npc)
+	var bounds: Rect2 = room_bounds[room_id]
+	npc.position = Vector2(bounds.position.x + local_x, 138)
+
+
+func _add_prop(texture: Texture2D, region: Rect2, x: float, baseline: float, target_width: float, walkable_width: float, walkable_height: float, z: int) -> AtlasWorldProp:
+	var prop := AtlasWorldProp.new().configure(texture, region, target_width, walkable_width, walkable_height, z)
+	add_child(prop)
+	prop.position = Vector2(x, baseline)
+	return prop
+
+
+func _add_narrative(texture: Texture2D, region: Rect2, x: float, baseline: float, target_width: float, dialogue: StringName) -> void:
+	var interactable := NarrativeInteractable.new()
+	interactable.dialogue_id = dialogue
+	interactable.configure_visual(texture, region, target_width)
+	add_child(interactable)
+	interactable.position = Vector2(x, baseline)
 
 
 func _production_scene_for(room_id: StringName) -> PackedScene:
@@ -112,6 +270,13 @@ func _production_scene_for(room_id: StringName) -> PackedScene:
 
 
 func _build_gameplay() -> void:
+	var home: Rect2 = room_bounds[&"casa_nilo"]
+	var home_checkpoint := Checkpoint.new()
+	home_checkpoint.checkpoint_id = &"vila_casa"
+	home_checkpoint.show_visual = false
+	add_child(home_checkpoint)
+	home_checkpoint.position = Vector2(home.position.x + 92.0, 132.0)
+
 	var church: Rect2 = room_bounds[&"igreja_velha"]
 	var checkpoint := Checkpoint.new()
 	checkpoint.checkpoint_id = &"vila_igreja"
@@ -125,19 +290,11 @@ func _build_gameplay() -> void:
 	shortcut.destination = Vector2(square.position.x + square.size.x - 58.0, 130.0)
 	add_child(shortcut)
 	shortcut.position = Vector2(warehouse.position.x + warehouse.size.x - 62.0, 128.0)
-
-	var arena: Rect2 = room_bounds[&"arena"]
-	var exit_gate := LiberationGate.new()
-	exit_gate.gate_size = Vector2(12.0, 180.0)
-	add_child(exit_gate)
-	exit_gate.position = Vector2(arena.end.x - 28.0, 60.0)
-	var barricade: Rect2 = room_bounds[&"barricada"]
-	var barricade_gate := LiberationGate.new()
-	barricade_gate.blocked_label = "BARRICADA"
-	barricade_gate.open_label = "ABERTA"
-	barricade_gate.show_indicator = false
-	add_child(barricade_gate)
-	barricade_gate.position = Vector2(barricade.position.x + 286.0, 133.0)
+	var underground: Rect2 = room_bounds[&"patio"]
+	var underground_checkpoint := Checkpoint.new()
+	underground_checkpoint.checkpoint_id = &"vila_subterraneo"
+	add_child(underground_checkpoint)
+	underground_checkpoint.position = Vector2(underground.position.x + 90.0, 132.0)
 
 	if not WorldState.is_vila_liberated():
 		_spawn_occupied_encounters()
@@ -159,8 +316,8 @@ func _build_metroidvania_routes() -> void:
 	wall_jump_pickup.position = Vector2(church.position.x + 104.0, 130.0)
 
 	# Campanário: uma chaminé curta que exige alternar saltos nas paredes.
-	_add_traversal_platform(Vector2(church.position.x + 214.0, 91.0), Vector2(9.0, 66.0), true)
-	_add_traversal_platform(Vector2(church.position.x + 250.0, 91.0), Vector2(9.0, 66.0), true)
+	_add_traversal_platform(Vector2(church.position.x + 214.0, 117.0), Vector2(9.0, 66.0), true)
+	_add_traversal_platform(Vector2(church.position.x + 250.0, 117.0), Vector2(9.0, 66.0), true)
 	_add_traversal_platform(Vector2(church.position.x + 278.0, 54.0), Vector2(64.0, 8.0), true)
 	_add_traversal_platform(Vector2(roofs.position.x + 18.0, 75.0), Vector2(54.0, 8.0), false)
 
@@ -173,9 +330,9 @@ func _build_metroidvania_routes() -> void:
 	dash_pickup.position = Vector2(roofs.position.x + 890.0, 72.0)
 
 	# Segredo na casa inicial: só abre no retorno com Pedra + Poeira.
-	_add_traversal_platform(Vector2(home.position.x + 176.0, 112.0), Vector2(42.0, 7.0), false)
-	_add_traversal_platform(Vector2(home.position.x + 224.0, 82.0), Vector2(46.0, 7.0), false)
-	_add_traversal_platform(Vector2(home.position.x + 281.0, 72.0), Vector2(66.0, 7.0), false)
+	_add_traversal_platform(Vector2(home.position.x + 176.0, 112.0), Vector2(42.0, 7.0), false, &"dash")
+	_add_traversal_platform(Vector2(home.position.x + 224.0, 82.0), Vector2(46.0, 7.0), false, &"dash")
+	_add_traversal_platform(Vector2(home.position.x + 281.0, 72.0), Vector2(66.0, 7.0), false, &"dash")
 	var home_gate := AbilityGate.new()
 	home_gate.required_ability = &"dash"
 	home_gate.label = "SELO DA POEIRA"
@@ -196,13 +353,128 @@ func _build_metroidvania_routes() -> void:
 	_add_connector(&"poco_igreja_cripta", Vector2(well.position.x + 160.0, 112.0), Vector2(church.position.x + 40.0, 130.0), &"wall_jump", "DESCER À CRIPTA", &"igreja_velha")
 	_add_connector(&"poco_igreja_cripta", Vector2(church.position.x + 40.0, 130.0), Vector2(well.position.x + 160.0, 112.0), &"", "TÚNEL DO POÇO", &"poco", true)
 
+	# O clímax abre um retorno curto ao hub; o acesso inverso só existe depois disso.
+	var sanctuary: Rect2 = room_bounds[&"arena"]
+	var return_connector := WorldConnector.new()
+	return_connector.connector_id = &"santuario_praca_retorno"
+	return_connector.destination = Vector2(square.position.x + 1030.0, 130.0)
+	return_connector.destination_room = &"praca_umbu"
+	return_connector.display_name = "RETORNAR À PRAÇA"
+	return_connector.required_flag = &"area01_encantado_discovered"
+	add_child(return_connector)
+	return_connector.position = Vector2(sanctuary.position.x + 1030.0, 128.0)
+	_add_connector(&"santuario_praca_retorno", Vector2(square.position.x + 1030.0, 130.0), Vector2(sanctuary.position.x + 1030.0, 128.0), &"", "ATALHO DO SANTUÁRIO", &"arena", true)
 
-func _add_traversal_platform(at: Vector2, size: Vector2, stone_style: bool) -> void:
+	_add_lore_collectible(&"cordel_telhadista", "O HOMEM QUE ANDAVA NO VENTO", Vector2(roofs.position.x + 1115.0, 56.0))
+	_add_lore_collectible(&"cordel_cripta", "VERSOS DA PEDRA ANTIGA", Vector2(warehouse.position.x + 1010.0, 118.0))
+	_add_lore_collectible(&"cordel_raizes", "A CANTIGA DAS RAÍZES", Vector2(well.position.x + 700.0, 110.0))
+	_add_lore_collectible(&"cordel_caverna", "A ESTRELA SOB A TERRA", Vector2(sanctuary.position.x + 450.0, 105.0))
+
+
+func _add_traversal_platform(at: Vector2, size: Vector2, stone_style: bool, reveal_ability: StringName = &"") -> void:
 	var platform := TraversalPlatform.new()
 	platform.platform_size = size
 	platform.stone_style = stone_style
+	platform.reveal_ability = reveal_ability
 	add_child(platform)
 	platform.position = at
+
+
+func _add_lore_collectible(id: StringName, display_name: String, at: Vector2) -> void:
+	var collectible := LoreCollectible.new()
+	collectible.collectible_id = id
+	collectible.display_name = display_name
+	add_child(collectible)
+	collectible.position = at
+
+
+func _hide_authored_ground(room: RoomController) -> void:
+	var ground := room.get_node_or_null("Geometry/Ground") as CanvasItem
+	if ground != null:
+		ground.visible = false
+
+
+func _add_home_backdrop(bounds: Rect2) -> void:
+	_add_gradient_backdrop(bounds, Color("5a4130"), Color("211711"))
+	# A arquitetura precisa ficar acima dos parallax das salas vizinhas. Sem isso,
+	# a rua atravessava visualmente a parede quando a câmera se aproximava da porta.
+	_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_WALL_REGION, bounds.get_center().x, 150.0, 920.0, 0.0, 0.0, -9)
+	_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_LEFT_WALL_REGION, bounds.position.x + 52.0, 150.0, 118.0, 0.0, 0.0, -8)
+	_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_RIGHT_WALL_REGION, bounds.end.x - 52.0, 150.0, 118.0, 0.0, 0.0, -8)
+	_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_CEILING_REGION, bounds.get_center().x, 0.0, 920.0, 0.0, 0.0, -7)
+	# Usa apenas o centro retangular do piso e sobrepõe levemente os módulos.
+	# As bordas em perspectiva do sprite completo deixavam uma fenda escura.
+	for index in 3:
+		_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_FLOOR_REGION, bounds.position.x + 160.0 + index * 320.0, 242.0, 324.0, 0.0, 0.0, -6)
+	_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_WINDOW_REGION, bounds.position.x + 680.0, 115.0, 105.0, 0.0, 0.0, -4)
+
+
+func _add_cave_backdrop(bounds: Rect2, deep: bool) -> void:
+	_add_gradient_backdrop(bounds, Color("17171a") if deep else Color("231d19"), Color("070708"))
+	var wall_region := CAVE_WALL_REGION if deep else UNDERGROUND_WALL_REGION
+	var wall_width := 520.0
+	for index in ceili(bounds.size.x / wall_width):
+		var wall := _add_prop(CAVERN_STRUCTURE_ATLAS, wall_region, bounds.position.x + wall_width * (index + 0.5), 150.0, wall_width + 4.0, 0.0, 0.0, -34)
+		wall.sprite.modulate = Color(0.56, 0.58, 0.61, 0.88) if deep else Color(0.50, 0.54, 0.58, 0.86)
+		var lower_wall := _add_prop(CAVERN_STRUCTURE_ATLAS, wall_region, bounds.position.x + wall_width * (index + 0.5), 370.0, wall_width + 4.0, 0.0, 0.0, -35)
+		lower_wall.sprite.modulate = Color(0.30, 0.32, 0.36, 0.92) if deep else Color(0.29, 0.30, 0.31, 0.92)
+	if deep:
+		for index in ceili(bounds.size.x / wall_width):
+			var ceiling := _add_prop(CAVERN_STRUCTURE_ATLAS, CAVE_CEILING_REGION, bounds.position.x + wall_width * (index + 0.5), 8.0, wall_width + 4.0, 0.0, 0.0, -12)
+			ceiling.sprite.modulate = Color(0.62, 0.64, 0.68, 0.92)
+	var segment_width := 430.0
+	for index in ceili(bounds.size.x / segment_width):
+		var sprite := _atlas_sprite(CAVERN_ATLAS, CAVE_FLOOR_REGION)
+		var scale_value := segment_width / CAVE_FLOOR_REGION.size.x
+		sprite.scale = Vector2.ONE * scale_value
+		sprite.position = Vector2(bounds.position.x + segment_width * (index + 0.5), 150.0 + CAVE_FLOOR_REGION.size.y * scale_value * 0.5)
+		sprite.z_index = -2
+		add_child(sprite)
+
+
+func _add_home_doors(home: Rect2) -> void:
+	var inside := TransitionDoor.new().configure_visual(CASA_ARCHITECTURE_ATLAS, HOME_DOOR_CLOSED_REGION, HOME_DOOR_OPEN_REGION, 90.0)
+	inside.door_id = &"casa_nilo_saida"
+	inside.destination = Vector2(home.end.x + 82.0, 138.0)
+	inside.destination_room = &"rua_cinzas"
+	inside.display_name = "SAIR PARA A RUA"
+	add_child(inside)
+	inside.position = Vector2(home.end.x - 105.0, 150.0)
+	var outside := TransitionDoor.new().configure_visual(CASA_ARCHITECTURE_ATLAS, HOME_DOOR_CLOSED_REGION, HOME_DOOR_OPEN_REGION, 84.0)
+	outside.door_id = &"casa_nilo_entrada"
+	outside.destination = Vector2(home.end.x - 155.0, 138.0)
+	outside.destination_room = &"casa_nilo"
+	outside.display_name = "ENTRAR NA CASA"
+	add_child(outside)
+	outside.position = Vector2(home.end.x + 42.0, 150.0)
+	_add_solid(Rect2(home.end.x - 16.0, -120.0, 16.0, 270.0))
+
+
+func _add_gradient_backdrop(bounds: Rect2, top_color: Color, bottom_color: Color) -> void:
+	var gradient := Gradient.new()
+	gradient.colors = PackedColorArray([top_color, bottom_color])
+	var texture := GradientTexture2D.new()
+	texture.gradient = gradient
+	texture.width = roundi(bounds.size.x)
+	texture.height = 480
+	texture.fill_from = Vector2(0.5, 0.0)
+	texture.fill_to = Vector2(0.5, 1.0)
+	var sprite := Sprite2D.new()
+	sprite.texture = texture
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	sprite.position = Vector2(bounds.get_center().x, 120.0)
+	sprite.z_index = -40
+	add_child(sprite)
+
+
+func _atlas_sprite(texture: Texture2D, region: Rect2) -> Sprite2D:
+	var sprite := Sprite2D.new()
+	sprite.texture = texture
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	sprite.region_enabled = true
+	sprite.region_filter_clip_enabled = true
+	sprite.region_rect = region
+	return sprite
 
 
 func _add_connector(id: StringName, at: Vector2, target: Vector2, ability: StringName, label: String, target_room: StringName, wait_for_unlock := false) -> void:

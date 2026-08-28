@@ -1,0 +1,11 @@
+{
+  "mercador_vila": {
+    "items": [
+      {"id":"carga_cabaca","name":"CARGA DE CABAÇA","price":20,"category":"consumables","amount":1,"description":"Recupera uma carga de cura, até o limite atual."},
+      {"id":"municao_pistola","name":"MUNIÇÃO DE PISTOLA","price":15,"category":"consumables","amount":1,"description":"Completa a munição das armas de fogo."},
+      {"id":"municao_rifle","name":"CARTUCHOS DE RIFLE","price":25,"category":"consumables","amount":1,"description":"Reabastece o rifle e a pistola no protótipo atual."},
+      {"id":"mapa_vila","name":"FOLHETO DA VILA","price":30,"category":"important_items","amount":1,"unique":true,"description":"Registra os setores visitados no mapa da Área 01."},
+      {"id":"medalha_antiga","name":"MEDALHA ANTIGA","price":55,"category":"collectibles","amount":1,"unique":true,"description":"Relíquia de uma história que a Vila prefere esquecer."}
+    ]
+  }
+}

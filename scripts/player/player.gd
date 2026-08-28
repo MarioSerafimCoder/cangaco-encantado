@@ -19,6 +19,7 @@ var _crouch_applied := false
 var _camera_shake_remaining := 0.0
 var _camera_shake_strength := 0.0
 var _camera_shake_offset := Vector2.ZERO
+var narrative_locked := false
 
 
 func _ready() -> void:
@@ -55,8 +56,9 @@ func _physics_process(delta: float) -> void:
 	var grounded_before_move := is_on_floor()
 	var vertical_speed_before_move := velocity.y
 	state_machine.tick(delta)
-	combat.update(delta)
-	movement.physics_step(self, delta, state_machine.is_movement_locked())
+	if not narrative_locked:
+		combat.update(delta)
+	movement.physics_step(self, delta, state_machine.is_movement_locked() or narrative_locked)
 	var landed := not grounded_before_move and is_on_floor()
 	if absf(velocity.x) > 1.0:
 		facing = signf(velocity.x)

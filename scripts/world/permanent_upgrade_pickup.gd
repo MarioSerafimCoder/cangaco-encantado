@@ -1,11 +1,15 @@
 class_name PermanentUpgradePickup
 extends Area2D
 
+const UI_ATLAS := preload("res://assets/area_01/ui/dialogo_loja_atlas.png")
+const MEDAL_REGION := Rect2(1000, 778, 155, 180)
+
 @export var upgrade_id: StringName = &"coracao_casa_nilo"
 @export var display_name := "CORAÇÃO DO SERTÃO"
 @export var health_bonus := 1
 
 var _collected := false
+var _visual: Sprite2D
 
 
 func _ready() -> void:
@@ -16,10 +20,18 @@ func _ready() -> void:
 	shape.radius = 10.0
 	collision.shape = shape
 	add_child(collision)
+	_visual = Sprite2D.new()
+	_visual.texture = UI_ATLAS
+	_visual.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_visual.region_enabled = true
+	_visual.region_filter_clip_enabled = true
+	_visual.region_rect = MEDAL_REGION
+	_visual.scale = Vector2.ONE * 0.17
+	_visual.z_index = 8
+	add_child(_visual)
 	body_entered.connect(_on_body_entered)
 	_collected = bool(GameState.permanent_upgrades.get(String(upgrade_id), false))
 	visible = not _collected
-	queue_redraw()
 
 
 func _on_body_entered(body: Node) -> void:
@@ -33,12 +45,3 @@ func _on_body_entered(body: Node) -> void:
 	EventBus.secret_discovered.emit(upgrade_id)
 	EventBus.permanent_upgrade_collected.emit(upgrade_id, display_name)
 	visible = false
-
-
-func _draw() -> void:
-	if _collected:
-		return
-	draw_circle(Vector2.ZERO, 9.0, Color(0.9, 0.2, 0.18, 0.25))
-	draw_colored_polygon(PackedVector2Array([Vector2(-7,-3), Vector2(-4,-7), Vector2(0,-5), Vector2(4,-7), Vector2(7,-3), Vector2(0,8)]), Color("dc493d"))
-	draw_polyline(PackedVector2Array([Vector2(-7,-3), Vector2(-4,-7), Vector2(0,-5), Vector2(4,-7), Vector2(7,-3), Vector2(0,8), Vector2(-7,-3)]), Color("ffd27a"), 1.0)
-

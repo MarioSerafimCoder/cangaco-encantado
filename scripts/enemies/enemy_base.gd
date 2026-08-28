@@ -307,6 +307,9 @@ func _on_died() -> void:
 	collision_layer = 0
 	collision_mask = 0
 	$Hurtbox.set_deferred("monitorable", false)
+	var reward := 3 if data.behavior == EnemyData.Behavior.RANGED else 2
+	GameState.add_currency(reward)
+	EventBus.request_autosave.emit(&"enemy_reward")
 	await get_tree().create_timer(data.death_duration).timeout
 	queue_free()
 

@@ -37,7 +37,7 @@ func _validate_pause_menu(menu: FrontEndMenu, hud: CanvasLayer) -> void:
 	menu.show_pause()
 	if menu.mode != FrontEndMenu.Mode.PAUSE or not get_tree().paused:
 		failures.append("Menu de pausa não abriu ou não congelou o jogo.")
-	for action in [&"continue", &"new_game", &"settings", &"controls", &"title", &"quit"]:
+	for action in [&"continue", &"map", &"new_game", &"settings", &"controls", &"title", &"quit"]:
 		if not menu.action_buttons.has(action):
 			failures.append("Ação ausente no menu de pausa: %s." % action)
 	if not hud.visible:
@@ -48,7 +48,7 @@ func _validate_settings(menu: FrontEndMenu) -> void:
 	menu.call("_open_settings")
 	if menu.mode != FrontEndMenu.Mode.SETTINGS:
 		failures.append("Tela de configurações não abriu.")
-	for action in [&"volume", &"fullscreen", &"screen_shake", &"controls", &"back"]:
+	for action in [&"volume", &"fullscreen", &"resolution", &"vsync", &"screen_shake", &"controls", &"back"]:
 		if not menu.action_buttons.has(action):
 			failures.append("Configuração ausente: %s." % action)
 

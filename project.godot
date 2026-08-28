@@ -27,6 +27,7 @@ WorldState="*res://autoload/world_state.gd"
 SaveManager="*res://autoload/save_manager.gd"
 SettingsManager="*res://autoload/settings_manager.gd"
 HitStop="*res://autoload/hit_stop.gd"
+DialogueDatabase="*res://scripts/dialogue/dialogue_database.gd"
 
 [display]
 

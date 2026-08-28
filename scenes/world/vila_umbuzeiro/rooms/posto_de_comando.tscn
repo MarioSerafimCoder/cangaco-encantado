@@ -18,7 +18,7 @@ size = Vector2(960, 480)
 [node name="PostoDeComando" type="Node2D"]
 script = ExtResource("1")
 room_id = &"posto"
-display_name = "12 POSTO DE COMANDO"
+display_name = "12 CAVERNA PROFUNDA"
 local_bounds = Rect2(0, -120, 960, 480)
 camera_bounds = Rect2(0, -120, 960, 480)
 authored_composition_width = 320.0

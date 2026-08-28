@@ -3,19 +3,19 @@ extends CanvasLayer
 
 const PIXEL_FONT := preload("res://assets/ui/fonts/Tiny5-Regular.ttf")
 const ROOM_LAYOUT := {
-	&"casa_nilo": Vector2i(0, 2),
-	&"rua_cinzas": Vector2i(1, 2),
-	&"igreja_velha": Vector2i(2, 2),
-	&"telhados": Vector2i(3, 1),
-	&"praca_umbu": Vector2i(4, 2),
-	&"barracos": Vector2i(5, 2),
-	&"armazem": Vector2i(5, 1),
-	&"patio": Vector2i(6, 1),
+	&"casa_nilo": Vector2i(0, 1),
+	&"rua_cinzas": Vector2i(1, 1),
+	&"barracos": Vector2i(2, 1),
+	&"praca_umbu": Vector2i(3, 1),
+	&"igreja_velha": Vector2i(4, 1),
+	&"telhados": Vector2i(4, 0),
+	&"armazem": Vector2i(4, 2),
+	&"patio": Vector2i(5, 2),
 	&"beco": Vector2i(6, 2),
 	&"poco": Vector2i(6, 3),
 	&"barricada": Vector2i(7, 2),
-	&"posto": Vector2i(8, 2),
-	&"arena": Vector2i(9, 2),
+	&"posto": Vector2i(7, 3),
+	&"arena": Vector2i(8, 3),
 }
 const ROOM_NAMES := {
 	&"casa_nilo": "CASA",
@@ -23,19 +23,19 @@ const ROOM_NAMES := {
 	&"igreja_velha": "IGREJA",
 	&"telhados": "TELHADOS",
 	&"praca_umbu": "PRAÇA",
-	&"barracos": "BARRACOS",
-	&"armazem": "ARMAZÉM",
-	&"patio": "PÁTIO",
-	&"beco": "BECO",
+	&"barracos": "VILA BAIXA",
+	&"armazem": "CRIPTA",
+	&"patio": "SUBSOLO",
+	&"beco": "GRUTAS",
 	&"poco": "POÇO",
-	&"barricada": "BARRICADA",
-	&"posto": "POSTO",
-	&"arena": "ARENA",
+	&"barricada": "CAV. RASA",
+	&"posto": "CAV. FUNDA",
+	&"arena": "SANTUÁRIO",
 }
 const CONNECTIONS := [
-	[&"casa_nilo", &"rua_cinzas", &""], [&"rua_cinzas", &"igreja_velha", &""],
-	[&"igreja_velha", &"telhados", &"wall_jump"], [&"telhados", &"praca_umbu", &""],
-	[&"praca_umbu", &"barracos", &""], [&"barracos", &"armazem", &""],
+	[&"casa_nilo", &"rua_cinzas", &""], [&"rua_cinzas", &"barracos", &""],
+	[&"barracos", &"praca_umbu", &""], [&"praca_umbu", &"igreja_velha", &""],
+	[&"igreja_velha", &"telhados", &"wall_jump"], [&"igreja_velha", &"armazem", &""],
 	[&"armazem", &"patio", &""], [&"patio", &"beco", &""],
 	[&"beco", &"poco", &"wall_jump"], [&"beco", &"barricada", &""],
 	[&"barricada", &"posto", &""], [&"posto", &"arena", &""],
@@ -75,6 +75,7 @@ func _ready() -> void:
 	EventBus.ability_unlocked.connect(_on_progress_changed_two)
 	EventBus.secret_discovered.connect(_on_progress_changed_one)
 	EventBus.permanent_upgrade_collected.connect(_on_upgrade_collected)
+	EventBus.lore_collectible_found.connect(_on_lore_collectible_found)
 
 
 func _build_toast() -> void:
@@ -112,6 +113,15 @@ func _toggle() -> void:
 		_root.visible = true
 		get_tree().paused = true
 		_canvas.queue_redraw()
+
+
+func open_map() -> void:
+	if _open:
+		return
+	_open = true
+	_root.visible = true
+	get_tree().paused = true
+	_canvas.queue_redraw()
 
 
 func _close() -> void:
@@ -194,6 +204,11 @@ func _on_progress_changed_two(_id: StringName, _display_name: String) -> void:
 func _on_upgrade_collected(_id: StringName, display_name: String) -> void:
 	_canvas.queue_redraw()
 	_show_toast("MELHORIA PERMANENTE\n%s: VIDA MÁXIMA +1" % display_name)
+
+
+func _on_lore_collectible_found(_id: StringName, display_name: String) -> void:
+	_canvas.queue_redraw()
+	_show_toast("RELATO ENCONTRADO\n%s" % display_name)
 
 
 func _show_toast(message: String) -> void:

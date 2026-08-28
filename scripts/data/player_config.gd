@@ -18,6 +18,7 @@ extends Resource
 @export var dash_speed := 285.0
 @export var dash_duration := 0.16
 @export var dash_cooldown := 0.42
+@export var run_jump_speed := 150.0
 
 @export_category("Combate e sobrevivência")
 @export var max_health := 5

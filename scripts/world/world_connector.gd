@@ -1,15 +1,19 @@
 class_name WorldConnector
 extends Area2D
 
+const PIXEL_FONT := preload("res://assets/ui/fonts/Tiny5-Regular.ttf")
+
 @export var connector_id: StringName
 @export var destination := Vector2.ZERO
 @export var required_ability: StringName
+@export var required_flag: StringName
 @export var display_name := "PASSAGEM"
 @export var destination_room: StringName
 @export var persistent_shortcut := true
 @export var locked_until_opened := false
 
 var _player_inside: NiloPlayer
+var _prompt: Label
 
 
 func _ready() -> void:
@@ -22,12 +26,23 @@ func _ready() -> void:
 	add_child(collision)
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
+	_prompt = Label.new()
+	_prompt.position = Vector2(-52, -28)
+	_prompt.size = Vector2(104, 18)
+	_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_prompt.add_theme_font_override("font", PIXEL_FONT)
+	_prompt.add_theme_font_size_override("font_size", 7)
+	_prompt.add_theme_color_override("font_color", Color("f4dfb6"))
+	_prompt.visible = false
+	add_child(_prompt)
 	set_process(true)
-	queue_redraw()
 
 
 func _process(_delta: float) -> void:
-	if _player_inside == null or not Input.is_action_just_pressed("interact"):
+	if _player_inside == null:
+		return
+	_refresh_prompt()
+	if not Input.is_action_just_pressed("interact"):
 		return
 	if not _can_use():
 		return
@@ -41,6 +56,8 @@ func _process(_delta: float) -> void:
 
 
 func _can_use() -> bool:
+	if not required_flag.is_empty() and not bool(WorldState.flags.get(String(required_flag), false)):
+		return false
 	if locked_until_opened and not bool(GameState.opened_shortcuts.get(String(connector_id), false)):
 		return false
 	if required_ability.is_empty():
@@ -51,24 +68,19 @@ func _can_use() -> bool:
 func _on_body_entered(body: Node) -> void:
 	if body is NiloPlayer:
 		_player_inside = body
-		queue_redraw()
+		_refresh_prompt()
 
 
 func _on_body_exited(body: Node) -> void:
 	if body == _player_inside:
 		_player_inside = null
-		queue_redraw()
+		_prompt.visible = false
 
 
-func _draw() -> void:
+func _refresh_prompt() -> void:
 	var unlocked := _can_use()
-	var color := Color("62cbb5") if unlocked else Color("9a3f38")
-	draw_rect(Rect2(-10, -16, 20, 32), Color(0.08, 0.06, 0.05, 0.82), true)
-	draw_rect(Rect2(-10, -16, 20, 32), color, false, 2.0)
-	draw_circle(Vector2(0, -2), 4, color, false, 1.0)
-	if _player_inside != null:
-		var prompt := "[E] %s" % display_name if unlocked else ("ATALHO FECHADO" if locked_until_opened else "REQUER %s" % _ability_name())
-		draw_string(ThemeDB.fallback_font, Vector2(-34, -22), prompt, HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color.WHITE)
+	_prompt.text = "[%s] %s" % [InputBootstrap.interact_prompt(), display_name] if unlocked else ("ATALHO FECHADO" if locked_until_opened or not required_flag.is_empty() else "REQUER %s" % _ability_name())
+	_prompt.visible = true
 
 
 func _ability_name() -> String:

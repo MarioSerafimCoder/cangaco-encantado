@@ -8,6 +8,11 @@ size = Vector2(640, 30)
 
 [node name="Ground" type="Node2D"]
 
+[node name="GroundFill" type="Polygon2D" parent="."]
+z_index = -4
+polygon = PackedVector2Array(0, 145, 640, 145, 640, 480, 0, 480)
+color = Color(0.176, 0.118, 0.082, 1)
+
 [node name="RoadSurface" type="Sprite2D" parent="."]
 position = Vector2(320, 142)
 scale = Vector2(0.29466, 0.16)

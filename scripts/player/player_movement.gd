@@ -65,6 +65,8 @@ func physics_step(body: CharacterBody2D, delta: float, movement_locked: bool) ->
 		coyote_remaining = 0.0
 	elif not movement_locked and jump_buffer_remaining > 0.0 and coyote_remaining > 0.0:
 		body.velocity.y = config.jump_velocity
+		if running_active and not is_zero_approx(input_axis):
+			body.velocity.x = signf(input_axis) * maxf(absf(body.velocity.x), config.run_jump_speed)
 		jump_buffer_remaining = 0.0
 		coyote_remaining = 0.0
 	if Input.is_action_just_released("jump") and body.velocity.y < -70.0:

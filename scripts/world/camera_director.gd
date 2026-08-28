@@ -25,6 +25,7 @@ var _vertical_intent_time := 0.0
 
 
 func _ready() -> void:
+	add_to_group("camera_director")
 	process_physics_priority = -100
 	world = get_node(world_path) as VilaGraybox
 	player = get_node(player_path) as NiloPlayer
@@ -56,16 +57,33 @@ func _physics_process(delta: float) -> void:
 func _update_composition(delta: float, immediate := false) -> void:
 	var maximum_speed := maxf(player.config.move_speed, 1.0)
 	var speed_ratio := clampf(absf(player.velocity.x) / maximum_speed, 0.0, 1.0)
+	var profile := active_room.camera_profile if active_room != null else "surface"
+	var profile_horizontal := maximum_horizontal_look_ahead
+	var profile_up := ascending_look_ahead
+	var profile_down := falling_look_ahead
+	match profile:
+		"rooftops":
+			profile_horizontal = 76.0
+			profile_up = -48.0
+			profile_down = 52.0
+		"underground":
+			profile_horizontal = 60.0
+			profile_up = -28.0
+			profile_down = 32.0
+		"cavern":
+			profile_horizontal = 66.0
+			profile_up = -44.0
+			profile_down = 50.0
 	var horizontal_target := 0.0
 	if speed_ratio > 0.08:
-		horizontal_target = player.facing * lerpf(60.0, maximum_horizontal_look_ahead, smoothstep(0.15, 1.0, speed_ratio))
+		horizontal_target = player.facing * lerpf(minf(54.0, profile_horizontal), profile_horizontal, smoothstep(0.15, 1.0, speed_ratio))
 	var vertical_target := 0.0
 	var has_vertical_intent := false
 	if not player.is_on_floor() and player.velocity.y < -145.0:
-		vertical_target = ascending_look_ahead
+		vertical_target = profile_up
 		has_vertical_intent = true
 	elif not player.is_on_floor() and player.velocity.y > 155.0:
-		vertical_target = falling_look_ahead
+		vertical_target = profile_down
 		has_vertical_intent = true
 	if has_vertical_intent:
 		_vertical_intent_time += delta
@@ -125,3 +143,20 @@ func _apply_bounds(bounds: Rect2) -> void:
 
 func is_transitioning() -> bool:
 	return _transition_elapsed < transition_duration and _current_bounds != _target_bounds
+
+
+func snap_to_room(room_id: StringName) -> void:
+	for candidate in get_tree().get_nodes_in_group("production_rooms"):
+		var room := candidate as RoomController
+		if room == null or room.room_id != room_id:
+			continue
+		active_room = room
+		_target_bounds = room.get_global_camera_bounds()
+		_start_bounds = _target_bounds
+		_current_bounds = _target_bounds
+		_transition_elapsed = transition_duration
+		_previous_player_position = player.global_position
+		_apply_bounds(_target_bounds)
+		_update_composition(1.0, true)
+		camera.reset_smoothing()
+		return

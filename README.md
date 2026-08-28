@@ -2,12 +2,12 @@
 
 Metroidvania 2D de ação e exploração inspirado no sertão brasileiro e no folclore nordestino. Nilo retorna à Vila do Umbuzeiro depois de um ataque da Companhia do Sol Negro e inicia uma jornada humana de vingança que, pouco a pouco, passa a envolver os Encantados e a restauração do mundo.
 
-Esta entrega é o vertical slice jogável **0.2.6 — Nilo Animation Upgrade**. Nilo recebeu novas folhas chibi de locomoção e combate, idle com respiração e piscada, caminhada própria e corrida automática após dois segundos de movimento contínuo.
+Esta entrega é o vertical slice jogável **0.4.0 — Área 01: Vila do Umbuzeiro**. A primeira macroárea agora possui exploração horizontal e vertical, diálogos, loja, economia, colecionáveis, progressão persistente e um encerramento seguro de beta, sem chefe nesta área.
 
 ## Stack
 
 - Godot 4.x + GDScript
-- resolução interna de 320x180
+- resolução interna de 640x360, apresentada em 1920x1080
 - renderização pixel-perfect, filtro nearest e snap de transform/vértice
 - teclado e gamepad
 - Windows/Steam como alvo inicial
@@ -38,6 +38,7 @@ Consulte também o [manual detalhado de teclado](docs/CONTROLS.md).
 | Ataque especial | I | LB |
 | Curar | Q | B |
 | Interagir | E | Y |
+| Abrir mapa | M | View/Back |
 | Pausar | Esc | Start |
 | Mostrar/ocultar debug técnico | F3 | - |
 | Liberar a Vila (debug) | F12 | - |
@@ -46,31 +47,17 @@ Os scripts de gameplay usam somente ações do `InputMap`; nenhum controle depen
 
 ## Vertical slice atual
 
-- Nilo com aceleração/desaceleração, salto variável, coyote time, jump buffer, fast fall e agachamento.
-- Vida de 5 HP, dano, knockback, hurt lock, invulnerabilidade, morte e retorno ao checkpoint.
-- Pistola semiautomática de 8 tiros, recarga automática e munição global infinita.
-- Rifle de 4 tiros, longo alcance, recuo controlado e alto dano de postura.
-- Ataque especial amplo e poderoso com recarga própria de 5 segundos.
-- Facão com combo de 3 golpes, corte para cima, corte descendente e bounce ao acertar.
-- Cabaça de Água com 2 cargas, cura de 2 HP, uso de 1,1 s e interrupção por dano.
-- Componentes reutilizáveis de vida, postura, hurtbox, hitbox, detecção, movimento e state machine.
-- Saqueador melee e Pistoleiro ranged funcionais em graybox.
-- Arquitetura inicial de Zé Tranca com tiro direto, tiro baixo, coronhada, reposicionamento, rajada e duas intensidades.
-- Nilo chibi com regiões individuais, respiração, piscada, quatro poses de caminhada, quatro de corrida e transição automática após 2 segundos.
-- Facão faseado com buffer, hitstop localizado, cortes direcionais, finalizador visual, projéteis orientados e feedbacks distintos de cura.
-- Câmera com look-ahead suave e leitura vertical de quedas.
-- HUD compacto com vida, munições, Cabaça, barra de chefe, avisos temporários e debug técnico opcional em F3.
-- Rua das Cinzas com três camadas rasterizadas independentes e paralaxe real.
-- Rua das Cinzas em cena própria, com baseline física/visual, entradas, spawns, camera bounds e composição editável.
-- Telhados da Vila, Praça do Umbu, Barracos Queimados, Posto de Comando e Arena de Zé Tranca também usam cenas ambientais próprias, com arquitetura completa, paralaxe contínuo e chão em camadas.
-- Escala visual de Nilo normalizada por altura útil medida entre idle, corrida, pistola, rifle, facão e especial, sem multiplicador fixo de ataque.
-- Sombras de contato pixeladas para Nilo, Saqueador, Pistoleiro e Zé Tranca.
-- Vila com céu tonal, serras e um kit rasterizado de ambientes, estruturas e obstáculos cobrindo as 13 áreas.
-- Sprites MVP para Saqueador, Pistoleiro e Zé Tranca com transparência PNG RGBA real, regiões individuais sem cortes e baseline estável entre estados.
-- As 13 áreas da Vila do Umbuzeiro em um percurso contínuo de graybox.
-- Checkpoint na Igreja Velha, atalho Armazém-Praça, Poço parcialmente bloqueado e saída para Pedra Seca.
-- Estados `OCCUPIED` e `LIBERATED`, com incêndios/inimigos/barricadas e retorno seguro da Vila.
-- Save JSON em `user://cangaco_encantado_save.json` para checkpoint, vida, cura, boss, atalhos, habilidades e flags do mundo.
+- Treze salas contínuas formam a macroárea: Casa de Nilo, Rua das Cinzas, Vila Baixa, Praça, Igreja, Telhados, Cripta, Subterrâneo, Grutas, Poço, Caverna Rasa, Caverna Profunda e Santuário.
+- Nilo possui locomoção chibi, caminhada, corrida após dois segundos, salto variável, salto de parede, investida e câmera 640x360 com transições suaves.
+- Combate completo com pistola, rifle, facão, especial, postura, antecipação inimiga, linha de visão e projéteis bloqueados pelo cenário.
+- Oito moradores têm diálogo contextual; a Praça funciona como centro seguro e abriga uma loja com cinco itens.
+- Moeda, inventário, compras únicas, estados de NPC, diálogos, habilidades, atalhos, colecionáveis e sala atual persistem no save.
+- Quatro cordéis e um coração permanente recompensam exploração, rotas altas e retorno com novas habilidades.
+- Três checkpoints, atalhos persistentes, caminhos verticais e mapa navegável sustentam a estrutura de metroidvania.
+- A manifestação no Santuário conclui a Área 01, remove encontros hostis e libera um retorno rápido à Praça e uma saída segura do beta.
+- HUD, menu inicial, pausa, configurações, controles, diálogo e loja usam linguagem visual em pixel art.
+- Os ambientes usam sprites rasterizados; volumes simples permanecem apenas como colisão invisível, não como arte exibida.
+- Sons e música foram deliberadamente adiados para uma etapa futura.
 
 ## Estrutura
 
@@ -86,7 +73,9 @@ res://
     data/                    classes Resource
     player/                  movimento, combate e state machine
     enemies/                 base reutilizável e componentes de IA
-    bosses/                  comportamento de Zé Tranca
+    dialogue/                banco e direção de diálogos orientados por dados
+    npc/                     moradores e interação contextual
+    shop/                    loja, compra e apresentação de mercadorias
     world/                   graybox, salas, checkpoint, atalho e gates
     ui/                      HUD de jogo e camada de debug opcional
   docs/                      decisões e fontes de design
@@ -95,7 +84,9 @@ res://
 
 ## Material visual
 
-As 15 imagens encontradas no workspace foram copiadas byte a byte para `assets/source/reference/`. Saqueador, Pistoleiro, Zé Tranca e as camadas rasterizadas da Rua das Cinzas usam transparência RGBA real. Nilo usa duas folhas chibi RGBA de 1254×1254 px, recortadas por regiões individuais porque o espaçamento gerado não é uniforme.
+As imagens de referência permanecem em `assets/source/reference/`. Nilo e os inimigos usam regiões individuais para preservar a baseline e impedir cortes em folhas de espaçamento irregular.
+
+Seis atlas produzidos para a Área 01 foram tratados com transparência e integrados em `assets/area_01/`: interior da Casa de Nilo, elementos de travessia, arquitetura da Vila, Cripta/Subterrâneo, Grutas/Cavernas e UI de diálogo/loja. As folhas originais para tratamento continuam em `assets_para_remover_fundo/area_01_vertical_slice/`.
 
 Os oito atlas ambientais corrigidos usam transparência RGBA real e estão integrados em `assets/environments/vila_umbuzeiro/atlases/`. O kit complementar 0.2.5 está em `assets/environments/vila_umbuzeiro/generated_0_2_5/` e substitui os fundos, chãos, moradores e interativos provisórios nas salas restantes.
 
@@ -117,11 +108,11 @@ powershell -ExecutionPolicy Bypass -File tools/validate_project.ps1
 
 O teste automatizado específico de game feel também pode ser executado com a cena `res://tools/game_feel_validation.tscn`. Ele valida fase da corrida, bob, contatos de pé, virada, fases do salto, pouso, hurtbox agachado, disparo semiautomático, buffer/variante do facão, orientação do projétil, configuração de hitstop e HUD temporário.
 
-A estrutura das treze salas de produção é validada por `res://tools/room_production_validation.tscn`. O teste cobre identidade, bounds, entradas, spawns, chão, baseline, paralaxe, colisões, estados visuais, perfil de nitidez e transições da câmera central. O checklist estético e de gameplay está em [RUA_DAS_CINZAS_TEST_CHECKLIST](docs/RUA_DAS_CINZAS_TEST_CHECKLIST.md).
+A estrutura das treze salas de produção é validada por `res://tools/room_production_validation.tscn`. O vertical slice completo é validado por `res://tools/area01_vertical_slice_validation.tscn`, cobrindo fluxo, NPCs, diálogo, loja, economia, colecionáveis, conclusão e persistência. O checklist estético e de gameplay está em [RUA_DAS_CINZAS_TEST_CHECKLIST](docs/RUA_DAS_CINZAS_TEST_CHECKLIST.md).
 
 Para teste manual isolado, abra `res://tools/movement_lab.tscn`. A cena contém pista de corrida, inversão, vão, plataformas e boneco de combate.
 
-As capturas atuais do jogo ficam em [`prints_do_jogo/`](prints_do_jogo/README.md). Depois de mudanças visuais grandes, execute `res://tools/mvp_visual_test.tscn` para sobrescrever os prints oficiais com o estado mais recente da build.
+As capturas atuais do jogo ficam em [`prints_do_jogo/`](prints_do_jogo/README.md). A revisão da Área 01 é regenerada por `res://tools/area01_visual_review.tscn` em `prints_do_jogo/area_01_vertical_slice/`.
 
 As seis comparações da Rua das Cinzas são atualizadas por `res://tools/rua_das_cinzas_visual_test.tscn`.
 
@@ -130,8 +121,7 @@ As capturas de aceitação da 0.2.4 são geradas por `res://tools/environment_vi
 ## Roadmap imediato
 
 1. Fazer o primeiro playtest manual completo com teclado e gamepad.
-2. Fazer uma rodada de game-feel com controle: aceleração, janela de combo, recoil, hitstop e câmera.
-3. Separar salas em cenas individuais com transições e `CameraBounds` próprios.
-4. Produzir spritesheets transparentes com grade e pivôs consistentes.
-5. Acrescentar Batedor, Incendiário e Jagunço de Preto sobre a mesma base.
-6. Evoluir a arena e o balanceamento de Zé Tranca após testes de fluxo.
+2. Ajustar economia, duração e dificuldade com dados de sessões completas.
+3. Realizar uma etapa dedicada de música, efeitos sonoros e mixagem.
+4. Fazer o polimento final de acessibilidade, prompts de gamepad e localização.
+5. Congelar a Área 01 como beta e iniciar a pré-produção da Área 02.

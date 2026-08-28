@@ -1,12 +1,19 @@
 class_name AbilityPickup
 extends Area2D
 
+const UI_ATLAS := preload("res://assets/area_01/ui/dialogo_loja_atlas.png")
+const ABILITY_REGION := Rect2(1245, 112, 120, 150)
+const PIXEL_FONT := preload("res://assets/ui/fonts/Tiny5-Regular.ttf")
+
 @export var ability_id: StringName = &"wall_jump"
 @export var display_name := "PASSO DA PEDRA"
 @export var description := "SALTE NOVAMENTE JUNTO A UMA PAREDE"
 
 var _player_inside: NiloPlayer
 var _collected := false
+var _visual: Sprite2D
+var _prompt: Label
+var _elapsed := 0.0
 
 
 func _ready() -> void:
@@ -17,6 +24,24 @@ func _ready() -> void:
 	shape.radius = 13.0
 	collision.shape = shape
 	add_child(collision)
+	_visual = Sprite2D.new()
+	_visual.texture = UI_ATLAS
+	_visual.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_visual.region_enabled = true
+	_visual.region_filter_clip_enabled = true
+	_visual.region_rect = ABILITY_REGION
+	_visual.scale = Vector2.ONE * 0.2
+	_visual.z_index = 8
+	add_child(_visual)
+	_prompt = Label.new()
+	_prompt.position = Vector2(-55, -28)
+	_prompt.size = Vector2(110, 14)
+	_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_prompt.add_theme_font_override("font", PIXEL_FONT)
+	_prompt.add_theme_font_size_override("font_size", 7)
+	_prompt.add_theme_color_override("font_color", Color("f4dfb6"))
+	_prompt.visible = false
+	add_child(_prompt)
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 	_collected = bool(GameState.abilities.get(String(ability_id), false))
@@ -26,9 +51,10 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	_elapsed += _delta
+	_visual.position.y = round(sin(_elapsed * 2.8) * 2.0)
 	if _player_inside != null and Input.is_action_just_pressed("interact"):
 		_collect()
-	queue_redraw()
 
 
 func _collect() -> void:
@@ -44,20 +70,11 @@ func _collect() -> void:
 func _on_body_entered(body: Node) -> void:
 	if body is NiloPlayer:
 		_player_inside = body
+		_prompt.text = "[%s] %s" % [InputBootstrap.interact_prompt(), display_name]
+		_prompt.visible = true
 
 
 func _on_body_exited(body: Node) -> void:
 	if body == _player_inside:
 		_player_inside = null
-
-
-func _draw() -> void:
-	if _collected:
-		return
-	var pulse := 1.0 + sin(Time.get_ticks_msec() * 0.006) * 0.12
-	draw_circle(Vector2.ZERO, 10.0 * pulse, Color(0.2, 0.82, 0.72, 0.2))
-	draw_colored_polygon(PackedVector2Array([Vector2(0, -9), Vector2(7, 0), Vector2(0, 9), Vector2(-7, 0)]), Color("6de0c3"))
-	draw_polyline(PackedVector2Array([Vector2(-7, 0), Vector2(0, -9), Vector2(7, 0), Vector2(0, 9), Vector2(-7, 0)]), Color("f7df8b"), 1.0)
-	if _player_inside != null:
-		draw_string(ThemeDB.fallback_font, Vector2(-38, -18), "[E] %s" % display_name, HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color.WHITE)
-
+		_prompt.visible = false

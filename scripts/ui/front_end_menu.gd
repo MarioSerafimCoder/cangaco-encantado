@@ -1,6 +1,8 @@
 class_name FrontEndMenu
 extends CanvasLayer
 
+signal game_entered
+
 enum Mode { HIDDEN, TITLE, PAUSE, SETTINGS, CONTROLS, CONFIRM_NEW_GAME }
 
 const PIXEL_FONT := preload("res://assets/ui/fonts/Tiny5-Regular.ttf")
@@ -52,7 +54,8 @@ func show_pause() -> void:
 	_set_standard_layout()
 	_set_heading("JOGO PAUSADO", "A LENDA ESPERA")
 	_clear_content()
-	_add_button(&"continue", "CONTINUAR", enter_game)
+	_add_button(&"continue", "RETOMAR", enter_game)
+	_add_button(&"map", "MAPA", _open_map)
 	_add_button(&"new_game", "NOVO JOGO", _request_new_game)
 	_add_button(&"settings", "CONFIGURAÇÕES", _open_settings)
 	_add_button(&"controls", "CONTROLES", _open_controls)
@@ -70,6 +73,7 @@ func enter_game() -> void:
 	var viewport := get_viewport()
 	if viewport.gui_get_focus_owner() != null:
 		viewport.gui_get_focus_owner().release_focus()
+	game_entered.emit()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -145,6 +149,14 @@ func _set_wide_layout() -> void:
 	_frame.size = Vector2(264.0, 132.0)
 	_content.position = Vector2(203.0, 153.0)
 	_content.size = Vector2(234.0, 98.0)
+
+
+func _set_settings_layout() -> void:
+	_content.add_theme_constant_override("separation", 2)
+	_frame.position = Vector2(232.0, 124.0)
+	_frame.size = Vector2(176.0, 164.0)
+	_content.position = Vector2(248.0, 139.0)
+	_content.size = Vector2(144.0, 140.0)
 
 
 func _set_heading(title_text: String, subtitle_text: String) -> void:
@@ -269,7 +281,7 @@ func _start_new_game() -> void:
 func _open_settings() -> void:
 	_submenu_origin = Mode.PAUSE if session_started else Mode.TITLE
 	mode = Mode.SETTINGS
-	_set_standard_layout()
+	_set_settings_layout()
 	_set_heading("CONFIGURAÇÕES", "AJUSTES DA EXPERIÊNCIA")
 	_build_settings_content()
 
@@ -278,6 +290,8 @@ func _build_settings_content() -> void:
 	_clear_content()
 	_add_button(&"volume", "VOLUME: %d%%" % int(round(SettingsManager.master_volume * 100.0)), _cycle_volume)
 	_add_button(&"fullscreen", "TELA CHEIA: %s" % _yes_no(SettingsManager.fullscreen), _toggle_fullscreen)
+	_add_button(&"resolution", "RESOLUÇÃO: %s" % SettingsManager.resolution_label(), _cycle_resolution)
+	_add_button(&"vsync", "VSYNC: %s" % _yes_no(SettingsManager.vsync_enabled), _toggle_vsync)
 	_add_button(&"screen_shake", "TREMOR DE CÂMERA: %s" % _yes_no(SettingsManager.screen_shake_enabled), _toggle_screen_shake)
 	_add_button(&"controls", "VER CONTROLES", _open_controls)
 	_add_button(&"back", "VOLTAR", _return_from_submenu)
@@ -304,6 +318,16 @@ func _toggle_fullscreen() -> void:
 
 func _toggle_screen_shake() -> void:
 	SettingsManager.set_screen_shake_enabled(not SettingsManager.screen_shake_enabled)
+	_build_settings_content()
+
+
+func _cycle_resolution() -> void:
+	SettingsManager.cycle_resolution()
+	_build_settings_content()
+
+
+func _toggle_vsync() -> void:
+	SettingsManager.set_vsync_enabled(not SettingsManager.vsync_enabled)
 	_build_settings_content()
 
 
@@ -338,6 +362,13 @@ func _return_from_submenu() -> void:
 
 func _return_to_title() -> void:
 	show_title(false)
+
+
+func _open_map() -> void:
+	enter_game()
+	var map_ui := get_parent().get_node_or_null("WorldMap") as WorldMapUI
+	if map_ui != null:
+		map_ui.open_map()
 
 
 func _quit_game() -> void:

@@ -11,6 +11,10 @@ signal player_exited(room_id: StringName)
 @export var camera_bounds := Rect2(0.0, -120.0, 960.0, 480.0)
 @export var authored_composition_width := 0.0
 @export var repeat_platform_geometry := false
+@export var occupied_tint := Color("f0e6db")
+@export var liberated_tint := Color("fff8e9")
+@export_enum("surface", "rooftops", "underground", "cavern") var camera_profile := "surface"
+@export var suppress_authored_environment := false
 
 var _active_player: NiloPlayer
 var _debug_visible := false
@@ -23,48 +27,12 @@ func _ready() -> void:
 		room_area.body_entered.connect(_on_body_entered)
 		room_area.body_exited.connect(_on_body_exited)
 	EventBus.world_state_changed.connect(_on_world_state_changed)
-	_extend_authored_composition()
+	var actors := get_node_or_null("Gameplay/Actors")
+	if actors != null:
+		actors.process_mode = Node.PROCESS_MODE_INHERIT if GameState.current_room_id == room_id else Node.PROCESS_MODE_DISABLED
 	_apply_rendering_profile()
 	_refresh_world_state()
 	set_process(true)
-
-
-func _extend_authored_composition() -> void:
-	if authored_composition_width <= 0.0 or authored_composition_width >= local_bounds.size.x:
-		return
-	var environment := get_node_or_null("Environment") as Node2D
-	if environment != null:
-		var authored_layers := environment.get_children().filter(func(child: Node) -> bool:
-			return child is Node2D and child.name != &"Parallax"
-		)
-		var offset := authored_composition_width
-		while offset < local_bounds.size.x:
-			for layer in authored_layers:
-				var repeated := (layer as Node).duplicate()
-				repeated.name = "%s_Ext_%d" % [layer.name, roundi(offset)]
-				repeated.position.x += offset
-				environment.add_child(repeated)
-			offset += authored_composition_width
-	if repeat_platform_geometry:
-		_repeat_geometry_branch("Geometry/Platforms")
-		_repeat_geometry_branch("Geometry/Walls")
-
-
-func _repeat_geometry_branch(path: String) -> void:
-	var branch := get_node_or_null(path) as Node2D
-	if branch == null:
-		return
-	var originals := branch.get_children()
-	var offset := authored_composition_width
-	while offset < local_bounds.size.x:
-		for original in originals:
-			if not original is Node2D:
-				continue
-			var repeated := original.duplicate()
-			repeated.name = "%s_Ext_%d" % [original.name, roundi(offset)]
-			repeated.position.x += offset
-			branch.add_child(repeated)
-		offset += authored_composition_width
 
 
 func _process(_delta: float) -> void:
@@ -93,6 +61,9 @@ func _on_body_entered(body: Node) -> void:
 	if not body.is_in_group("player"):
 		return
 	_active_player = body as NiloPlayer
+	var actors := get_node_or_null("Gameplay/Actors")
+	if actors != null:
+		actors.process_mode = Node.PROCESS_MODE_INHERIT
 	EventBus.room_entered.emit(room_id, display_name)
 	player_entered.emit(room_id)
 
@@ -101,6 +72,9 @@ func _on_body_exited(body: Node) -> void:
 	if body != _active_player:
 		return
 	_active_player = null
+	var actors := get_node_or_null("Gameplay/Actors")
+	if actors != null:
+		actors.process_mode = Node.PROCESS_MODE_DISABLED
 	player_exited.emit(room_id)
 
 
@@ -113,7 +87,12 @@ func _refresh_world_state() -> void:
 	var liberated := WorldState.get_region_state(world_region_id) == WorldState.LIBERATED
 	var environment := get_node_or_null("Environment") as CanvasItem
 	if environment != null:
-		environment.self_modulate = Color("fff8e9") if liberated else Color("f0e6db")
+		environment.self_modulate = liberated_tint if liberated else occupied_tint
+	if suppress_authored_environment:
+		for old_art in get_node("Environment").get_children():
+			if old_art is CanvasItem:
+				(old_art as CanvasItem).visible = false
+		return
 	_set_group_visibility(&"room_occupied_only", not liberated)
 	_set_group_visibility(&"room_liberated_only", liberated)
 

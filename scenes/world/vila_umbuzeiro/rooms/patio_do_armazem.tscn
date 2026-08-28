@@ -15,7 +15,7 @@ size = Vector2(1280, 480)
 [node name="PatioDoArmazem" type="Node2D"]
 script = ExtResource("1")
 room_id = &"patio"
-display_name = "08 PÁTIO DO ARMAZÉM"
+display_name = "08 SUBTERRÂNEO DA VILA"
 local_bounds = Rect2(0, -120, 1280, 480)
 camera_bounds = Rect2(0, -120, 1280, 480)
 authored_composition_width = 640.0

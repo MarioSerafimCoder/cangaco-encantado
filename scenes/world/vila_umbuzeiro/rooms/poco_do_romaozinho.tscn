@@ -15,7 +15,7 @@ size = Vector2(88, 24)
 [node name="PocoDoRomaozinho" type="Node2D"]
 script = ExtResource("1")
 room_id = &"poco"
-display_name = "10 POÇO DO ROMÃOZINHO"
+display_name = "10 POÇO DAS RAÍZES"
 local_bounds = Rect2(0, -120, 960, 480)
 camera_bounds = Rect2(0, -120, 960, 480)
 authored_composition_width = 320.0

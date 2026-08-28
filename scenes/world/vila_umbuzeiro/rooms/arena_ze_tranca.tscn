@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/room_controller.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_1280.tscn" id="2"]
@@ -6,8 +6,6 @@
 [ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/atlases/08_arena_ze_tranca.png" id="4"]
 [ext_resource type="Texture2D" path="res://assets/fx/vfx_ocupacao_e_tiros.png" id="5"]
 [ext_resource type="Script" path="res://scripts/fx/atlas_strip_animator.gd" id="6"]
-[ext_resource type="Script" path="res://scripts/world/enemy_spawn.gd" id="7"]
-[ext_resource type="PackedScene" path="res://scenes/bosses/ze_tranca.tscn" id="8"]
 [ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/fillers/rochas_01.tres" id="9"]
 [ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/fillers/ossos_01.tres" id="10"]
 
@@ -17,7 +15,7 @@ size = Vector2(1280, 480)
 [node name="ArenaZeTranca" type="Node2D"]
 script = ExtResource("1")
 room_id = &"arena"
-display_name = "13 ARENA DE ZÉ TRANCA"
+display_name = "13 SANTUÁRIO ENCANTADO"
 local_bounds = Rect2(0, -120, 1280, 480)
 camera_bounds = Rect2(0, -120, 1280, 480)
 authored_composition_width = 640.0
@@ -179,12 +177,6 @@ position = Vector2(18, 138)
 position = Vector2(1262, 138)
 
 [node name="EnemySpawns" type="Node2D" parent="Gameplay"]
-
-[node name="ZeTrancaSpawn" type="Marker2D" parent="Gameplay/EnemySpawns"]
-position = Vector2(390, 134)
-script = ExtResource("7")
-enemy_scene = ExtResource("8")
-spawn_id = &"arena_ze_tranca"
 
 [node name="Triggers" type="Node2D" parent="Gameplay"]
 

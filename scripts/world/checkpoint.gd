@@ -6,6 +6,7 @@ const INACTIVE_REGION := Rect2(96, 45, 268, 402)
 const ACTIVE_REGION := Rect2(449, 45, 270, 402)
 
 @export var checkpoint_id: StringName = &"vila_igreja"
+@export var show_visual := true
 var active := false
 var visual: Sprite2D
 
@@ -26,6 +27,7 @@ func _ready() -> void:
 	visual.region_filter_clip_enabled = true
 	visual.z_index = 8
 	add_child(visual)
+	visual.visible = show_visual
 	body_entered.connect(_on_body_entered)
 	_refresh_visual()
 

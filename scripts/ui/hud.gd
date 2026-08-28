@@ -15,15 +15,19 @@ var debug_panel: Panel
 var debug_label: Label
 var boss_status: BossStatusHUD
 var help_panel: Panel
+var help_label: Label
 var player: NiloPlayer
 var room_fade := 0.0
 var world_fade := 0.0
 var help_fade := 6.0
 var debug_visible := false
+var opening_guide_active := false
+var opening_guide_stage := 0
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	add_to_group("game_hud")
 	layer = 20
 	_build_hud()
 	EventBus.player_health_changed.connect(_on_health_changed)
@@ -36,6 +40,7 @@ func _ready() -> void:
 	_on_ammo_changed(&"rifle", 4, 4)
 	_on_heals_changed(GameState.heal_charges, 2)
 	_on_world_changed(&"vila_umbuzeiro", WorldState.get_region_state(&"vila_umbuzeiro"))
+	EventBus.currency_changed.connect(_on_currency_changed)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -60,7 +65,10 @@ func _process(delta: float) -> void:
 		_update_boss_bar()
 	room_fade = maxf(0.0, room_fade - delta)
 	world_fade = maxf(0.0, world_fade - delta)
-	help_fade = maxf(0.0, help_fade - delta)
+	if not opening_guide_active:
+		help_fade = maxf(0.0, help_fade - delta)
+	elif not get_tree().paused:
+		_update_opening_guide()
 	_apply_temporary_visibility(room_panel, room_fade)
 	_apply_temporary_visibility(world_panel, world_fade)
 	_apply_temporary_visibility(help_panel, help_fade)
@@ -83,8 +91,14 @@ func _build_hud() -> void:
 	debug_label = _make_label(debug_panel, Vector2(5.0, 3.0), Vector2(103.0, 25.0), 6, Color("bce8ee"))
 	debug_panel.visible = false
 
-	room_panel = _make_panel(Rect2(244.0, 58.0, 152.0, 17.0), Color("241d1ae6"), Color("d59a4a"), ROOM_PANEL_TEXTURE)
-	room_label = _make_label(room_panel, Vector2(3.0, 3.0), Vector2(146.0, 10.0), 7, Color("fff0ca"))
+	room_panel = _make_panel(Rect2(228.0, 56.0, 184.0, 21.0), Color("241d1ae6"), Color("d59a4a"), ROOM_PANEL_TEXTURE)
+	var room_text_backing := ColorRect.new()
+	room_text_backing.position = Vector2(18.0, 5.0)
+	room_text_backing.size = Vector2(148.0, 10.0)
+	room_text_backing.color = Color("17110de6")
+	room_text_backing.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	room_panel.add_child(room_text_backing)
+	room_label = _make_label(room_panel, Vector2(18.0, 5.0), Vector2(148.0, 10.0), 7, Color("fff0ca"))
 	room_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	room_panel.visible = false
 
@@ -92,7 +106,7 @@ func _build_hud() -> void:
 	add_child(boss_status)
 
 	help_panel = _make_panel(Rect2(192.0, 343.0, 256.0, 12.0), Color("171311c9"), Color("6e5337"), HELP_PANEL_TEXTURE)
-	var help_label := _make_label(help_panel, Vector2(3.0, 1.0), Vector2(250.0, 9.0), 5, Color("d8c39e"))
+	help_label = _make_label(help_panel, Vector2(3.0, 1.0), Vector2(250.0, 9.0), 5, Color("d8c39e"))
 	help_label.text = "A/D MOVER  ESPAÇO PULAR  J FACÃO  K PISTOLA  L RIFLE  I ESPECIAL"
 	help_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
@@ -165,6 +179,9 @@ func _on_room_entered(room_id: StringName, display_name: String) -> void:
 	room_label.text = display_name
 	room_fade = 2.0
 	if room_id != &"casa_nilo":
+		if opening_guide_active:
+			GameState.set_dialogue_flag(&"opening_house_exited", true)
+		opening_guide_active = false
 		help_fade = 0.0
 
 
@@ -175,3 +192,25 @@ func _on_world_changed(region_id: StringName, state: StringName) -> void:
 	world_label.text = "VILA LIBERTADA" if liberated else "VILA OCUPADA"
 	world_label.add_theme_color_override("font_color", Color("9ee39b") if liberated else Color("f2b36f"))
 	world_fade = 3.2 if liberated else 2.2
+
+
+func _on_currency_changed(current: int) -> void:
+	world_label.text = "◆ %d" % current
+	world_label.add_theme_color_override("font_color", Color("e4c181"))
+	world_fade = 1.8
+
+
+func begin_opening_guide() -> void:
+	if GameState.current_room_id != &"casa_nilo" or bool(GameState.dialogue_flags.get("opening_house_exited", false)):
+		return
+	opening_guide_active = true
+	opening_guide_stage = 0
+	help_fade = 999.0
+	help_label.text = "A/D MOVER   E INTERAGIR   ENCONTRE A SAÍDA"
+	help_panel.visible = true
+
+
+func _update_opening_guide() -> void:
+	if opening_guide_stage == 0 and absf(Input.get_axis("move_left", "move_right")) > 0.2:
+		opening_guide_stage = 1
+		help_label.text = "SIGA PARA A DIREITA   E ABRIR A PORTA"

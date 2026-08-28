@@ -21,7 +21,7 @@ func reset_new_game() -> void:
 
 
 func _ready() -> void:
-	EventBus.boss_defeated.connect(_on_boss_defeated)
+	pass
 
 
 func get_region_state(region_id: StringName) -> StringName:
@@ -46,7 +46,17 @@ func liberate_vila() -> void:
 
 func set_flag(flag_id: StringName, value: bool) -> void:
 	flags[String(flag_id)] = value
+	EventBus.world_flag_changed.emit(flag_id, value)
 	EventBus.request_autosave.emit(&"world_flag")
+
+
+func complete_area01_discovery() -> void:
+	if bool(flags.get("area01_encantado_discovered", false)):
+		return
+	set_flag(&"area01_encantado_discovered", true)
+	GameState.area_states["area_01_vila_umbuzeiro"] = "DISCOVERY_COMPLETE"
+	set_region_state(&"vila_umbuzeiro", LIBERATED)
+	EventBus.area_discovery_completed.emit(&"area_01_vila_umbuzeiro")
 
 
 func to_dictionary() -> Dictionary:
@@ -56,8 +66,3 @@ func to_dictionary() -> Dictionary:
 func apply_dictionary(data: Dictionary) -> void:
 	region_states.merge(data.get("region_states", {}), true)
 	flags.merge(data.get("flags", {}), true)
-
-
-func _on_boss_defeated(boss_id: StringName) -> void:
-	if boss_id == &"ze_tranca":
-		liberate_vila()

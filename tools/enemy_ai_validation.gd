@@ -133,8 +133,8 @@ func _validate_damage_and_death_timing() -> void:
 
 func _validate_encounter_combinations() -> void:
 	var expectations := [
-		[RUA_SCENE, 3, "Rua das Cinzas"],
-		[PRACA_SCENE, 3, "Praça do Umbu"],
+		[RUA_SCENE, 1, "Rua das Cinzas"],
+		[PRACA_SCENE, 0, "Praça do Umbu"],
 		[BARRACOS_SCENE, 2, "Barracos Queimados"],
 		[POSTO_SCENE, 2, "Posto de Comando"],
 	]
@@ -144,8 +144,8 @@ func _validate_encounter_combinations() -> void:
 		for candidate in room.find_children("*", "", true, false):
 			if candidate is EnemySpawn:
 				count += 1
-		if count < int(entry[1]):
-			failures.append("%s deveria ter ao menos %d posições inimigas; encontrou %d." % [entry[2], entry[1], count])
+		if count != int(entry[1]):
+			failures.append("%s deveria ter %d posições inimigas no ritmo da Área 01; encontrou %d." % [entry[2], entry[1], count])
 		room.free()
 
 

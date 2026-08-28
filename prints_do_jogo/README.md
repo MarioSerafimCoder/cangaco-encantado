@@ -4,6 +4,14 @@ Esta pasta mantém as capturas visuais oficiais da build atual. Os arquivos deve
 
 ## Atualização automática
 
+Para revisar a Área 01 completa em 1920x1080, execute:
+
+```text
+res://tools/area01_visual_review.tscn
+```
+
+Ela sobrescreve `area_01_vertical_slice/` com onze capturas nomeadas, incluindo a composição geral e a porta de saída da Casa de Nilo, Vila Baixa, Praça, loja, diálogo, Igreja, Telhados, Subterrâneo, Grutas e Santuário. Esse é o conjunto visual oficial do vertical slice 0.4.0.
+
 Execute a cena Godot:
 
 ```text

@@ -34,6 +34,8 @@ const JOYPAD_BUTTON_BINDINGS := {
 	"pause": JOY_BUTTON_START,
 }
 
+var last_input_was_gamepad := false
+
 
 func _enter_tree() -> void:
 	for action in KEYBOARD_BINDINGS:
@@ -49,6 +51,17 @@ func _enter_tree() -> void:
 	_add_joy_axis_if_missing("move_down", JOY_AXIS_LEFT_Y, 1.0)
 	_add_joy_axis_if_missing("aim", JOY_AXIS_TRIGGER_LEFT, 1.0)
 	_add_joy_axis_if_missing("shoot_pistol", JOY_AXIS_TRIGGER_RIGHT, 1.0)
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventJoypadButton or event is InputEventJoypadMotion:
+		last_input_was_gamepad = true
+	elif event is InputEventKey or event is InputEventMouseButton:
+		last_input_was_gamepad = false
+
+
+func interact_prompt() -> String:
+	return "Y" if last_input_was_gamepad else "E"
 
 
 func _ensure_action(action: StringName) -> void:

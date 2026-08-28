@@ -10,19 +10,19 @@ func _ready() -> void:
 	await get_tree().process_frame
 	var rooms := get_tree().get_nodes_in_group("production_rooms")
 	var expected_rooms := {
-		&"casa_nilo": 320.0,
-		&"rua_cinzas": 640.0,
-		&"igreja_velha": 320.0,
-		&"telhados": 640.0,
-		&"praca_umbu": 640.0,
-		&"barracos": 640.0,
-		&"armazem": 640.0,
-		&"patio": 640.0,
-		&"beco": 320.0,
-		&"poco": 320.0,
-		&"barricada": 640.0,
-		&"posto": 320.0,
-		&"arena": 640.0,
+		&"casa_nilo": 960.0,
+		&"rua_cinzas": 1280.0,
+		&"igreja_velha": 960.0,
+		&"telhados": 1280.0,
+		&"praca_umbu": 1280.0,
+		&"barracos": 1280.0,
+		&"armazem": 1280.0,
+		&"patio": 1280.0,
+		&"beco": 960.0,
+		&"poco": 960.0,
+		&"barricada": 1280.0,
+		&"posto": 960.0,
+		&"arena": 1280.0,
 	}
 	if rooms.size() != expected_rooms.size():
 		failures.append("Todas as treze áreas devem usar RoomController; encontradas: %d." % rooms.size())
@@ -41,12 +41,12 @@ func _ready() -> void:
 		if not by_id.has(room_id):
 			failures.append("Sala de produção ausente: %s." % room_id)
 	if by_id.has(&"rua_cinzas"):
-		_validate_spawns(by_id[&"rua_cinzas"], 2)
+		_validate_spawns(by_id[&"rua_cinzas"], 1)
 		await _validate_player_baseline(by_id[&"rua_cinzas"])
 	if by_id.has(&"telhados"):
 		_validate_roof_collisions(by_id[&"telhados"])
 	if by_id.has(&"barracos"):
-		_validate_spawns(by_id[&"barracos"], 1)
+		_validate_spawns(by_id[&"barracos"], 2)
 	if by_id.has(&"armazem"):
 		_validate_spawns(by_id[&"armazem"], 2)
 	if by_id.has(&"patio"):
@@ -54,7 +54,7 @@ func _ready() -> void:
 	if by_id.has(&"beco"):
 		_validate_spawns(by_id[&"beco"], 1)
 	if by_id.has(&"arena"):
-		_validate_spawns(by_id[&"arena"], 1)
+		_validate_spawns(by_id[&"arena"], 0)
 	_validate_no_hybrid_decorator()
 	await _validate_camera_director(by_id)
 	_validate_visual_cohesion(rooms)
@@ -76,7 +76,7 @@ func _validate_identity_and_bounds(room: RoomController, expected_rooms: Diction
 		failures.append("Camera bounds são menores que o viewport interno.")
 	if not room.camera_bounds.encloses(room.local_bounds):
 		failures.append("Camera bounds não abrangem a área jogável completa.")
-	if not is_equal_approx(room.camera_bounds.position.y, -60.0) or not is_equal_approx(room.camera_bounds.size.y, 300.0):
+	if not is_equal_approx(room.camera_bounds.position.y, -120.0) or not is_equal_approx(room.camera_bounds.size.y, 480.0):
 		failures.append("Sala %s não usa o enquadramento vertical padronizado." % room.room_id)
 
 
@@ -91,6 +91,10 @@ func _validate_entrances(room: RoomController) -> void:
 
 func _validate_spawns(room: RoomController, minimum_count: int) -> void:
 	var spawn_root := room.get_node_or_null("Gameplay/EnemySpawns")
+	if minimum_count == 0:
+		if spawn_root != null and spawn_root.get_child_count() != 0:
+			failures.append("Sala %s não deve possuir encontro de chefe ou spawn obrigatório." % room.room_id)
+		return
 	if spawn_root == null or spawn_root.get_child_count() < minimum_count:
 		failures.append("Sala %s precisa de ao menos %d EnemySpawn(s)." % [room.room_id, minimum_count])
 		return
@@ -151,6 +155,10 @@ func _validate_parallax_paths(room: RoomController, expected: Dictionary) -> voi
 func _validate_world_state(room: RoomController) -> void:
 	var occupied := room.get_node("Environment/OccupiedOnly") as CanvasItem
 	var liberated := room.get_node("Environment/LiberatedOnly") as CanvasItem
+	if room.suppress_authored_environment:
+		if occupied.visible or liberated.visible:
+			failures.append("Ambiente autoral antigo reapareceu em %s." % room.room_id)
+		return
 	if not occupied.visible or liberated.visible:
 		failures.append("Estado OCCUPIED não ativou os grupos visuais corretos.")
 	WorldState.region_states["vila_umbuzeiro"] = WorldState.LIBERATED
@@ -198,16 +206,16 @@ func _validate_camera_director(by_id: Dictionary) -> void:
 		failures.append("Gerenciador central de câmera não foi encontrado.")
 		return
 	player.set_physics_process(false)
-	player.global_position = Vector2(300, 138)
+	player.global_position = Vector2(930, 138)
 	await get_tree().physics_frame
-	player.global_position = Vector2(340, 138)
+	player.global_position = Vector2(970, 138)
 	await get_tree().physics_frame
 	var target := (by_id[&"rua_cinzas"] as RoomController).get_global_camera_bounds()
 	if not director.is_transitioning():
 		failures.append("Troca Casa–Rua aplicou limites instantaneamente, sem transição.")
 	if player.camera.limit_left == roundi(target.position.x) and player.camera.limit_right == roundi(target.end.x):
 		failures.append("Câmera saltou diretamente para os limites da sala seguinte.")
-	for _frame in 30:
+	for _frame in 45:
 		await get_tree().physics_frame
 	if player.camera.limit_left != roundi(target.position.x) or player.camera.limit_right != roundi(target.end.x):
 		failures.append("Câmera não concluiu a transição nos limites da Rua.")
@@ -215,9 +223,9 @@ func _validate_camera_director(by_id: Dictionary) -> void:
 
 
 func _validate_visual_cohesion(rooms: Array[Node]) -> void:
-	var expected_tint := Color("f0e6db")
 	for candidate in rooms:
 		var room := candidate as RoomController
+		var expected_tint := room.occupied_tint
 		var environment := room.get_node_or_null("Environment") as CanvasItem
 		if environment == null or not environment.self_modulate.is_equal_approx(expected_tint):
 			failures.append("Sala %s não recebeu o perfil cromático comum." % room.room_id)

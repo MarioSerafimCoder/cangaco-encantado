@@ -366,26 +366,12 @@ position = Vector2(1262, 138)
 [node name="EnemySpawns" type="Node2D" parent="Gameplay"]
 
 [node name="SaqueadorSpawn" type="Marker2D" parent="Gameplay/EnemySpawns"]
-position = Vector2(210, 137)
+position = Vector2(520, 137)
 script = ExtResource("3_spawn")
 enemy_scene = ExtResource("10_saqueador")
 spawn_id = &"rua_saqueador_01"
 facing = 1.0
-
-[node name="PistoleiroSpawn" type="Marker2D" parent="Gameplay/EnemySpawns"]
-position = Vector2(430, 138)
-script = ExtResource("3_spawn")
-enemy_scene = ExtResource("11_pistoleiro")
-spawn_id = &"rua_pistoleiro_01"
-patrol_radius = 52.0
-
-[node name="SaqueadorFlancoSpawn" type="Marker2D" parent="Gameplay/EnemySpawns"]
-position = Vector2(335, 138)
-script = ExtResource("3_spawn")
-enemy_scene = ExtResource("10_saqueador")
-spawn_id = &"rua_saqueador_02"
-facing = -1.0
-patrol_radius = 34.0
+activation_flag = &"first_combat_unlocked"
 
 [node name="Interactables" type="Node2D" parent="Gameplay"]
 

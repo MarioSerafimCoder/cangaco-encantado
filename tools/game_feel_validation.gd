@@ -275,8 +275,10 @@ func _validate_feedback_configuration(nilo: NiloPlayer) -> void:
 
 func _validate_temporary_hud() -> void:
 	var hud := $Main/HUD as GameHUD
-	if hud.world_panel.size.y > 17.0 or hud.room_panel.size.y > 18.0:
-		failures.append("HUD contextual excedeu a altura compacta definida para 0.2.1.")
+	# A moldura atual ganhou três pixels para separar o ornamento do nome da sala,
+	# sem voltar ao painel alto da versão 0.2.1.
+	if hud.world_panel.size.y > 17.0 or hud.room_panel.size.y > 22.0:
+		failures.append("HUD contextual excedeu a altura compacta definida para a interface atual.")
 	hud.world_fade = 0.0
 	hud.room_fade = 0.0
 	hud.help_fade = 0.0

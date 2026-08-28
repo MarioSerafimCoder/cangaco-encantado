@@ -4,6 +4,7 @@ const SAVE_PATH := "user://cangaco_encantado_save.json"
 
 var _new_game_requested := false
 var _skip_title_once := false
+var autosave_enabled := true
 
 
 func _ready() -> void:
@@ -69,4 +70,5 @@ func consume_skip_title_request() -> bool:
 
 
 func _on_autosave_requested(_reason: StringName) -> void:
-	save_game()
+	if autosave_enabled:
+		save_game()

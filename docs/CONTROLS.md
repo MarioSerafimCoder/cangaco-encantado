@@ -8,8 +8,8 @@ Abra o projeto no Godot e pressione **F6** para executar a cena atual ou **F5** 
 
 | Comando | Tecla | Uso |
 |---|---|---|
-| Andar/correr para a esquerda | `A` ou `←` | Anda para a esquerda e corre depois de manter por 2 segundos. |
-| Andar/correr para a direita | `D` ou `→` | Anda para a direita e corre depois de manter por 2 segundos. |
+| Andar/correr para a esquerda | `A` ou `←` | Anda para a esquerda e corre depois de manter por 2 segundos; a corrida aumenta o alcance do salto. |
+| Andar/correr para a direita | `D` ou `→` | Anda para a direita e corre depois de manter por 2 segundos; a corrida aumenta o alcance do salto. |
 | Direção para cima | `W` ou `↑` | Combina com mira ou facão. |
 | Direção para baixo | `S` ou `↓` | Fast fall no ar e ataque descendente. |
 | Pular | `Espaço` | Segure para um salto mais alto; solte cedo para salto curto. |
@@ -38,7 +38,7 @@ O rifle causa mais dano de postura que a pistola, enquanto o ataque especial é 
 | Comando | Tecla | Uso |
 |---|---|---|
 | Usar Cabaça de Água | `Q` | Inicia cura de 2 HP; receber dano durante 1,1 s interrompe o uso. |
-| Interagir | `E` | Ativa portas, atalhos e outros objetos próximos. |
+| Interagir | `E` | Conversa, examina, compra, ativa portas, atalhos e outros objetos próximos. |
 | Abrir/fechar mapa | `M` | Exibe salas descobertas, posição atual, rotas bloqueadas, atalhos e segredos. |
 | Pausar/continuar | `Esc` | Abre o menu de pausa; pressione novamente para continuar ou voltar da tela atual. |
 | Mostrar/ocultar debug | `F3` | Exibe estado, posição, velocidade e formas técnicas de hitbox. Começa desligado. |

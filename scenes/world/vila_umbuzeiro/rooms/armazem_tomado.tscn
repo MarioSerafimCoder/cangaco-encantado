@@ -20,7 +20,7 @@ size = Vector2(96, 8)
 [node name="ArmazemTomado" type="Node2D"]
 script = ExtResource("1")
 room_id = &"armazem"
-display_name = "07 ARMAZÉM TOMADO"
+display_name = "07 CRIPTA DA IGREJA"
 local_bounds = Rect2(0, -120, 1280, 480)
 camera_bounds = Rect2(0, -120, 1280, 480)
 authored_composition_width = 640.0

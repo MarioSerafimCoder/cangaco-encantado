@@ -1,5 +1,26 @@
 # Changelog
 
+## Área 01 — vertical slice da Vila do Umbuzeiro — 0.4.0
+
+- As treze salas foram reorganizadas como uma macroárea coerente, com rotas horizontais, verticais, atalhos e retorno após adquirir habilidades.
+- Casa de Nilo, arquitetura da Vila, Cripta, Subterrâneo, Grutas, Cavernas e Santuário receberam os novos atlas tratados com transparência.
+- Oito moradores ganharam interação e diálogos orientados por JSON, com variantes condicionais, escolhas e eventos persistentes.
+- A Praça do Umbu tornou-se um centro seguro com mercador, cinco itens, moeda, inventário e compras únicas.
+- Quatro cordéis e uma melhoria permanente de vida passaram a recompensar exploração e revisita.
+- Três checkpoints, fade de entrada/morte, mapa revisado e transições centralizadas de câmera completam o fluxo de navegação.
+- O encontro inicial só começa depois de Nilo encontrar o morador ferido; a Praça não cria inimigos.
+- A manifestação no Santuário conclui a área sem chefe, libera a Vila, abre retorno rápido e conduz a uma saída segura de beta.
+- Save ampliado para moeda, inventário, compras, NPCs, diálogos, áreas, salas visitadas e atalhos.
+- Criadas validação funcional da Área 01 e uma suíte visual 1920x1080 com onze capturas nomeadas.
+- Música e efeitos sonoros foram mantidos fora desta entrega, conforme escopo definido.
+- O boot normal agora abre o menu inicial de forma determinística, inclusive ao iniciar pela cena principal no editor.
+- A Casa de Nilo recebeu parede contínua, teto, piso modular sem fendas e porta interativa com fade nos dois sentidos.
+- Um guia contextual orienta movimento e saída apenas na primeira visita à casa.
+- Grutas e setores subterrâneos receberam uma segunda camada estrutural, removendo faixas pretas entre plataformas.
+- Corrigida a grade real 4×2 do atlas de moradores (1313×1198), eliminando recortes invadidos e fragmentos soltos.
+- Plataformas do segredo da casa ficam ocultas até obter o Passo da Poeira, evitando poluição visual na abertura.
+- A suíte visual passou a registrar também a porta de saída da casa, totalizando onze capturas oficiais.
+
 ## Pipeline integral, câmera e coesão visual — 0.3.4
 
 - Casa de Nilo, Igreja Velha, Armazém, Pátio, Beco, Poço e Barricada foram convertidos em cenas completas com `RoomController`.
