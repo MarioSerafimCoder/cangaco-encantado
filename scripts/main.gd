@@ -33,6 +33,9 @@ func _ready() -> void:
 	if _starting_new_game:
 		SaveManager.save_game()
 	if show_title_on_start and not _start_immediately:
+		# A tela de transição fica acima do menu. No boot ela precisa começar
+		# transparente; caso contrário o jogo carrega, mas aparenta não iniciar.
+		_screen_fade.modulate.a = 0.0
 		front_end.show_title(true)
 	else:
 		front_end.enter_game()

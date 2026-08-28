@@ -14,6 +14,7 @@
 - Criadas validação funcional da Área 01 e uma suíte visual 1920x1080 com onze capturas nomeadas.
 - Música e efeitos sonoros foram mantidos fora desta entrega, conforme escopo definido.
 - O boot normal agora abre o menu inicial de forma determinística, inclusive ao iniciar pela cena principal no editor.
+- Corrigida a camada preta de transição que permanecia acima do menu e fazia o jogo parecer travado ao iniciar pelo Godot.
 - A Casa de Nilo recebeu parede contínua, teto, piso modular sem fendas e porta interativa com fade nos dois sentidos.
 - Um guia contextual orienta movimento e saída apenas na primeira visita à casa.
 - Grutas e setores subterrâneos receberam uma segunda camada estrutural, removendo faixas pretas entre plataformas.
