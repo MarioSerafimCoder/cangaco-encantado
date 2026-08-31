@@ -1,16 +1,14 @@
-[gd_scene load_steps=25 format=3]
+[gd_scene format=3 uid="uid://bvncmi187wjd2"]
 
-[ext_resource type="Script" path="res://scripts/world/room_controller.gd" id="1_controller"]
-[ext_resource type="Script" path="res://scripts/world/camera_parallax_layer.gd" id="2_parallax"]
-[ext_resource type="Script" path="res://scripts/world/enemy_spawn.gd" id="3_spawn"]
-[ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/rua_sky_far.png" id="4_sky"]
-[ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/rua_village_mid.png" id="5_mid"]
-[ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/rua_foreground.png" id="6_foreground"]
+[ext_resource type="Script" uid="uid://dvifhv6p8unas" path="res://scripts/world/room_controller.gd" id="1_controller"]
+[ext_resource type="Script" uid="uid://cb1avlu8rlver" path="res://scripts/world/camera_parallax_layer.gd" id="2_parallax"]
+[ext_resource type="Script" uid="uid://bx61cfuhdut77" path="res://scripts/world/enemy_spawn.gd" id="3_spawn"]
+[ext_resource type="Texture2D" uid="uid://bqrufxsjl73co" path="res://assets/environments/rua_das_cinzas/rua_sky_far.png" id="4_sky"]
+[ext_resource type="Texture2D" uid="uid://dphwy1k11gxwj" path="res://assets/environments/rua_das_cinzas/rua_village_mid.png" id="5_mid"]
+[ext_resource type="Texture2D" uid="uid://cq660h42xux2o" path="res://assets/environments/rua_das_cinzas/rua_foreground.png" id="6_foreground"]
 [ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/props/carroca_01.tres" id="7_cart"]
 [ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/props/cerca_01.tres" id="8_fence"]
-[ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/props/barricada_01.tres" id="9_barricade"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/saqueador.tscn" id="10_saqueador"]
-[ext_resource type="PackedScene" path="res://scenes/enemies/pistoleiro.tscn" id="11_pistoleiro"]
 [ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/fillers/rochas_01.tres" id="12_rocks"]
 [ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/fillers/capim_seco_01.tres" id="13_grass"]
 [ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/fillers/cacto_01.tres" id="14_cactus"]
@@ -18,358 +16,516 @@
 [ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/fillers/ossos_01.tres" id="16_bones"]
 [ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/fillers/parede_quebrada_esquerda.tres" id="17_wall_left"]
 [ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/fillers/parede_quebrada_direita.tres" id="18_wall_right"]
-[ext_resource type="Texture2D" path="res://assets/fx/vfx_ocupacao_e_tiros.png" id="19_vfx"]
-[ext_resource type="Script" path="res://scripts/fx/atlas_strip_animator.gd" id="20_atlas_anim"]
-[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_7/rua_chao_continuo.png" id="21_ground"]
-[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/03_sistema_de_chao_e_transicoes.png" id="22_ground_front"]
+[ext_resource type="Texture2D" uid="uid://cpgqbd3tq6s0f" path="res://assets/fx/vfx_ocupacao_e_tiros.png" id="19_vfx"]
+[ext_resource type="Script" uid="uid://4xt7iqpyhv5g" path="res://scripts/fx/atlas_strip_animator.gd" id="20_atlas_anim"]
+[ext_resource type="Texture2D" uid="uid://crwepuy5x2m2k" path="res://assets/environments/vila_umbuzeiro/generated_0_2_7/rua_chao_continuo.png" id="21_ground"]
+[ext_resource type="Texture2D" uid="uid://dqyqmdneanbt7" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/03_sistema_de_chao_e_transicoes.png" id="22_ground_front"]
+[ext_resource type="Texture2D" uid="uid://dh5px13dqifm8" path="res://assets/area_01/environment/traversal_props_atlas.png" id="23_traversal"]
+[ext_resource type="Script" uid="uid://c8a48fds01adt" path="res://scripts/npc/npc_actor.gd" id="24_npc"]
+[ext_resource type="Texture2D" uid="uid://duf0ll2myapvk" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/07_moradores_chibi_da_vila.png" id="25_npc_atlas"]
+[ext_resource type="FontFile" uid="uid://dn8i4yhvcne74" path="res://assets/ui/fonts/Tiny5-Regular.ttf" id="26_font"]
 
 [sub_resource type="RectangleShape2D" id="GroundShape"]
 size = Vector2(1280, 210)
 
+[sub_resource type="RectangleShape2D" id="CartWestShape"]
+size = Vector2(102, 8)
+
+[sub_resource type="RectangleShape2D" id="CrateShape"]
+size = Vector2(40, 8)
+
+[sub_resource type="RectangleShape2D" id="CanopyShape"]
+size = Vector2(100, 8)
+
+[sub_resource type="RectangleShape2D" id="RampCartShape"]
+size = Vector2(94, 8)
+
+[sub_resource type="RectangleShape2D" id="NPCShape"]
+size = Vector2(28, 40)
+
 [sub_resource type="RectangleShape2D" id="RoomShape"]
 size = Vector2(1280, 480)
 
-[node name="RuaDasCinzas" type="Node2D"]
+[node name="RuaDasCinzas" type="Node2D" unique_id=1148286011]
 script = ExtResource("1_controller")
 room_id = &"rua_cinzas"
 display_name = "02 RUA DAS CINZAS"
 local_bounds = Rect2(0, -120, 1280, 480)
 camera_bounds = Rect2(0, -120, 1280, 480)
+round_authored_sprite_positions = false
 
-[node name="Environment" type="Node2D" parent="."]
+[node name="Environment" type="Node2D" parent="." unique_id=327657522]
 
-[node name="Sky" type="Node2D" parent="Environment"]
+[node name="Sky" type="Node2D" parent="Environment" unique_id=1907185812]
 z_index = -30
 script = ExtResource("2_parallax")
 scroll_scale = Vector2(0.03, 1)
 
-[node name="Texture" type="Sprite2D" parent="Environment/Sky"]
+[node name="Texture" type="Sprite2D" parent="Environment/Sky" unique_id=1200207377]
+modulate = Color(0.84, 0.87, 0.86, 1)
+texture_filter = 1
 position = Vector2(320, 0)
-texture_filter = 1
 texture = ExtResource("4_sky")
-modulate = Color(0.84, 0.87, 0.86, 1)
 
-[node name="TextureEast" type="Sprite2D" parent="Environment/Sky"]
+[node name="TextureEast" type="Sprite2D" parent="Environment/Sky" unique_id=668577439]
+modulate = Color(0.84, 0.87, 0.86, 1)
+texture_filter = 1
 position = Vector2(960, 0)
-texture_filter = 1
 texture = ExtResource("4_sky")
-modulate = Color(0.84, 0.87, 0.86, 1)
 
-[node name="FarBackground" type="Node2D" parent="Environment"]
+[node name="FarBackground" type="Node2D" parent="Environment" unique_id=826908084]
 z_index = -24
 script = ExtResource("2_parallax")
 scroll_scale = Vector2(0.14, 1)
 
-[node name="AtmosphericBand" type="Polygon2D" parent="Environment/FarBackground"]
-polygon = PackedVector2Array(0, 75, 1280, 75, 1280, 150, 0, 150)
+[node name="AtmosphericBand" type="Polygon2D" parent="Environment/FarBackground" unique_id=616799882]
+position = Vector2(0, -3)
 color = Color(0.57, 0.49, 0.45, 0.1)
+polygon = PackedVector2Array(0, 75, 1280, 75, 1280, 150, 0, 150)
 
-[node name="MidBackground" type="Node2D" parent="Environment"]
+[node name="MidBackground" type="Node2D" parent="Environment" unique_id=1971972384]
 z_index = -12
 script = ExtResource("2_parallax")
 scroll_scale = Vector2(0.5, 1)
 
-[node name="Texture" type="Sprite2D" parent="Environment/MidBackground"]
-position = Vector2(320, 69)
-texture_filter = 1
-texture = ExtResource("5_mid")
+[node name="Texture" type="Sprite2D" parent="Environment/MidBackground" unique_id=882715277]
 modulate = Color(0.88, 0.82, 0.77, 1)
+texture_filter = 1
+position = Vector2(324, 72)
+texture = ExtResource("5_mid")
 
-[node name="TextureEast" type="Sprite2D" parent="Environment/MidBackground"]
+[node name="TextureEast" type="Sprite2D" parent="Environment/MidBackground" unique_id=547745023]
+modulate = Color(0.88, 0.82, 0.77, 1)
+texture_filter = 1
 position = Vector2(960, 69)
-texture_filter = 1
 texture = ExtResource("5_mid")
-modulate = Color(0.88, 0.82, 0.77, 1)
 
-[node name="GameplayDecor" type="Node2D" parent="Environment"]
+[node name="GameplayDecor" type="Node2D" parent="Environment" unique_id=1776093226]
 z_index = -3
 
-[node name="TransitionLeft" type="Sprite2D" parent="Environment/GameplayDecor"]
+[node name="TransitionLeft" type="Sprite2D" parent="Environment/GameplayDecor" unique_id=338062513]
+z_index = -4
+texture_filter = 1
 position = Vector2(18, 115)
 scale = Vector2(0.3, 0.3)
-z_index = -4
-texture_filter = 1
 texture = ExtResource("17_wall_left")
 
-[node name="TransitionRight" type="Sprite2D" parent="Environment/GameplayDecor"]
-position = Vector2(1262, 115)
-scale = Vector2(-0.3, 0.3)
+[node name="TransitionRight" type="Sprite2D" parent="Environment/GameplayDecor" unique_id=1393784613]
 z_index = -4
 texture_filter = 1
+position = Vector2(1262, 115)
+scale = Vector2(-0.3, 0.3)
 texture = ExtResource("18_wall_right")
 
-[node name="Carroca" type="Sprite2D" parent="Environment/GameplayDecor"]
-position = Vector2(141, 114)
-scale = Vector2(0.224242, 0.224242)
+[node name="RochasOeste" type="Sprite2D" parent="Environment/GameplayDecor" unique_id=1937810109]
 texture_filter = 1
-texture = ExtResource("7_cart")
-
-[node name="Cerca" type="Sprite2D" parent="Environment/GameplayDecor"]
-position = Vector2(486, 114)
-scale = Vector2(0.255556, 0.255556)
-texture_filter = 1
-texture = ExtResource("8_fence")
-
-[node name="RochasOeste" type="Sprite2D" parent="Environment/GameplayDecor"]
 position = Vector2(72, 136)
 scale = Vector2(0.19, 0.19)
-texture_filter = 1
 texture = ExtResource("12_rocks")
 
-[node name="CapimCentro" type="Sprite2D" parent="Environment/GameplayDecor"]
+[node name="CapimCentro" type="Sprite2D" parent="Environment/GameplayDecor" unique_id=1028361653]
+texture_filter = 1
 position = Vector2(303, 137)
 scale = Vector2(0.16, 0.16)
-texture_filter = 1
 texture = ExtResource("13_grass")
 
-[node name="MadeiraCentro" type="Sprite2D" parent="Environment/GameplayDecor"]
+[node name="MadeiraCentro" type="Sprite2D" parent="Environment/GameplayDecor" unique_id=1624784983]
+texture_filter = 1
 position = Vector2(368, 139)
 scale = Vector2(0.16, 0.16)
-texture_filter = 1
 texture = ExtResource("15_wood")
 
-[node name="CactoLeste" type="Sprite2D" parent="Environment/GameplayDecor"]
-position = Vector2(548, 132)
-scale = Vector2(0.17, 0.17)
+[node name="Ossos" type="Sprite2D" parent="Environment/GameplayDecor" unique_id=744175609]
 texture_filter = 1
-texture = ExtResource("14_cactus")
-
-[node name="Ossos" type="Sprite2D" parent="Environment/GameplayDecor"]
 position = Vector2(416, 144)
 scale = Vector2(0.12, 0.12)
-texture_filter = 1
 texture = ExtResource("16_bones")
 
-[node name="CarrocaLeste" type="Sprite2D" parent="Environment/GameplayDecor"]
-position = Vector2(782, 114)
-scale = Vector2(0.224242, 0.224242)
+[node name="CarrocaLeste" type="Sprite2D" parent="Environment/GameplayDecor" unique_id=2095237166]
 texture_filter = 1
+position = Vector2(783.00006, 130)
+scale = Vector2(0.14242415, 0.13749999)
 texture = ExtResource("7_cart")
 
-[node name="CercaLeste" type="Sprite2D" parent="Environment/GameplayDecor"]
-position = Vector2(1126, 114)
-scale = Vector2(0.255556, 0.255556)
+[node name="CercaLeste" type="Sprite2D" parent="Environment/GameplayDecor" unique_id=896474878]
 texture_filter = 1
+position = Vector2(1126, 121.00001)
+scale = Vector2(0.255556, 0.255556)
 texture = ExtResource("8_fence")
 
-[node name="RochasLeste" type="Sprite2D" parent="Environment/GameplayDecor"]
+[node name="RochasLeste" type="Sprite2D" parent="Environment/GameplayDecor" unique_id=161722656]
+texture_filter = 1
 position = Vector2(712, 136)
 scale = Vector2(0.19, 0.19)
-texture_filter = 1
 texture = ExtResource("12_rocks")
 
-[node name="CapimLeste" type="Sprite2D" parent="Environment/GameplayDecor"]
+[node name="CapimLeste" type="Sprite2D" parent="Environment/GameplayDecor" unique_id=392812179]
+texture_filter = 1
 position = Vector2(943, 137)
 scale = Vector2(0.16, 0.16)
-texture_filter = 1
 texture = ExtResource("13_grass")
 
-[node name="CactoExtremoLeste" type="Sprite2D" parent="Environment/GameplayDecor"]
-position = Vector2(1188, 132)
-scale = Vector2(0.17, 0.17)
+[node name="CactoExtremoLeste" type="Sprite2D" parent="Environment/GameplayDecor" unique_id=1370956348]
 texture_filter = 1
+position = Vector2(1188, 137.2224)
+scale = Vector2(0.1156, 0.1156)
 texture = ExtResource("14_cactus")
 
-[node name="OccupiedOnly" type="Node2D" parent="Environment" groups=["room_occupied_only"]]
-
-[node name="OccupationTint" type="Polygon2D" parent="Environment/OccupiedOnly"]
-z_index = -7
-polygon = PackedVector2Array(0, 0, 1280, 0, 1280, 150, 0, 150)
-color = Color(0.22, 0.055, 0.04, 0.1)
-
-[node name="Barricada" type="Sprite2D" parent="Environment/OccupiedOnly"]
-position = Vector2(602, 120)
-scale = Vector2(0.21, 0.21)
-z_index = -2
+[node name="Carroca" type="Sprite2D" parent="Environment/GameplayDecor" unique_id=2021228900]
 texture_filter = 1
-texture = ExtResource("9_barricade")
+position = Vector2(480.0656, 132.4828)
+scale = Vector2(0.1251173, 0.1251173)
+texture = ExtResource("7_cart")
 
-[node name="FireGlowLeft" type="Polygon2D" parent="Environment/OccupiedOnly"]
-position = Vector2(452, 145)
+[node name="OccupiedOnly" type="Node2D" parent="Environment" unique_id=1070060761 groups=["room_occupied_only"]]
+
+[node name="FireGlowLeft" type="Polygon2D" parent="Environment/OccupiedOnly" unique_id=1636390181]
 z_index = -5
-polygon = PackedVector2Array(-24, 5, 24, 5, 14, -24, -14, -24)
+position = Vector2(452, 145)
 color = Color(0.95, 0.31, 0.08, 0.1)
+polygon = PackedVector2Array(-24, 5, 24, 5, 14, -24, -14, -24)
 
-[node name="FireAnimated" type="Sprite2D" parent="Environment/OccupiedOnly"]
+[node name="FireAnimated" type="Sprite2D" parent="Environment/OccupiedOnly" unique_id=1609774305]
+texture_filter = 1
 position = Vector2(452, 133)
 scale = Vector2(0.18, 0.18)
-z_index = 0
-texture_filter = 1
 texture = ExtResource("19_vfx")
 script = ExtResource("20_atlas_anim")
 frame_rect = Rect2(0, 0, 112, 200)
 frame_count = 6
-frames_per_second = 8.0
 
-[node name="SmokeAnimated" type="Sprite2D" parent="Environment/OccupiedOnly"]
-position = Vector2(452, 110)
-scale = Vector2(0.13, 0.13)
-z_index = -1
+[node name="SmokeAnimated" type="Sprite2D" parent="Environment/OccupiedOnly" unique_id=1248993541]
 modulate = Color(0.72, 0.68, 0.65, 0.72)
+z_index = -1
 texture_filter = 1
+position = Vector2(456, 101)
+scale = Vector2(0.13, 0.13)
 texture = ExtResource("19_vfx")
 script = ExtResource("20_atlas_anim")
 frame_rect = Rect2(0, 205, 110, 285)
 frame_count = 7
 frames_per_second = 6.0
 
-[node name="LiberatedOnly" type="Node2D" parent="Environment" groups=["room_liberated_only"]]
+[node name="LiberatedOnly" type="Node2D" parent="Environment" unique_id=770919168 groups=["room_liberated_only"]]
 visible = false
 
-[node name="RecoveryLight" type="Polygon2D" parent="Environment/LiberatedOnly"]
+[node name="RecoveryLight" type="Polygon2D" parent="Environment/LiberatedOnly" unique_id=1717176508]
 z_index = -7
-polygon = PackedVector2Array(0, 0, 1280, 0, 1280, 150, 0, 150)
 color = Color(0.94, 0.72, 0.35, 0.055)
+polygon = PackedVector2Array(0, 0, 1280, 0, 1280, 150, 0, 150)
 
-[node name="RecoveredLantern" type="Polygon2D" parent="Environment/LiberatedOnly"]
-position = Vector2(452, 136)
+[node name="RecoveredLantern" type="Polygon2D" parent="Environment/LiberatedOnly" unique_id=740450587]
 z_index = -1
-polygon = PackedVector2Array(-3, -5, 3, -5, 4, 4, -4, 4)
+position = Vector2(452, 136)
 color = Color(0.96, 0.72, 0.29, 0.9)
+polygon = PackedVector2Array(-3, -5, 3, -5, 4, 4, -4, 4)
 
-[node name="Foreground" type="Node2D" parent="Environment"]
-# A silhueta grande deve dar profundidade sem encobrir Nilo, NPCs, portas ou props.
-# Mantemos a paralaxe, mas atrás da arquitetura e da camada de gameplay.
-z_index = -10
+[node name="Foreground" type="Node2D" parent="Environment" unique_id=1770212655]
 script = ExtResource("2_parallax")
 scroll_scale = Vector2(1.1, 1)
 
-[node name="Texture" type="Sprite2D" parent="Environment/Foreground"]
-position = Vector2(320, 8)
+[node name="Texture" type="Sprite2D" parent="Environment/Foreground" unique_id=1259015482]
+modulate = Color(0.63, 0.59, 0.55, 0.96)
 z_index = -10
 texture_filter = 1
+position = Vector2(141, 91)
+scale = Vector2(0.35555556, 0.35555556)
 texture = ExtResource("6_foreground")
-modulate = Color(0.63, 0.59, 0.55, 0.96)
 
-[node name="TextureEast" type="Sprite2D" parent="Environment/Foreground"]
-position = Vector2(960, 8)
+[node name="TextureEast" type="Sprite2D" parent="Environment/Foreground" unique_id=798638073]
+modulate = Color(0.63, 0.59, 0.55, 0.96)
 z_index = -10
 texture_filter = 1
+position = Vector2(834, 86)
+scale = Vector2(0.45, 0.45)
 texture = ExtResource("6_foreground")
-modulate = Color(0.63, 0.59, 0.55, 0.96)
 
-[node name="Geometry" type="Node2D" parent="."]
+[node name="Geometry" type="Node2D" parent="." unique_id=1868749408]
 
-[node name="Ground" type="Node2D" parent="Geometry"]
+[node name="Ground" type="Node2D" parent="Geometry" unique_id=1797170536]
 
-[node name="VisualBody" type="Polygon2D" parent="Geometry/Ground"]
+[node name="VisualBody" type="Polygon2D" parent="Geometry/Ground" unique_id=1701539705]
 visible = false
 z_index = -1
-polygon = PackedVector2Array(0, 150, 640, 150, 640, 180, 0, 180)
 color = Color(0.407, 0.27, 0.208, 1)
+polygon = PackedVector2Array(0, 150, 640, 150, 640, 180, 0, 180)
 
-[node name="BaselineCap" type="Polygon2D" parent="Geometry/Ground"]
+[node name="BaselineCap" type="Polygon2D" parent="Geometry/Ground" unique_id=2035062505]
 visible = false
 z_index = -1
-polygon = PackedVector2Array(0, 150, 640, 150, 640, 154, 0, 154)
 color = Color(0.612, 0.439, 0.275, 1)
+polygon = PackedVector2Array(0, 150, 640, 150, 640, 154, 0, 154)
 
-[node name="StreetGroundSprite" type="Sprite2D" parent="Geometry/Ground"]
-position = Vector2(640, 153)
-scale = Vector2(0.58932, 0.16)
+[node name="StreetGroundSprite" type="Sprite2D" parent="Geometry/Ground" unique_id=1901752985]
 z_index = -1
 texture_filter = 1
+position = Vector2(639, 155)
+scale = Vector2(0.58932, 0.16)
 texture = ExtResource("21_ground")
 
-[node name="GroundFrontWest" type="Sprite2D" parent="Geometry/Ground"]
+[node name="GroundFrontWest" type="Sprite2D" parent="Geometry/Ground" unique_id=877770136]
+texture_filter = 1
 position = Vector2(160, 205)
 scale = Vector2(0.772727, 0.727273)
-texture_filter = 1
 texture = ExtResource("22_ground_front")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(19, 520, 475, 166)
+region_filter_clip_enabled = true
 
-[node name="GroundFrontEast" type="Sprite2D" parent="Geometry/Ground"]
+[node name="GroundFrontEast" type="Sprite2D" parent="Geometry/Ground" unique_id=238767174]
+texture_filter = 1
 position = Vector2(480, 205)
 scale = Vector2(0.772727, 0.727273)
-texture_filter = 1
 texture = ExtResource("22_ground_front")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(19, 520, 475, 166)
+region_filter_clip_enabled = true
 
-[node name="GroundFrontFarEast" type="Sprite2D" parent="Geometry/Ground"]
+[node name="GroundFrontFarEast" type="Sprite2D" parent="Geometry/Ground" unique_id=2089682255]
+texture_filter = 1
 position = Vector2(800, 205)
 scale = Vector2(0.772727, 0.727273)
-texture_filter = 1
 texture = ExtResource("22_ground_front")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(19, 520, 475, 166)
+region_filter_clip_enabled = true
 
-[node name="GroundFrontEdge" type="Sprite2D" parent="Geometry/Ground"]
+[node name="GroundFrontEdge" type="Sprite2D" parent="Geometry/Ground" unique_id=1952217267]
+texture_filter = 1
 position = Vector2(1120, 205)
 scale = Vector2(0.772727, 0.727273)
-texture_filter = 1
 texture = ExtResource("22_ground_front")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(19, 520, 475, 166)
+region_filter_clip_enabled = true
 
-[node name="DeepGroundWest" type="Sprite2D" parent="Geometry/Ground"]
+[node name="DeepGroundWest" type="Sprite2D" parent="Geometry/Ground" unique_id=310663348]
+texture_filter = 1
 position = Vector2(160, 335)
 scale = Vector2(0.772727, 0.727273)
-texture_filter = 1
 texture = ExtResource("22_ground_front")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(19, 520, 475, 166)
+region_filter_clip_enabled = true
 
-[node name="DeepGroundCenterWest" type="Sprite2D" parent="Geometry/Ground"]
+[node name="DeepGroundCenterWest" type="Sprite2D" parent="Geometry/Ground" unique_id=636223397]
+texture_filter = 1
 position = Vector2(480, 335)
 scale = Vector2(0.772727, 0.727273)
-texture_filter = 1
 texture = ExtResource("22_ground_front")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(19, 520, 475, 166)
+region_filter_clip_enabled = true
 
-[node name="DeepGroundCenterEast" type="Sprite2D" parent="Geometry/Ground"]
+[node name="DeepGroundCenterEast" type="Sprite2D" parent="Geometry/Ground" unique_id=57294100]
+texture_filter = 1
 position = Vector2(800, 335)
 scale = Vector2(0.772727, 0.727273)
-texture_filter = 1
 texture = ExtResource("22_ground_front")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(19, 520, 475, 166)
+region_filter_clip_enabled = true
 
-[node name="DeepGroundEast" type="Sprite2D" parent="Geometry/Ground"]
+[node name="DeepGroundEast" type="Sprite2D" parent="Geometry/Ground" unique_id=1366340882]
+texture_filter = 1
 position = Vector2(1120, 335)
 scale = Vector2(0.772727, 0.727273)
-texture_filter = 1
 texture = ExtResource("22_ground_front")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(19, 520, 475, 166)
+region_filter_clip_enabled = true
 
-[node name="GroundCollision" type="StaticBody2D" parent="Geometry/Ground"]
+[node name="GroundCollision" type="StaticBody2D" parent="Geometry/Ground" unique_id=695258670]
 position = Vector2(640, 255)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/Ground/GroundCollision"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/Ground/GroundCollision" unique_id=112323997]
 shape = SubResource("GroundShape")
 
-[node name="Platforms" type="Node2D" parent="Geometry"]
+[node name="Platforms" type="Node2D" parent="Geometry" unique_id=1964281409]
 
-[node name="Walls" type="Node2D" parent="Geometry"]
+[node name="EditableObstacles" type="Node2D" parent="Geometry" unique_id=1168147275]
 
-[node name="Gameplay" type="Node2D" parent="."]
+[node name="CarrocaOeste" type="StaticBody2D" parent="Geometry/EditableObstacles" unique_id=14393493]
+position = Vector2(300, 150)
+collision_mask = 0
 
-[node name="Entrances" type="Node2D" parent="Gameplay"]
+[node name="ObstacleSprite" type="Sprite2D" parent="Geometry/EditableObstacles/CarrocaOeste" unique_id=666198182]
+z_index = -1
+texture_filter = 1
+position = Vector2(0, -14.33898)
+scale = Vector2(0.20338984, 0.20338984)
+texture = ExtResource("23_traversal")
+region_enabled = true
+region_rect = Rect2(55, 145, 590, 265)
+region_filter_clip_enabled = true
 
-[node name="LEFT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances"]
+[node name="WalkableSurface" type="CollisionShape2D" parent="Geometry/EditableObstacles/CarrocaOeste" unique_id=1553172701]
+position = Vector2(0, -31.79661)
+shape = SubResource("CartWestShape")
+
+[node name="CaixaOeste" type="StaticBody2D" parent="Geometry/EditableObstacles" unique_id=1589144464]
+position = Vector2(510, 150)
+collision_mask = 0
+
+[node name="ObstacleSprite" type="Sprite2D" parent="Geometry/EditableObstacles/CaixaOeste" unique_id=947394865]
+z_index = -1
+texture_filter = 1
+position = Vector2(0, -16.97561)
+scale = Vector2(0.23414634, 0.23414634)
+texture = ExtResource("23_traversal")
+region_enabled = true
+region_rect = Rect2(830, 425, 205, 185)
+region_filter_clip_enabled = true
+
+[node name="WalkableSurface" type="CollisionShape2D" parent="Geometry/EditableObstacles/CaixaOeste" unique_id=677512031]
+position = Vector2(0, -34.634148)
+shape = SubResource("CrateShape")
+
+[node name="ToldoCentral" type="StaticBody2D" parent="Geometry/EditableObstacles" unique_id=750531710]
+position = Vector2(690, 150)
+collision_mask = 0
+
+[node name="ObstacleSprite" type="Sprite2D" parent="Geometry/EditableObstacles/ToldoCentral" unique_id=508657456]
+z_index = -1
+texture_filter = 1
+position = Vector2(0, -41.87097)
+scale = Vector2(0.38064516, 0.38064516)
+texture = ExtResource("23_traversal")
+region_enabled = true
+region_rect = Rect2(35, 665, 310, 300)
+region_filter_clip_enabled = true
+
+[node name="WalkableSurface" type="CollisionShape2D" parent="Geometry/EditableObstacles/ToldoCentral" unique_id=1487579463]
+position = Vector2(0, -94.96774)
+shape = SubResource("CanopyShape")
+
+[node name="CarrocaRampa" type="StaticBody2D" parent="Geometry/EditableObstacles" unique_id=1477948701]
+position = Vector2(900, 150)
+collision_mask = 0
+
+[node name="ObstacleSprite" type="Sprite2D" parent="Geometry/EditableObstacles/CarrocaRampa" unique_id=1080666670]
+z_index = -1
+texture_filter = 1
+position = Vector2(-5, -17.000002)
+scale = Vector2(0.19823009, 0.19823009)
+texture = ExtResource("23_traversal")
+region_enabled = true
+region_rect = Rect2(695, 135, 565, 295)
+region_filter_clip_enabled = true
+
+[node name="WalkableSurface" type="CollisionShape2D" parent="Geometry/EditableObstacles/CarrocaRampa" unique_id=1137081354]
+position = Vector2(-5, -36.8867)
+shape = SubResource("RampCartShape")
+
+[node name="CaixaLeste" type="StaticBody2D" parent="Geometry/EditableObstacles" unique_id=2005013912]
+position = Vector2(1090, 150)
+collision_mask = 0
+
+[node name="ObstacleSprite" type="Sprite2D" parent="Geometry/EditableObstacles/CaixaLeste" unique_id=1459514722]
+z_index = -1
+texture_filter = 1
+position = Vector2(0, -16.97561)
+scale = Vector2(0.23414634, 0.23414634)
+texture = ExtResource("23_traversal")
+region_enabled = true
+region_rect = Rect2(830, 425, 205, 185)
+region_filter_clip_enabled = true
+
+[node name="WalkableSurface" type="CollisionShape2D" parent="Geometry/EditableObstacles/CaixaLeste" unique_id=1031707131]
+position = Vector2(0, -34.634148)
+shape = SubResource("CrateShape")
+
+[node name="Walls" type="Node2D" parent="Geometry" unique_id=469079379]
+
+[node name="Gameplay" type="Node2D" parent="." unique_id=1756788553]
+
+[node name="Entrances" type="Node2D" parent="Gameplay" unique_id=2062443589]
+
+[node name="LEFT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances" unique_id=263646410]
 position = Vector2(18, 138)
 
-[node name="RIGHT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances"]
+[node name="RIGHT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances" unique_id=1286260507]
 position = Vector2(1262, 138)
 
-[node name="Actors" type="Node2D" parent="Gameplay"]
+[node name="Actors" type="Node2D" parent="Gameplay" unique_id=1332848606]
 
-[node name="EnemySpawns" type="Node2D" parent="Gameplay"]
+[node name="DonaTereza" type="Area2D" parent="Gameplay/Actors" unique_id=933318490]
+position = Vector2(120, 138)
+collision_layer = 16
+collision_mask = 2
+script = ExtResource("24_npc")
+npc_id = &"dona_tereza"
+display_name = "DONA TEREZA"
+dialogue_id = &"dona_tereza"
+room_id = &"rua_cinzas"
 
-[node name="SaqueadorSpawn" type="Marker2D" parent="Gameplay/EnemySpawns"]
+[node name="InteractionCollision" type="CollisionShape2D" parent="Gameplay/Actors/DonaTereza" unique_id=2018138584]
+position = Vector2(0, -10)
+shape = SubResource("NPCShape")
+
+[node name="NPCSprite" type="Sprite2D" parent="Gameplay/Actors/DonaTereza" unique_id=1591268077]
+z_index = 6
+texture_filter = 1
+position = Vector2(-5, -8)
+scale = Vector2(0.075, 0.075)
+texture = ExtResource("25_npc_atlas")
+region_enabled = true
+region_rect = Rect2(0, 0, 328.25, 599)
+region_filter_clip_enabled = true
+
+[node name="Prompt" type="Label" parent="Gameplay/Actors/DonaTereza" unique_id=1696688876]
+visible = false
+offset_left = -48.0
+offset_top = -49.0
+offset_right = 48.0
+offset_bottom = -35.0
+theme_override_colors/font_color = Color(1, 0.901961, 0.678431, 1)
+theme_override_fonts/font = ExtResource("26_font")
+theme_override_font_sizes/font_size = 8
+text = "E CONVERSAR"
+horizontal_alignment = 1
+
+[node name="Raimundo" type="Area2D" parent="Gameplay/Actors" unique_id=1415538173]
+position = Vector2(185, 138)
+collision_layer = 16
+collision_mask = 2
+script = ExtResource("24_npc")
+npc_id = &"raimundo"
+display_name = "RAIMUNDO"
+dialogue_id = &"ferido"
+room_id = &"rua_cinzas"
+atlas_index = 1
+
+[node name="InteractionCollision" type="CollisionShape2D" parent="Gameplay/Actors/Raimundo" unique_id=353746125]
+position = Vector2(0, -10)
+shape = SubResource("NPCShape")
+
+[node name="NPCSprite" type="Sprite2D" parent="Gameplay/Actors/Raimundo" unique_id=2004321566]
+z_index = 6
+texture_filter = 1
+position = Vector2(-1, -9)
+scale = Vector2(0.075, 0.075)
+texture = ExtResource("25_npc_atlas")
+region_enabled = true
+region_rect = Rect2(328.25, 0, 328.25, 599)
+region_filter_clip_enabled = true
+
+[node name="Prompt" type="Label" parent="Gameplay/Actors/Raimundo" unique_id=486575255]
+visible = false
+offset_left = -48.0
+offset_top = -49.0
+offset_right = 48.0
+offset_bottom = -35.0
+theme_override_colors/font_color = Color(1, 0.901961, 0.678431, 1)
+theme_override_fonts/font = ExtResource("26_font")
+theme_override_font_sizes/font_size = 8
+text = "E CONVERSAR"
+horizontal_alignment = 1
+
+[node name="EnemySpawns" type="Node2D" parent="Gameplay" unique_id=643575199]
+
+[node name="SaqueadorSpawn" type="Marker2D" parent="Gameplay/EnemySpawns" unique_id=155843992]
 position = Vector2(520, 137)
 script = ExtResource("3_spawn")
 enemy_scene = ExtResource("10_saqueador")
@@ -377,11 +533,11 @@ spawn_id = &"rua_saqueador_01"
 facing = 1.0
 activation_flag = &"first_combat_unlocked"
 
-[node name="Interactables" type="Node2D" parent="Gameplay"]
+[node name="Interactables" type="Node2D" parent="Gameplay" unique_id=191961063]
 
-[node name="Triggers" type="Node2D" parent="Gameplay"]
+[node name="Triggers" type="Node2D" parent="Gameplay" unique_id=1253638415]
 
-[node name="RoomArea" type="Area2D" parent="Gameplay/Triggers"]
+[node name="RoomArea" type="Area2D" parent="Gameplay/Triggers" unique_id=430042993]
 position = Vector2(640, 120)
 collision_layer = 0
 collision_mask = 2
@@ -389,12 +545,12 @@ collision_mask = 2
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Triggers/RoomArea"]
 shape = SubResource("RoomShape")
 
-[node name="Camera" type="Node2D" parent="."]
+[node name="Camera" type="Node2D" parent="." unique_id=938584581]
 
-[node name="Bounds" type="Node2D" parent="Camera"]
+[node name="Bounds" type="Node2D" parent="Camera" unique_id=126353002]
 
-[node name="TopLeft" type="Marker2D" parent="Camera/Bounds"]
+[node name="TopLeft" type="Marker2D" parent="Camera/Bounds" unique_id=1985343508]
 position = Vector2(0, -120)
 
-[node name="BottomRight" type="Marker2D" parent="Camera/Bounds"]
+[node name="BottomRight" type="Marker2D" parent="Camera/Bounds" unique_id=750246146]
 position = Vector2(1280, 360)

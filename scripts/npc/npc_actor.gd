@@ -20,6 +20,7 @@ var prompt: Label
 var origin_x := 0.0
 var facing := 1.0
 var _idle_time := 0.0
+var _base_sprite_scale := Vector2(BASE_SCALE, BASE_SCALE)
 
 
 func _ready() -> void:
@@ -27,41 +28,51 @@ func _ready() -> void:
 	collision_layer = 16
 	collision_mask = 2
 	origin_x = position.x
-	var collision := CollisionShape2D.new()
-	var shape := RectangleShape2D.new()
-	shape.size = Vector2(28, 40)
-	collision.shape = shape
-	collision.position.y = -10
-	add_child(collision)
-	sprite = Sprite2D.new()
-	sprite.texture = NPC_ATLAS
-	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	sprite.region_enabled = true
-	sprite.region_filter_clip_enabled = true
-	# O atlas original mede 1313x1198; usar células fixas de 384x512
-	# invadia o personagem vizinho e cortava a linha inferior.
-	var cell_size := Vector2(
-		float(NPC_ATLAS.get_width()) / ATLAS_COLUMNS,
-		float(NPC_ATLAS.get_height()) / ATLAS_ROWS
-	)
-	sprite.region_rect = Rect2(
-		Vector2(atlas_index % ATLAS_COLUMNS, atlas_index / ATLAS_COLUMNS) * cell_size,
-		cell_size
-	)
-	sprite.scale = Vector2(BASE_SCALE, BASE_SCALE)
-	sprite.position.y = -19
-	sprite.z_index = 6
-	add_child(sprite)
-	prompt = Label.new()
-	prompt.position = Vector2(-48, -49)
-	prompt.size = Vector2(96, 14)
-	prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	prompt.add_theme_font_override("font", PIXEL_FONT)
-	prompt.add_theme_font_size_override("font_size", 8)
-	prompt.add_theme_color_override("font_color", Color("ffe6ad"))
+	var collision := get_node_or_null("InteractionCollision") as CollisionShape2D
+	if collision == null:
+		collision = CollisionShape2D.new()
+		collision.name = "InteractionCollision"
+		var shape := RectangleShape2D.new()
+		shape.size = Vector2(28, 40)
+		collision.shape = shape
+		collision.position.y = -10
+		add_child(collision)
+	sprite = get_node_or_null("NPCSprite") as Sprite2D
+	if sprite == null:
+		sprite = Sprite2D.new()
+		sprite.name = "NPCSprite"
+		sprite.texture = NPC_ATLAS
+		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		sprite.region_enabled = true
+		sprite.region_filter_clip_enabled = true
+		# O atlas original mede 1313x1198; usar células fixas de 384x512
+		# invadia o personagem vizinho e cortava a linha inferior.
+		var cell_size := Vector2(
+			float(NPC_ATLAS.get_width()) / ATLAS_COLUMNS,
+			float(NPC_ATLAS.get_height()) / ATLAS_ROWS
+		)
+		sprite.region_rect = Rect2(
+			Vector2(atlas_index % ATLAS_COLUMNS, atlas_index / ATLAS_COLUMNS) * cell_size,
+			cell_size
+		)
+		sprite.scale = Vector2(BASE_SCALE, BASE_SCALE)
+		sprite.position.y = -19
+		sprite.z_index = 6
+		add_child(sprite)
+	_base_sprite_scale = sprite.scale
+	prompt = get_node_or_null("Prompt") as Label
+	if prompt == null:
+		prompt = Label.new()
+		prompt.name = "Prompt"
+		prompt.position = Vector2(-48, -49)
+		prompt.size = Vector2(96, 14)
+		prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		prompt.add_theme_font_override("font", PIXEL_FONT)
+		prompt.add_theme_font_size_override("font_size", 8)
+		prompt.add_theme_color_override("font_color", Color("ffe6ad"))
+		add_child(prompt)
 	prompt.text = InputGlyphResolver.prompt(&"interact", "CONVERSAR")
 	prompt.visible = false
-	add_child(prompt)
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 	EventBus.room_entered.connect(_on_room_entered)
@@ -71,7 +82,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	_idle_time += delta
 	var breathe := sin(_idle_time * 2.1) * 0.004
-	sprite.scale.y = BASE_SCALE + breathe
+	sprite.scale = Vector2(_base_sprite_scale.x, _base_sprite_scale.y + breathe)
 	if player_inside != null:
 		facing = signf(player_inside.global_position.x - global_position.x)
 		sprite.flip_h = facing < 0

@@ -56,11 +56,11 @@ func _validate_authored_tree(home: RoomController) -> void:
 
 func _validate_visual_values(home: RoomController) -> void:
 	var expected := {
-		"Environment/Architecture/Interior/BackWall": [Vector2(320, 35.5385), Rect2(302, 108, 910, 340), Vector2(0.681319, 0.681319), -9],
+		"Environment/Architecture/Interior/BackWall": [Vector2(305, 49), Rect2(302, 108, 910, 340), Vector2(0.681319, 0.681319), -9],
 		"Environment/Architecture/Interior/Window": [Vector2(424, 77), Rect2(1294, 672, 216, 238), Vector2(0.351852, 0.351852), -4],
-		"Environment/Architecture/Interior/Furniture/Bed": [Vector2(88, 113.921), Rect2(28, 105, 455, 330), Vector2(0.237363, 0.237363), -3],
-		"Environment/Architecture/Interior/Furniture/Cabinet": [Vector2(218, 118.583), Rect2(500, 120, 240, 300), Vector2(0.241667, 0.241667), -3],
-		"Environment/Architecture/Interior/Furniture/Workbench": [Vector2(344, 122.337), Rect2(805, 145, 395, 275), Vector2(0.248101, 0.248101), -3],
+		"Environment/Architecture/Interior/Furniture/Bed": [Vector2(81.45503, 126), Rect2(28, 105, 455, 330), Vector2(0.20853055, 0.1818182), -3],
+		"Environment/Architecture/Interior/Furniture/Cabinet": [Vector2(181.00002, 125), Rect2(500, 120, 240, 300), Vector2(0.17916685, 0.19555682), -3],
+		"Environment/Architecture/Interior/Furniture/Workbench": [Vector2(337, 129), Rect2(805, 145, 395, 275), Vector2(0.20342602, 0.18419215), -3],
 	}
 	for path in expected:
 		var sprite := home.get_node(path) as Sprite2D

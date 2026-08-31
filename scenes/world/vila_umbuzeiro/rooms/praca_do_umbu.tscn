@@ -1,21 +1,21 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene format=3 uid="uid://bd1pi0fhega3a"]
 
-[ext_resource type="Script" path="res://scripts/world/room_controller.gd" id="1"]
+[ext_resource type="Script" uid="uid://dvifhv6p8unas" path="res://scripts/world/room_controller.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_1280.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/ground_1280.tscn" id="3"]
-[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/atlases/03_telhados_e_praca_umbu.png" id="4"]
-[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/07_moradores_chibi_da_vila.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://ch7wrln0jnsbx" path="res://assets/environments/vila_umbuzeiro/atlases/03_telhados_e_praca_umbu.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://duf0ll2myapvk" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/07_moradores_chibi_da_vila.png" id="5"]
 [ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/props/barricada_01.tres" id="6"]
-[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_7/praca_pavimento_pedra.png" id="7_pavement"]
-[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_7/telhados_fachadas_completas.png" id="8_facades"]
+[ext_resource type="Texture2D" uid="uid://coq4de8y1lt84" path="res://assets/environments/vila_umbuzeiro/generated_0_2_7/praca_pavimento_pedra.png" id="7_pavement"]
+[ext_resource type="Texture2D" uid="uid://hsmyb863yfm7" path="res://assets/environments/vila_umbuzeiro/generated_0_2_7/telhados_fachadas_completas.png" id="8_facades"]
 
 [sub_resource type="RectangleShape2D" id="TreeBaseShape"]
-size = Vector2(144, 24)
+size = Vector2(122, 24)
 
 [sub_resource type="RectangleShape2D" id="RoomShape"]
 size = Vector2(1280, 480)
 
-[node name="PracaDoUmbu" type="Node2D"]
+[node name="PracaDoUmbu" type="Node2D" unique_id=1115167994]
 script = ExtResource("1")
 room_id = &"praca_umbu"
 display_name = "04 PRAÇA DO UMBU"
@@ -23,248 +23,243 @@ local_bounds = Rect2(0, -120, 1280, 480)
 camera_bounds = Rect2(0, -120, 1280, 480)
 authored_composition_width = 640.0
 
-[node name="Environment" type="Node2D" parent="."]
+[node name="Environment" type="Node2D" parent="." unique_id=2089467905]
 
-[node name="Parallax" parent="Environment" instance=ExtResource("2")]
+[node name="Parallax" parent="Environment" unique_id=1071697298 instance=ExtResource("2")]
 
-[node name="Architecture" type="Node2D" parent="Environment"]
+[node name="Architecture" type="Node2D" parent="Environment" unique_id=8541824]
 z_index = -20
 
-[node name="WestHouse" type="Polygon2D" parent="Environment/Architecture"]
+[node name="WestHouse" type="Polygon2D" parent="Environment/Architecture" unique_id=15905055]
 visible = false
-polygon = PackedVector2Array(0, 93, 136, 93, 136, 150, 0, 150)
 color = Color(0.52, 0.38, 0.28, 1)
+polygon = PackedVector2Array(0, 93, 136, 93, 136, 150, 0, 150)
 
-[node name="WestDoor" type="Polygon2D" parent="Environment/Architecture"]
+[node name="WestDoor" type="Polygon2D" parent="Environment/Architecture" unique_id=554725710]
 visible = false
 z_index = 1
-polygon = PackedVector2Array(31, 120, 48, 120, 48, 150, 31, 150)
 color = Color(0.16, 0.12, 0.11, 1)
+polygon = PackedVector2Array(31, 120, 48, 120, 48, 150, 31, 150)
 
-[node name="WestWindow" type="Polygon2D" parent="Environment/Architecture"]
+[node name="WestWindow" type="Polygon2D" parent="Environment/Architecture" unique_id=388004289]
 visible = false
 z_index = 1
-polygon = PackedVector2Array(86, 112, 101, 112, 101, 126, 86, 126)
 color = Color(0.18, 0.27, 0.26, 1)
+polygon = PackedVector2Array(86, 112, 101, 112, 101, 126, 86, 126)
 
-[node name="WestRoofShadow" type="Polygon2D" parent="Environment/Architecture"]
+[node name="WestRoofShadow" type="Polygon2D" parent="Environment/Architecture" unique_id=350347810]
 visible = false
 z_index = 2
-polygon = PackedVector2Array(0, 92, 143, 92, 136, 101, 0, 101)
 color = Color(0.11, 0.075, 0.065, 0.62)
+polygon = PackedVector2Array(0, 92, 143, 92, 136, 101, 0, 101)
 
-[node name="WestRoof" type="Sprite2D" parent="Environment/Architecture"]
+[node name="WestRoof" type="Sprite2D" parent="Environment/Architecture" unique_id=1042186586]
 visible = false
+z_index = 3
+texture_filter = 1
 position = Vector2(68, 83.9)
 scale = Vector2(0.1218, 0.1218)
-z_index = 3
-texture_filter = 1
 texture = ExtResource("4")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(40, 45, 985, 150)
+region_filter_clip_enabled = true
 
-[node name="EastHouse" type="Polygon2D" parent="Environment/Architecture"]
+[node name="EastHouse" type="Polygon2D" parent="Environment/Architecture" unique_id=1343942526]
 visible = false
-polygon = PackedVector2Array(504, 101, 640, 101, 640, 150, 504, 150)
 color = Color(0.58, 0.42, 0.29, 1)
+polygon = PackedVector2Array(504, 101, 640, 101, 640, 150, 504, 150)
 
-[node name="EastDoor" type="Polygon2D" parent="Environment/Architecture"]
+[node name="EastDoor" type="Polygon2D" parent="Environment/Architecture" unique_id=1075559990]
 visible = false
 z_index = 1
-polygon = PackedVector2Array(585, 122, 603, 122, 603, 150, 585, 150)
 color = Color(0.17, 0.12, 0.1, 1)
+polygon = PackedVector2Array(585, 122, 603, 122, 603, 150, 585, 150)
 
-[node name="EastWindow" type="Polygon2D" parent="Environment/Architecture"]
+[node name="EastWindow" type="Polygon2D" parent="Environment/Architecture" unique_id=1302362068]
 visible = false
 z_index = 1
-polygon = PackedVector2Array(532, 116, 547, 116, 547, 129, 532, 129)
 color = Color(0.19, 0.28, 0.27, 1)
+polygon = PackedVector2Array(532, 116, 547, 116, 547, 129, 532, 129)
 
-[node name="EastRoofShadow" type="Polygon2D" parent="Environment/Architecture"]
+[node name="EastRoofShadow" type="Polygon2D" parent="Environment/Architecture" unique_id=1948783649]
 visible = false
 z_index = 2
-polygon = PackedVector2Array(497, 100, 640, 100, 640, 109, 504, 109)
 color = Color(0.11, 0.075, 0.065, 0.62)
+polygon = PackedVector2Array(497, 100, 640, 100, 640, 109, 504, 109)
 
-[node name="EastRoof" type="Sprite2D" parent="Environment/Architecture"]
+[node name="EastRoof" type="Sprite2D" parent="Environment/Architecture" unique_id=1535736210]
 visible = false
-position = Vector2(572, 91.9)
-scale = Vector2(0.1218, 0.1218)
 z_index = 3
 texture_filter = 1
+position = Vector2(572, 91.9)
+scale = Vector2(0.1218, 0.1218)
 texture = ExtResource("4")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(40, 45, 985, 150)
+region_filter_clip_enabled = true
 
-[node name="WestHouseComplete" type="Sprite2D" parent="Environment/Architecture"]
+[node name="WestHouseComplete" type="Sprite2D" parent="Environment/Architecture" unique_id=1019436552]
+z_index = 4
+texture_filter = 1
 position = Vector2(57.6, 111.3)
 scale = Vector2(0.23904, 0.23904)
-z_index = 4
-texture_filter = 1
 texture = ExtResource("8_facades")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(51, 303, 502, 324)
+region_filter_clip_enabled = true
 
-[node name="EastHouseComplete" type="Sprite2D" parent="Environment/Architecture"]
-position = Vector2(582.4, 93.9)
-scale = Vector2(0.21429, 0.21429)
+[node name="EastHouseComplete" type="Sprite2D" parent="Environment/Architecture" unique_id=1384036299]
 z_index = 4
 texture_filter = 1
+position = Vector2(584, 101)
+scale = Vector2(0.21429, 0.21429)
 texture = ExtResource("8_facades")
 region_enabled = true
+region_rect = Rect2(627, 775.7999, 588, 375.20007)
 region_filter_clip_enabled = true
-region_rect = Rect2(627, 627, 588, 524)
 
-[node name="WestMarket" type="Sprite2D" parent="Environment/Architecture"]
+[node name="WestMarket" type="Sprite2D" parent="Environment/Architecture" unique_id=511405123]
+z_index = 5
+texture_filter = 1
 position = Vector2(125, 110.8)
 scale = Vector2(0.253, 0.253)
-z_index = 5
-texture_filter = 1
 texture = ExtResource("4")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(35, 665, 415, 310)
+region_filter_clip_enabled = true
 
-[node name="VillageSign" type="Sprite2D" parent="Environment/Architecture"]
+[node name="VillageSign" type="Sprite2D" parent="Environment/Architecture" unique_id=1263202018]
+z_index = 5
+texture_filter = 1
 position = Vector2(505, 117.4)
 scale = Vector2(0.217, 0.217)
-z_index = 5
-texture_filter = 1
 texture = ExtResource("4")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(485, 680, 230, 300)
+region_filter_clip_enabled = true
 
-[node name="PlazaGround" type="Node2D" parent="Environment"]
-z_index = -2
+[node name="PlazaGround" type="Node2D" parent="Environment" unique_id=1752083684]
 visible = false
-
-[node name="StonePavement" type="Sprite2D" parent="Environment"]
-position = Vector2(320, 130)
-scale = Vector2(0.24, 0.08)
 z_index = -2
-texture_filter = 1
-texture = ExtResource("7_pavement")
 
-[node name="StoneCourt" type="Polygon2D" parent="Environment/PlazaGround"]
-polygon = PackedVector2Array(88, 143, 132, 137, 224, 134, 320, 132, 416, 134, 508, 137, 552, 143, 530, 151, 110, 151)
+[node name="StoneCourt" type="Polygon2D" parent="Environment/PlazaGround" unique_id=1029587660]
 color = Color(0.64, 0.52, 0.37, 1)
+polygon = PackedVector2Array(88, 143, 132, 137, 224, 134, 320, 132, 416, 134, 508, 137, 552, 143, 530, 151, 110, 151)
 
-[node name="InnerPath" type="Polygon2D" parent="Environment/PlazaGround"]
+[node name="InnerPath" type="Polygon2D" parent="Environment/PlazaGround" unique_id=2004881613]
 z_index = 1
-polygon = PackedVector2Array(181, 139, 222, 132, 320, 128, 418, 132, 459, 139, 430, 147, 210, 147)
 color = Color(0.72, 0.61, 0.43, 0.68)
+polygon = PackedVector2Array(181, 139, 222, 132, 320, 128, 418, 132, 459, 139, 430, 147, 210, 147)
 
-[node name="Cobbles" type="Line2D" parent="Environment/PlazaGround"]
+[node name="Cobbles" type="Line2D" parent="Environment/PlazaGround" unique_id=1757012877]
 z_index = 2
 points = PackedVector2Array(112, 145, 154, 141, 193, 145, 238, 139, 279, 144, 321, 137, 365, 143, 407, 138, 450, 144, 503, 140, 535, 144)
 width = 1.0
 default_color = Color(0.38, 0.3, 0.24, 0.65)
 
-[node name="Umbuzeiro" type="Sprite2D" parent="Environment"]
-position = Vector2(320, 77.6)
-scale = Vector2(0.2541, 0.2541)
+[node name="StonePavement" type="Sprite2D" parent="Environment" unique_id=254944045]
+z_index = -2
+texture_filter = 1
+position = Vector2(320, 130)
+scale = Vector2(0.24, 0.08)
+texture = ExtResource("7_pavement")
+
+[node name="Umbuzeiro" type="Sprite2D" parent="Environment" unique_id=1386245297]
 z_index = -1
 texture_filter = 1
+position = Vector2(320, 77.6)
+scale = Vector2(0.2541, 0.2541)
 texture = ExtResource("4")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(880, 260, 610, 570)
+region_filter_clip_enabled = true
 
-[node name="OccupiedOnly" type="Node2D" parent="Environment" groups=["room_occupied_only"]]
+[node name="OccupiedOnly" type="Node2D" parent="Environment" unique_id=370144427 groups=["room_occupied_only"]]
 
-[node name="OccupationTint" type="Polygon2D" parent="Environment/OccupiedOnly"]
-z_index = -10
-polygon = PackedVector2Array(0, 0, 640, 0, 640, 150, 0, 150)
-color = Color(0.25, 0.055, 0.04, 0.08)
-
-[node name="Barricade" type="Sprite2D" parent="Environment/OccupiedOnly"]
-position = Vector2(548, 130)
-scale = Vector2(0.18, 0.18)
+[node name="Barricade" type="Sprite2D" parent="Environment/OccupiedOnly" unique_id=2051818019]
 z_index = 4
 texture_filter = 1
+position = Vector2(676, 126)
+scale = Vector2(0.14294733, 0.14294733)
 texture = ExtResource("6")
 
-[node name="LiberatedOnly" type="Node2D" parent="Environment" groups=["room_liberated_only"]]
+[node name="LiberatedOnly" type="Node2D" parent="Environment" unique_id=1780037220 groups=["room_liberated_only"]]
 visible = false
 
-[node name="ResidentShadow1" type="Polygon2D" parent="Environment/LiberatedOnly"]
+[node name="ResidentShadow1" type="Polygon2D" parent="Environment/LiberatedOnly" unique_id=1767440271]
 z_index = 9
-polygon = PackedVector2Array(143, 149, 157, 149, 154, 151, 146, 151)
 color = Color(0.08, 0.055, 0.045, 0.38)
+polygon = PackedVector2Array(143, 149, 157, 149, 154, 151, 146, 151)
 
-[node name="Resident1" type="Sprite2D" parent="Environment/LiberatedOnly"]
+[node name="Resident1" type="Sprite2D" parent="Environment/LiberatedOnly" unique_id=161176684]
+z_index = 10
+texture_filter = 1
 position = Vector2(150, 134.5)
 scale = Vector2(0.074, 0.074)
-z_index = 10
-texture_filter = 1
 texture = ExtResource("5")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(88, 111, 224, 442)
+region_filter_clip_enabled = true
 
-[node name="ResidentShadow2" type="Polygon2D" parent="Environment/LiberatedOnly"]
+[node name="ResidentShadow2" type="Polygon2D" parent="Environment/LiberatedOnly" unique_id=310069265]
 z_index = 9
-polygon = PackedVector2Array(471, 149, 485, 149, 482, 151, 474, 151)
 color = Color(0.08, 0.055, 0.045, 0.38)
+polygon = PackedVector2Array(471, 149, 485, 149, 482, 151, 474, 151)
 
-[node name="Resident2" type="Sprite2D" parent="Environment/LiberatedOnly"]
+[node name="Resident2" type="Sprite2D" parent="Environment/LiberatedOnly" unique_id=640774153]
+z_index = 10
+texture_filter = 1
 position = Vector2(478, 134.5)
 scale = Vector2(-0.074, 0.074)
-z_index = 10
-texture_filter = 1
 texture = ExtResource("5")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(699, 111, 222, 442)
+region_filter_clip_enabled = true
 
-[node name="ResidentShadow3" type="Polygon2D" parent="Environment/LiberatedOnly"]
+[node name="ResidentShadow3" type="Polygon2D" parent="Environment/LiberatedOnly" unique_id=1820421379]
 z_index = 9
-polygon = PackedVector2Array(191, 149, 205, 149, 202, 151, 194, 151)
 color = Color(0.08, 0.055, 0.045, 0.38)
+polygon = PackedVector2Array(191, 149, 205, 149, 202, 151, 194, 151)
 
-[node name="Resident3" type="Sprite2D" parent="Environment/LiberatedOnly"]
+[node name="Resident3" type="Sprite2D" parent="Environment/LiberatedOnly" unique_id=1975131394]
+z_index = 10
+texture_filter = 1
 position = Vector2(198, 135)
 scale = Vector2(0.07, 0.07)
-z_index = 10
-texture_filter = 1
 texture = ExtResource("5")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(391, 648, 210, 431)
+region_filter_clip_enabled = true
 
-[node name="Geometry" type="Node2D" parent="."]
+[node name="Geometry" type="Node2D" parent="." unique_id=1372547038]
 
-[node name="Ground" parent="Geometry" instance=ExtResource("3")]
+[node name="Ground" parent="Geometry" unique_id=1568296270 instance=ExtResource("3")]
 
-[node name="TreeBase" type="StaticBody2D" parent="Geometry"]
+[node name="TreeBase" type="StaticBody2D" parent="Geometry" unique_id=828781628]
 position = Vector2(320, 138)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/TreeBase"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/TreeBase" unique_id=1402999438]
+position = Vector2(-5, -10)
 shape = SubResource("TreeBaseShape")
 
-[node name="Gameplay" type="Node2D" parent="."]
+[node name="Gameplay" type="Node2D" parent="." unique_id=1329036357]
 
-[node name="Actors" type="Node2D" parent="Gameplay"]
+[node name="Actors" type="Node2D" parent="Gameplay" unique_id=1165685964]
 
-[node name="Entrances" type="Node2D" parent="Gameplay"]
+[node name="Entrances" type="Node2D" parent="Gameplay" unique_id=353158538]
 
-[node name="LEFT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances"]
+[node name="LEFT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances" unique_id=1236709836]
 position = Vector2(18, 138)
 
-[node name="RIGHT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances"]
+[node name="RIGHT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances" unique_id=2003458182]
 position = Vector2(1262, 138)
 
-[node name="EnemySpawns" type="Node2D" parent="Gameplay"]
+[node name="EnemySpawns" type="Node2D" parent="Gameplay" unique_id=465999909]
 
-[node name="Triggers" type="Node2D" parent="Gameplay"]
+[node name="Triggers" type="Node2D" parent="Gameplay" unique_id=1211611672]
 
-[node name="RoomArea" type="Area2D" parent="Gameplay/Triggers"]
+[node name="RoomArea" type="Area2D" parent="Gameplay/Triggers" unique_id=860821250]
 position = Vector2(640, 120)
 collision_layer = 0
 collision_mask = 2
@@ -272,4 +267,4 @@ collision_mask = 2
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Triggers/RoomArea"]
 shape = SubResource("RoomShape")
 
-[node name="Camera" type="Node2D" parent="."]
+[node name="Camera" type="Node2D" parent="." unique_id=1891675314]

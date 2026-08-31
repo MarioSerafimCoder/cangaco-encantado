@@ -27,6 +27,8 @@ $requiredFiles = @(
 	'scenes/ui/components/notification_toast.tscn',
 	'tools/ui_ux_polish_validation.tscn',
 	'tools/casa_de_nilo_authored_validation.tscn',
+	'tools/rua_das_cinzas_authored_validation.tscn',
+	'tools/first_rooms_traversal_validation.tscn',
     'README.md',
     'docs/IMPLEMENTATION.md',
     'docs/ROOM_PRODUCTION_PIPELINE.md',

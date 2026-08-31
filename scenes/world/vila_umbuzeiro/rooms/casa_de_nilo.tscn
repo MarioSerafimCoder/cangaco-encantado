@@ -4,18 +4,18 @@
 [ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_1280.tscn" id="2_parallax"]
 [ext_resource type="Texture2D" uid="uid://cm1onjsa24m4w" path="res://assets/environments/vila_umbuzeiro/atlases/01_casa_nilo_e_rua_props.png" id="3_exterior"]
 [ext_resource type="Texture2D" uid="uid://bjqimmaohcr3t" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/06_elementos_atmosfericos.png" id="4_atmosphere"]
-[ext_resource type="Texture2D" path="res://assets/area_01/environment/casa_nilo_interior_atlas.png" id="5_interior"]
-[ext_resource type="Texture2D" path="res://assets/area_01/environment/casa_nilo_arquitetura_atlas.png" id="6_architecture"]
-[ext_resource type="Script" path="res://scripts/world/narrative_interactable.gd" id="7_narrative"]
-[ext_resource type="Script" path="res://scripts/world/transition_door.gd" id="8_door"]
-[ext_resource type="Script" path="res://scripts/world/checkpoint.gd" id="9_checkpoint"]
-[ext_resource type="Script" path="res://scripts/world/traversal_platform.gd" id="10_platform"]
-[ext_resource type="Script" path="res://scripts/world/ability_gate.gd" id="11_gate"]
-[ext_resource type="Script" path="res://scripts/world/permanent_upgrade_pickup.gd" id="12_upgrade"]
+[ext_resource type="Texture2D" uid="uid://d1cmv6mb5qb8f" path="res://assets/area_01/environment/casa_nilo_interior_atlas.png" id="5_interior"]
+[ext_resource type="Texture2D" uid="uid://c3co4fbl17ony" path="res://assets/area_01/environment/casa_nilo_arquitetura_atlas.png" id="6_architecture"]
+[ext_resource type="Script" uid="uid://u6mgt8aqk0b1" path="res://scripts/world/narrative_interactable.gd" id="7_narrative"]
+[ext_resource type="Script" uid="uid://dimd5j40tf86s" path="res://scripts/world/transition_door.gd" id="8_door"]
+[ext_resource type="Script" uid="uid://dkmcv78j8o41l" path="res://scripts/world/checkpoint.gd" id="9_checkpoint"]
+[ext_resource type="Script" uid="uid://bjrplnm5jrrk7" path="res://scripts/world/traversal_platform.gd" id="10_platform"]
+[ext_resource type="Script" uid="uid://b6nef4jkefg2t" path="res://scripts/world/ability_gate.gd" id="11_gate"]
+[ext_resource type="Script" uid="uid://docl6kupwsxgl" path="res://scripts/world/permanent_upgrade_pickup.gd" id="12_upgrade"]
 [ext_resource type="FontFile" uid="uid://dn8i4yhvcne74" path="res://assets/ui/fonts/Tiny5-Regular.ttf" id="13_font"]
-[ext_resource type="Texture2D" path="res://assets/area_01/ui/dialogo_loja_atlas.png" id="14_ui"]
-[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/08_objetos_interativos_e_estados.png" id="15_interactive"]
-[ext_resource type="Texture2D" path="res://assets/area_01/environment/traversal_props_atlas.png" id="16_traversal"]
+[ext_resource type="Texture2D" uid="uid://bo0snj0tw7ong" path="res://assets/area_01/ui/dialogo_loja_atlas.png" id="14_ui"]
+[ext_resource type="Texture2D" uid="uid://ct8j78ncwqjr4" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/08_objetos_interativos_e_estados.png" id="15_interactive"]
+[ext_resource type="Texture2D" uid="uid://dh5px13dqifm8" path="res://assets/area_01/environment/traversal_props_atlas.png" id="16_traversal"]
 
 [sub_resource type="Gradient" id="Gradient_home"]
 colors = PackedColorArray(0.352941, 0.254902, 0.188235, 1, 0.129412, 0.0901961, 0.0666667, 1)
@@ -33,17 +33,17 @@ size = Vector2(640, 30)
 [sub_resource type="RectangleShape2D" id="LeftBoundaryShape"]
 size = Vector2(24, 480)
 
-[sub_resource type="RectangleShape2D" id="DoorWallShape"]
-size = Vector2(16, 270)
-
 [sub_resource type="RectangleShape2D" id="BedSurfaceShape"]
-size = Vector2(76, 8)
+size = Vector2(67, 8)
 
 [sub_resource type="RectangleShape2D" id="CabinetSurfaceShape"]
-size = Vector2(42, 7)
+size = Vector2(32, 7)
 
 [sub_resource type="RectangleShape2D" id="WorkbenchSurfaceShape"]
-size = Vector2(72, 7)
+size = Vector2(59, 8)
+
+[sub_resource type="RectangleShape2D" id="DoorWallShape"]
+size = Vector2(16, 270)
 
 [sub_resource type="RectangleShape2D" id="NarrativeShape"]
 size = Vector2(34, 44)
@@ -53,9 +53,6 @@ size = Vector2(49.5, 58)
 
 [sub_resource type="RectangleShape2D" id="ExteriorDoorShape"]
 size = Vector2(46.2, 58)
-
-[sub_resource type="RectangleShape2D" id="CheckpointShape"]
-size = Vector2(20, 34)
 
 [sub_resource type="RectangleShape2D" id="SecretStep01Shape"]
 size = Vector2(42, 7)
@@ -93,7 +90,7 @@ visible = false
 
 [node name="Architecture" type="Node2D" parent="Environment" unique_id=321021808]
 
-[node name="Exterior" type="Node2D" parent="Environment/Architecture"]
+[node name="Exterior" type="Node2D" parent="Environment/Architecture" unique_id=1561442057]
 visible = false
 
 [node name="DustBand" type="Sprite2D" parent="Environment/Architecture/Exterior" unique_id=895156719]
@@ -125,35 +122,35 @@ region_enabled = true
 region_rect = Rect2(65, 50, 590, 465)
 region_filter_clip_enabled = true
 
-[node name="Interior" type="Node2D" parent="Environment/Architecture"]
+[node name="Interior" type="Node2D" parent="Environment/Architecture" unique_id=1117770867]
 
-[node name="Backdrop" type="Sprite2D" parent="Environment/Architecture/Interior"]
+[node name="Backdrop" type="Sprite2D" parent="Environment/Architecture/Interior" unique_id=2141334862]
 z_index = -40
 texture_filter = 1
 position = Vector2(320, 120)
 texture = SubResource("GradientTexture_home")
 
-[node name="BackWall" type="Sprite2D" parent="Environment/Architecture/Interior"]
+[node name="BackWall" type="Sprite2D" parent="Environment/Architecture/Interior" unique_id=1918163430]
 z_index = -9
 texture_filter = 1
-position = Vector2(320, 35.5385)
+position = Vector2(305, 49)
 scale = Vector2(0.681319, 0.681319)
 texture = ExtResource("6_architecture")
 region_enabled = true
 region_rect = Rect2(302, 108, 910, 340)
 region_filter_clip_enabled = true
 
-[node name="LeftWall" type="Sprite2D" parent="Environment/Architecture/Interior"]
+[node name="LeftWall" type="Sprite2D" parent="Environment/Architecture/Interior" unique_id=211614409]
 z_index = -8
 texture_filter = 1
-position = Vector2(36, 67.2245)
-scale = Vector2(0.397959, 0.397959)
+position = Vector2(36, 53.897945)
+scale = Vector2(0.397959, 0.4614188)
 texture = ExtResource("6_architecture")
 region_enabled = true
 region_rect = Rect2(28, 54, 196, 420)
 region_filter_clip_enabled = true
 
-[node name="RightWall" type="Sprite2D" parent="Environment/Architecture/Interior"]
+[node name="RightWall" type="Sprite2D" parent="Environment/Architecture/Interior" unique_id=592121172]
 z_index = -8
 texture_filter = 1
 position = Vector2(604, 70.8585)
@@ -163,7 +160,7 @@ region_enabled = true
 region_rect = Rect2(1283, 55, 205, 420)
 region_filter_clip_enabled = true
 
-[node name="Ceiling" type="Sprite2D" parent="Environment/Architecture/Interior"]
+[node name="Ceiling" type="Sprite2D" parent="Environment/Architecture/Interior" unique_id=179166265]
 z_index = -7
 texture_filter = 1
 position = Vector2(320, -28.4404)
@@ -173,9 +170,9 @@ region_enabled = true
 region_rect = Rect2(207, 500, 1090, 108)
 region_filter_clip_enabled = true
 
-[node name="Floor" type="Node2D" parent="Environment/Architecture/Interior"]
+[node name="Floor" type="Node2D" parent="Environment/Architecture/Interior" unique_id=285864124]
 
-[node name="FloorWest" type="Sprite2D" parent="Environment/Architecture/Interior/Floor"]
+[node name="FloorWest" type="Sprite2D" parent="Environment/Architecture/Interior/Floor" unique_id=306387222]
 z_index = -6
 texture_filter = 1
 position = Vector2(160, 190.808)
@@ -185,7 +182,7 @@ region_enabled = true
 region_rect = Rect2(90, 697, 500, 158)
 region_filter_clip_enabled = true
 
-[node name="FloorEast" type="Sprite2D" parent="Environment/Architecture/Interior/Floor"]
+[node name="FloorEast" type="Sprite2D" parent="Environment/Architecture/Interior/Floor" unique_id=1867059069]
 z_index = -6
 texture_filter = 1
 position = Vector2(480, 190.808)
@@ -195,7 +192,7 @@ region_enabled = true
 region_rect = Rect2(90, 697, 500, 158)
 region_filter_clip_enabled = true
 
-[node name="Window" type="Sprite2D" parent="Environment/Architecture/Interior"]
+[node name="Window" type="Sprite2D" parent="Environment/Architecture/Interior" unique_id=429921500]
 z_index = -4
 texture_filter = 1
 position = Vector2(424, 77)
@@ -205,63 +202,63 @@ region_enabled = true
 region_rect = Rect2(1294, 672, 216, 238)
 region_filter_clip_enabled = true
 
-[node name="Furniture" type="Node2D" parent="Environment/Architecture/Interior"]
+[node name="Furniture" type="Node2D" parent="Environment/Architecture/Interior" unique_id=1855458540]
 
-[node name="Bed" type="Sprite2D" parent="Environment/Architecture/Interior/Furniture"]
+[node name="Bed" type="Sprite2D" parent="Environment/Architecture/Interior/Furniture" unique_id=1702645339]
 z_index = -3
 texture_filter = 1
-position = Vector2(88, 113.921)
-scale = Vector2(0.237363, 0.237363)
+position = Vector2(81.45503, 126)
+scale = Vector2(0.20853055, 0.1818182)
 texture = ExtResource("5_interior")
 region_enabled = true
 region_rect = Rect2(28, 105, 455, 330)
 region_filter_clip_enabled = true
 
-[node name="Cabinet" type="Sprite2D" parent="Environment/Architecture/Interior/Furniture"]
+[node name="Cabinet" type="Sprite2D" parent="Environment/Architecture/Interior/Furniture" unique_id=810994855]
 z_index = -3
 texture_filter = 1
-position = Vector2(218, 118.583)
-scale = Vector2(0.241667, 0.241667)
+position = Vector2(181.00002, 125)
+scale = Vector2(0.17916685, 0.19555682)
 texture = ExtResource("5_interior")
 region_enabled = true
 region_rect = Rect2(500, 120, 240, 300)
 region_filter_clip_enabled = true
 
-[node name="Workbench" type="Sprite2D" parent="Environment/Architecture/Interior/Furniture"]
+[node name="Workbench" type="Sprite2D" parent="Environment/Architecture/Interior/Furniture" unique_id=1071339805]
 z_index = -3
 texture_filter = 1
-position = Vector2(344, 122.337)
-scale = Vector2(0.248101, 0.248101)
+position = Vector2(337, 129)
+scale = Vector2(0.20342602, 0.18419215)
 texture = ExtResource("5_interior")
 region_enabled = true
 region_rect = Rect2(805, 145, 395, 275)
 region_filter_clip_enabled = true
 
-[node name="WallShelf" type="Sprite2D" parent="Environment/Architecture/Interior/Furniture"]
+[node name="WallShelf" type="Sprite2D" parent="Environment/Architecture/Interior/Furniture" unique_id=226012580]
 z_index = 2
 texture_filter = 1
-position = Vector2(172, 100.007)
+position = Vector2(258, 136)
 scale = Vector2(0.164286, 0.164286)
 texture = ExtResource("5_interior")
 region_enabled = true
 region_rect = Rect2(90, 560, 280, 170)
 region_filter_clip_enabled = true
 
-[node name="LongShelf" type="Sprite2D" parent="Environment/Architecture/Interior/Furniture"]
+[node name="LongShelf" type="Sprite2D" parent="Environment/Architecture/Interior/Furniture" unique_id=1167492940]
 z_index = -2
 texture_filter = 1
-position = Vector2(430, 90.8696)
-scale = Vector2(0.234783, 0.234783)
+position = Vector2(422, 111)
+scale = Vector2(0.17391326, 0.17367148)
 texture = ExtResource("5_interior")
 region_enabled = true
 region_rect = Rect2(245, 780, 460, 180)
 region_filter_clip_enabled = true
 
-[node name="Lamp" type="Sprite2D" parent="Environment/Architecture/Interior/Furniture"]
+[node name="Lamp" type="Sprite2D" parent="Environment/Architecture/Interior/Furniture" unique_id=855236711]
 z_index = 2
 texture_filter = 1
-position = Vector2(486, 126.083)
-scale = Vector2(0.233333, 0.233333)
+position = Vector2(321, 102)
+scale = Vector2(0.14166655, 0.13674784)
 texture = ExtResource("5_interior")
 region_enabled = true
 region_rect = Rect2(55, 750, 120, 205)
@@ -274,58 +271,52 @@ visible = false
 
 [node name="Geometry" type="Node2D" parent="." unique_id=219737947]
 
-[node name="Ground" type="Node2D" parent="Geometry"]
+[node name="Ground" type="Node2D" parent="Geometry" unique_id=511680495]
 
-[node name="GroundCollision" type="StaticBody2D" parent="Geometry/Ground"]
+[node name="GroundCollision" type="StaticBody2D" parent="Geometry/Ground" unique_id=2073716711]
 position = Vector2(320, 165)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/Ground/GroundCollision"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/Ground/GroundCollision" unique_id=844809616]
 shape = SubResource("GroundShape")
 
-[node name="InteriorCollision" type="Node2D" parent="Geometry"]
+[node name="InteriorCollision" type="Node2D" parent="Geometry" unique_id=850957756]
 
-[node name="LeftBoundary" type="StaticBody2D" parent="Geometry/InteriorCollision"]
+[node name="LeftBoundary" type="StaticBody2D" parent="Geometry/InteriorCollision" unique_id=1904524626]
 position = Vector2(-12, 120)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/InteriorCollision/LeftBoundary"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/InteriorCollision/LeftBoundary" unique_id=875006584]
 shape = SubResource("LeftBoundaryShape")
 
-[node name="BedSurface" type="StaticBody2D" parent="Geometry/InteriorCollision"]
-position = Vector2(88, 79.7055)
-collision_layer = 1
+[node name="BedSurface" type="StaticBody2D" parent="Geometry/InteriorCollision" unique_id=1131131128]
+position = Vector2(81.45503, 100.72727)
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/InteriorCollision/BedSurface"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/InteriorCollision/BedSurface" unique_id=2029475610]
 shape = SubResource("BedSurfaceShape")
 
-[node name="CabinetSurface" type="StaticBody2D" parent="Geometry/InteriorCollision"]
-position = Vector2(218, 90.9083)
-collision_layer = 1
+[node name="CabinetSurface" type="StaticBody2D" parent="Geometry/InteriorCollision" unique_id=500281957]
+position = Vector2(181, 103.27317)
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/InteriorCollision/CabinetSurface"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/InteriorCollision/CabinetSurface" unique_id=977265223]
 shape = SubResource("CabinetSurfaceShape")
 
-[node name="WorkbenchSurface" type="StaticBody2D" parent="Geometry/InteriorCollision"]
-position = Vector2(344, 94.2038)
-collision_layer = 1
+[node name="WorkbenchSurface" type="StaticBody2D" parent="Geometry/InteriorCollision" unique_id=909468872]
+position = Vector2(337, 109.5155)
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/InteriorCollision/WorkbenchSurface"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/InteriorCollision/WorkbenchSurface" unique_id=1586601576]
 shape = SubResource("WorkbenchSurfaceShape")
 
-[node name="DoorCollision" type="Node2D" parent="Geometry"]
+[node name="DoorCollision" type="Node2D" parent="Geometry" unique_id=1321045337]
 
-[node name="InteriorDoorWall" type="StaticBody2D" parent="Geometry/DoorCollision"]
+[node name="InteriorDoorWall" type="StaticBody2D" parent="Geometry/DoorCollision" unique_id=981511724]
 position = Vector2(632, 15)
-collision_layer = 1
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/DoorCollision/InteriorDoorWall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/DoorCollision/InteriorDoorWall" unique_id=2138772618]
 shape = SubResource("DoorWallShape")
 
 [node name="Gameplay" type="Node2D" parent="." unique_id=56583167]
@@ -342,29 +333,28 @@ position = Vector2(622, 138)
 
 [node name="EnemySpawns" type="Node2D" parent="Gameplay" unique_id=113964451]
 
-[node name="Interactables" type="Node2D" parent="Gameplay"]
+[node name="Interactables" type="Node2D" parent="Gameplay" unique_id=540056790]
 
-[node name="FamilyKeepsake" type="Area2D" parent="Gameplay/Interactables"]
+[node name="FamilyKeepsake" type="Area2D" parent="Gameplay/Interactables" unique_id=1197422744]
 position = Vector2(164, 112)
 script = ExtResource("7_narrative")
 dialogue_id = &"lembranca_nilo"
-interaction_verb = "EXAMINAR"
 
-[node name="KeepsakeSprite" type="Sprite2D" parent="Gameplay/Interactables/FamilyKeepsake"]
+[node name="KeepsakeSprite" type="Sprite2D" parent="Gameplay/Interactables/FamilyKeepsake" unique_id=1474284006]
 z_index = 4
 texture_filter = 1
-position = Vector2(0, -27.2333)
+position = Vector2(-14.999999, -33)
 scale = Vector2(0.143333, 0.143333)
 texture = ExtResource("5_interior")
 region_enabled = true
 region_rect = Rect2(1210, 20, 300, 380)
 region_filter_clip_enabled = true
 
-[node name="InteractionCollision" type="CollisionShape2D" parent="Gameplay/Interactables/FamilyKeepsake"]
-position = Vector2(0, -14)
+[node name="InteractionCollision" type="CollisionShape2D" parent="Gameplay/Interactables/FamilyKeepsake" unique_id=1597284464]
+position = Vector2(-16, -12)
 shape = SubResource("NarrativeShape")
 
-[node name="Prompt" type="Label" parent="Gameplay/Interactables/FamilyKeepsake"]
+[node name="Prompt" type="Label" parent="Gameplay/Interactables/FamilyKeepsake" unique_id=654994473]
 visible = false
 offset_left = -40.0
 offset_top = -58.0
@@ -376,16 +366,13 @@ theme_override_font_sizes/font_size = 8
 text = "[E] EXAMINAR"
 horizontal_alignment = 1
 
-[node name="HomeCheckpoint" type="Area2D" parent="Gameplay/Interactables"]
+[node name="HomeCheckpoint" type="Area2D" parent="Gameplay/Interactables" unique_id=1154465036]
 position = Vector2(92, 132)
 script = ExtResource("9_checkpoint")
 checkpoint_id = &"vila_casa"
 show_visual = false
 
-[node name="InteractionCollision" type="CollisionShape2D" parent="Gameplay/Interactables/HomeCheckpoint"]
-shape = SubResource("CheckpointShape")
-
-[node name="CheckpointSprite" type="Sprite2D" parent="Gameplay/Interactables/HomeCheckpoint"]
+[node name="CheckpointSprite" type="Sprite2D" parent="Gameplay/Interactables/HomeCheckpoint" unique_id=1455531544]
 visible = false
 z_index = 8
 texture_filter = 1
@@ -396,9 +383,9 @@ region_enabled = true
 region_rect = Rect2(96, 45, 268, 402)
 region_filter_clip_enabled = true
 
-[node name="Doors" type="Node2D" parent="Gameplay"]
+[node name="Doors" type="Node2D" parent="Gameplay" unique_id=1161085385]
 
-[node name="InteriorDoor" type="Area2D" parent="Gameplay/Doors"]
+[node name="InteriorDoor" type="Area2D" parent="Gameplay/Doors" unique_id=301545504]
 position = Vector2(535, 150)
 script = ExtResource("8_door")
 door_id = &"casa_nilo_saida"
@@ -409,7 +396,7 @@ closed_region = Rect2(693, 648, 235, 298)
 open_region = Rect2(965, 647, 273, 300)
 target_width = 90.0
 
-[node name="DoorSprite" type="Sprite2D" parent="Gameplay/Doors/InteriorDoor"]
+[node name="DoorSprite" type="Sprite2D" parent="Gameplay/Doors/InteriorDoor" unique_id=1480333522]
 z_index = -1
 texture_filter = 1
 position = Vector2(0, -57.0638)
@@ -419,11 +406,11 @@ region_enabled = true
 region_rect = Rect2(693, 648, 235, 298)
 region_filter_clip_enabled = true
 
-[node name="InteractionCollision" type="CollisionShape2D" parent="Gameplay/Doors/InteriorDoor"]
+[node name="InteractionCollision" type="CollisionShape2D" parent="Gameplay/Doors/InteriorDoor" unique_id=1637005012]
 position = Vector2(0, -28)
 shape = SubResource("InteriorDoorShape")
 
-[node name="Prompt" type="Label" parent="Gameplay/Doors/InteriorDoor"]
+[node name="Prompt" type="Label" parent="Gameplay/Doors/InteriorDoor" unique_id=194699351]
 visible = false
 offset_left = -58.0
 offset_top = -92.0
@@ -438,11 +425,11 @@ theme_override_font_sizes/font_size = 7
 text = "[E] SAIR PARA A RUA"
 horizontal_alignment = 1
 
-[node name="FadeLayer" type="CanvasLayer" parent="Gameplay/Doors/InteriorDoor"]
-layer = 118
+[node name="FadeLayer" type="CanvasLayer" parent="Gameplay/Doors/InteriorDoor" unique_id=596228801]
 process_mode = 3
+layer = 118
 
-[node name="Fade" type="ColorRect" parent="Gameplay/Doors/InteriorDoor/FadeLayer"]
+[node name="Fade" type="ColorRect" parent="Gameplay/Doors/InteriorDoor/FadeLayer" unique_id=652896377]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -451,7 +438,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.01, 0.007, 0.005, 0)
 
-[node name="ExteriorDoor" type="Area2D" parent="Gameplay/Doors"]
+[node name="ExteriorDoor" type="Area2D" parent="Gameplay/Doors" unique_id=1081198408]
 position = Vector2(682, 150)
 script = ExtResource("8_door")
 door_id = &"casa_nilo_entrada"
@@ -462,7 +449,7 @@ closed_region = Rect2(693, 648, 235, 298)
 open_region = Rect2(965, 647, 273, 300)
 target_width = 84.0
 
-[node name="DoorSprite" type="Sprite2D" parent="Gameplay/Doors/ExteriorDoor"]
+[node name="DoorSprite" type="Sprite2D" parent="Gameplay/Doors/ExteriorDoor" unique_id=1641009743]
 z_index = -1
 texture_filter = 1
 position = Vector2(0, -53.2596)
@@ -472,11 +459,11 @@ region_enabled = true
 region_rect = Rect2(693, 648, 235, 298)
 region_filter_clip_enabled = true
 
-[node name="InteractionCollision" type="CollisionShape2D" parent="Gameplay/Doors/ExteriorDoor"]
+[node name="InteractionCollision" type="CollisionShape2D" parent="Gameplay/Doors/ExteriorDoor" unique_id=1687768426]
 position = Vector2(0, -28)
 shape = SubResource("ExteriorDoorShape")
 
-[node name="Prompt" type="Label" parent="Gameplay/Doors/ExteriorDoor"]
+[node name="Prompt" type="Label" parent="Gameplay/Doors/ExteriorDoor" unique_id=46772882]
 visible = false
 offset_left = -58.0
 offset_top = -92.0
@@ -491,11 +478,11 @@ theme_override_font_sizes/font_size = 7
 text = "[E] ENTRAR NA CASA"
 horizontal_alignment = 1
 
-[node name="FadeLayer" type="CanvasLayer" parent="Gameplay/Doors/ExteriorDoor"]
-layer = 118
+[node name="FadeLayer" type="CanvasLayer" parent="Gameplay/Doors/ExteriorDoor" unique_id=1968709946]
 process_mode = 3
+layer = 118
 
-[node name="Fade" type="ColorRect" parent="Gameplay/Doors/ExteriorDoor/FadeLayer"]
+[node name="Fade" type="ColorRect" parent="Gameplay/Doors/ExteriorDoor/FadeLayer" unique_id=1942892912]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -504,15 +491,15 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.01, 0.007, 0.005, 0)
 
-[node name="Secret" type="Node2D" parent="Gameplay"]
+[node name="Secret" type="Node2D" parent="Gameplay" unique_id=980329021]
 
-[node name="SecretStep01" type="StaticBody2D" parent="Gameplay/Secret"]
+[node name="SecretStep01" type="StaticBody2D" parent="Gameplay/Secret" unique_id=1151799917]
 position = Vector2(176, 112)
 script = ExtResource("10_platform")
 platform_size = Vector2(42, 7)
 reveal_ability = &"dash"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Secret/SecretStep01"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Secret/SecretStep01" unique_id=14795654]
 shape = SubResource("SecretStep01Shape")
 
 [node name="PlatformSprite" type="Sprite2D" parent="Gameplay/Secret/SecretStep01"]
@@ -525,16 +512,16 @@ region_enabled = true
 region_rect = Rect2(38, 820, 292, 44)
 region_filter_clip_enabled = true
 
-[node name="SecretStep02" type="StaticBody2D" parent="Gameplay/Secret"]
+[node name="SecretStep02" type="StaticBody2D" parent="Gameplay/Secret" unique_id=1879704656]
 position = Vector2(224, 82)
 script = ExtResource("10_platform")
 platform_size = Vector2(46, 7)
 reveal_ability = &"dash"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Secret/SecretStep02"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Secret/SecretStep02" unique_id=2147460079]
 shape = SubResource("SecretStep02Shape")
 
-[node name="PlatformSprite" type="Sprite2D" parent="Gameplay/Secret/SecretStep02"]
+[node name="PlatformSprite" type="Sprite2D" parent="Gameplay/Secret/SecretStep02" unique_id=737072857]
 z_index = 2
 texture_filter = 1
 position = Vector2(0, 0.0342466)
@@ -544,26 +531,26 @@ region_enabled = true
 region_rect = Rect2(38, 820, 292, 44)
 region_filter_clip_enabled = true
 
-[node name="SecretStep03" type="StaticBody2D" parent="Gameplay/Secret"]
+[node name="SecretStep03" type="StaticBody2D" parent="Gameplay/Secret" unique_id=571771243]
 position = Vector2(281, 72)
 script = ExtResource("10_platform")
 platform_size = Vector2(66, 7)
 reveal_ability = &"dash"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Secret/SecretStep03"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Secret/SecretStep03" unique_id=415118542]
 shape = SubResource("SecretStep03Shape")
 
-[node name="PlatformSprite" type="Sprite2D" parent="Gameplay/Secret/SecretStep03"]
+[node name="PlatformSprite" type="Sprite2D" parent="Gameplay/Secret/SecretStep03" unique_id=2042077440]
 z_index = 2
 texture_filter = 1
-position = Vector2(0, -1.4726)
+position = Vector2(0, 2.682209e-06)
 scale = Vector2(0.226027, 0.226027)
 texture = ExtResource("16_traversal")
 region_enabled = true
 region_rect = Rect2(38, 820, 292, 44)
 region_filter_clip_enabled = true
 
-[node name="DustSeal" type="StaticBody2D" parent="Gameplay/Secret"]
+[node name="DustSeal" type="StaticBody2D" parent="Gameplay/Secret" unique_id=950168391]
 position = Vector2(252, 49)
 script = ExtResource("11_gate")
 required_ability = &"dash"
@@ -571,30 +558,34 @@ gate_size = Vector2(8, 52)
 label = "SELO DA POEIRA"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Secret/DustSeal"]
+position = Vector2(11, 8)
 shape = SubResource("GateShape")
 
-[node name="GateSprite" type="Sprite2D" parent="Gameplay/Secret/DustSeal"]
+[node name="GateSprite" type="Sprite2D" parent="Gameplay/Secret/DustSeal" unique_id=2123543122]
 z_index = 7
 texture_filter = 1
+position = Vector2(11.000015, 8)
 scale = Vector2(0.18, 0.18)
 texture = ExtResource("14_ui")
 region_enabled = true
 region_rect = Rect2(1245, 112, 120, 150)
 region_filter_clip_enabled = true
 
-[node name="HeartUpgrade" type="Area2D" parent="Gameplay/Secret"]
+[node name="HeartUpgrade" type="Area2D" parent="Gameplay/Secret" unique_id=824568971]
 position = Vector2(292, 57)
 script = ExtResource("12_upgrade")
 upgrade_id = &"coracao_casa_nilo"
 display_name = "CORAÇÃO DO SERTÃO"
 
-[node name="InteractionCollision" type="CollisionShape2D" parent="Gameplay/Secret/HeartUpgrade"]
+[node name="InteractionCollision" type="CollisionShape2D" parent="Gameplay/Secret/HeartUpgrade" unique_id=156012705]
+position = Vector2(4, -1)
 shape = SubResource("UpgradeShape")
 
-[node name="UpgradeSprite" type="Sprite2D" parent="Gameplay/Secret/HeartUpgrade"]
+[node name="UpgradeSprite" type="Sprite2D" parent="Gameplay/Secret/HeartUpgrade" unique_id=1287436388]
 z_index = 8
 texture_filter = 1
-scale = Vector2(0.17, 0.17)
+position = Vector2(3.9999886, -1.0000005)
+scale = Vector2(0.18232265, 0.17)
 texture = ExtResource("14_ui")
 region_enabled = true
 region_rect = Rect2(1000, 778, 155, 180)

@@ -34,6 +34,7 @@ func _ready() -> void:
 		by_id[room.room_id] = room
 		_validate_identity_and_bounds(room, expected_rooms)
 		_validate_entrances(room)
+		_validate_room_trigger(room)
 		_validate_geometry(room)
 		_validate_parallax(room)
 		_validate_foreground_safety(room)
@@ -91,6 +92,16 @@ func _validate_entrances(room: RoomController) -> void:
 			failures.append("Entrada ausente: %s." % entrance_id)
 		elif not room.local_bounds.has_point(marker.position):
 			failures.append("Entrada %s está fora dos bounds." % entrance_id)
+
+
+func _validate_room_trigger(room: RoomController) -> void:
+	var collision := room.get_node_or_null("Gameplay/Triggers/RoomArea/CollisionShape2D") as CollisionShape2D
+	var shape := collision.shape as RectangleShape2D if collision != null else null
+	if shape == null:
+		failures.append("RoomArea sem RectangleShape2D em %s." % room.room_id)
+		return
+	if not shape.size.is_equal_approx(room.local_bounds.size):
+		failures.append("RoomArea não acompanha os bounds de %s." % room.room_id)
 
 
 func _validate_spawns(room: RoomController, minimum_count: int) -> void:
@@ -234,6 +245,10 @@ func _validate_dynamic_traversal(world: VilaGraybox) -> void:
 			var collision_top := collision.position.y - shape.size.y * 0.5
 			if absf(collision_top + prop.walkable_surface_height) > 0.25:
 				failures.append("Colisão de prop não acompanha a superfície caminhável em %s." % room_id)
+		for surface in _authored_walkable_surfaces(room_id):
+			walkable_count += 1
+			if absf(float(surface["collision_top"]) + float(surface["surface_height"])) > 0.25:
+				failures.append("Colisão autoral não acompanha a superfície caminhável em %s." % room_id)
 		if walkable_count < int(minimums[room_id]):
 			failures.append("Sala %s possui poucos obstáculos/telhados caminháveis: %d." % [room_id, walkable_count])
 	var upper_walls := 0
@@ -264,27 +279,61 @@ func _validate_representative_platform_landings(world: VilaGraybox) -> void:
 	var jump_height := player.config.jump_velocity * player.config.jump_velocity / (2.0 * player.config.gravity)
 	for room_id in [&"rua_cinzas", &"barracos", &"telhados"]:
 		var bounds: Rect2 = world.room_bounds[room_id]
-		var candidates: Array[AtlasWorldProp] = []
+		var candidates: Array[Dictionary] = []
 		for candidate in world.find_children("*", "AtlasWorldProp", false, false):
 			var prop := candidate as AtlasWorldProp
 			if bounds.has_point(prop.position) and prop.collision_layer != 0 and prop.walkable_surface_height <= jump_height - 2.0:
-				candidates.append(prop)
+				candidates.append({"position": prop.global_position, "surface_height": prop.walkable_surface_height})
+		for surface in _authored_walkable_surfaces(room_id):
+			if float(surface["surface_height"]) <= jump_height - 2.0:
+				candidates.append(surface)
 		if candidates.is_empty():
 			failures.append("Sala %s não oferece caixa/carroça alcançável pelo salto básico (%.1f px)." % [room_id, jump_height])
 			continue
-		candidates.sort_custom(func(a: AtlasWorldProp, b: AtlasWorldProp) -> bool: return a.walkable_surface_height < b.walkable_surface_height)
-		var prop := candidates[0]
+		candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a["surface_height"]) < float(b["surface_height"]))
+		var surface: Dictionary = candidates[0]
 		player.narrative_locked = true
 		player.velocity = Vector2.ZERO
-		player.global_position = prop.global_position + Vector2(0.0, -prop.walkable_surface_height - 34.0)
+		player.global_position = surface["position"] + Vector2(0.0, -float(surface["surface_height"]) - 34.0)
 		for _frame in 60:
 			await get_tree().physics_frame
 			if player.is_on_floor():
 				break
-		var expected_y := prop.global_position.y - prop.walkable_surface_height - 12.0
+		var expected_y := float((surface["position"] as Vector2).y) - float(surface["surface_height"]) - 12.0
 		if not player.is_on_floor() or absf(player.global_position.y - expected_y) > 0.8:
 			failures.append("Nilo não pousou corretamente na plataforma de %s; y %.2f, esperado %.2f." % [room_id, player.global_position.y, expected_y])
 	player.narrative_locked = false
+
+
+func _authored_walkable_surfaces(room_id: StringName) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	var room: RoomController
+	for candidate in get_tree().get_nodes_in_group("production_rooms"):
+		var production_room := candidate as RoomController
+		if production_room.room_id == room_id:
+			room = production_room
+			break
+	if room == null:
+		return result
+	var obstacles := room.get_node_or_null("Geometry/EditableObstacles")
+	if obstacles == null:
+		return result
+	for candidate in obstacles.get_children():
+		var body := candidate as StaticBody2D
+		if body == null or body.collision_layer == 0:
+			continue
+		var collision := body.get_node_or_null("WalkableSurface") as CollisionShape2D
+		var shape := collision.shape as RectangleShape2D if collision != null else null
+		if shape == null:
+			failures.append("Obstáculo autoral sem RectangleShape2D em %s." % room_id)
+			continue
+		var collision_top := collision.position.y - shape.size.y * 0.5
+		result.append({
+			"position": body.global_position,
+			"surface_height": -collision_top,
+			"collision_top": collision_top,
+		})
+	return result
 
 
 func _validate_camera_director(by_id: Dictionary) -> void:

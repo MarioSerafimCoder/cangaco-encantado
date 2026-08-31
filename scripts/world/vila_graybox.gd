@@ -114,15 +114,6 @@ func _add_production_room(bounds: Rect2, scene: PackedScene) -> void:
 
 
 func _build_area01_composition() -> void:
-	var street: Rect2 = room_bounds[&"rua_cinzas"]
-	# Obstáculos baixos, legíveis e alcançáveis com o salto básico. As bases ficam
-	# presas à linha do chão e a colisão acompanha exatamente a parte caminhável.
-	_add_prop(TRAVERSAL_ATLAS, Rect2(55, 145, 590, 265), street.position.x + 300, 150, 120, 102, 8, -1, 45)
-	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), street.position.x + 510, 150, 48, 40, 8, -1)
-	_add_prop(TRAVERSAL_ATLAS, Rect2(35, 665, 310, 300), street.position.x + 690, 150, 118, 100, 8, -1)
-	_add_prop(TRAVERSAL_ATLAS, Rect2(695, 135, 565, 295), street.position.x + 900, 150, 112, 94, 8, -1, 44)
-	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), street.position.x + 1090, 150, 48, 40, 8, -1)
-
 	var lower: Rect2 = room_bounds[&"barracos"]
 	_add_roofed_building(Rect2(50, 75, 270, 325), lower.position.x + 145, 150, 150, 122)
 	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), lower.position.x + 275, 150, 48, 40, 8, -1)
@@ -191,8 +182,6 @@ func _build_underground_composition() -> void:
 
 
 func _build_npcs() -> void:
-	_add_npc(&"dona_tereza", "DONA TEREZA", &"dona_tereza", 0, &"rua_cinzas", 120, 0)
-	_add_npc(&"raimundo", "RAIMUNDO", &"ferido", 1, &"rua_cinzas", 185, 0)
 	_add_npc(&"bento", "BENTO", &"artesao", 3, &"barracos", 610, 14)
 	_add_npc(&"anselmo", "SEU ANSELMO", &"mercador", 6, &"praca_umbu", 650, 0)
 	_add_npc(&"lia", "LIA", &"crianca", 4, &"praca_umbu", 440, 20)
@@ -389,11 +378,12 @@ func _hide_authored_ground(room: RoomController) -> void:
 func _normalize_room_art(room: RoomController) -> void:
 	# Os cactos antigos foram desenhados na escala de ilustração e dominavam o
 	# personagem. A redução preserva a base no chão em vez de fazê-los flutuar.
-	for candidate in room.find_children("*Cacto*", "Sprite2D", true, false):
-		var cactus := candidate as Sprite2D
-		var old_height := cactus.texture.get_height() * absf(cactus.scale.y) if cactus.texture != null else 0.0
-		cactus.scale *= 0.68
-		cactus.position.y += old_height * 0.16
+	if room.room_id != &"rua_cinzas":
+		for candidate in room.find_children("*Cacto*", "Sprite2D", true, false):
+			var cactus := candidate as Sprite2D
+			var old_height := cactus.texture.get_height() * absf(cactus.scale.y) if cactus.texture != null else 0.0
+			cactus.scale *= 0.68
+			cactus.position.y += old_height * 0.16
 
 	if room.room_id != &"telhados":
 		return

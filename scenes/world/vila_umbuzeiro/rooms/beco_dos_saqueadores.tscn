@@ -1,101 +1,123 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene format=3 uid="uid://biasc2agd4fbg"]
 
-[ext_resource type="Script" path="res://scripts/world/room_controller.gd" id="1"]
+[ext_resource type="Script" uid="uid://dvifhv6p8unas" path="res://scripts/world/room_controller.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_1280.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/ground_960.tscn" id="3"]
-[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/atlases/06_beco_e_poco_romaozinho.png" id="4"]
-[ext_resource type="Script" path="res://scripts/world/enemy_spawn.gd" id="5"]
+[ext_resource type="Texture2D" uid="uid://b1w1hl4r3m83v" path="res://assets/environments/vila_umbuzeiro/atlases/06_beco_e_poco_romaozinho.png" id="4"]
+[ext_resource type="Script" uid="uid://bx61cfuhdut77" path="res://scripts/world/enemy_spawn.gd" id="5"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/pistoleiro.tscn" id="6"]
-[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/01_arquitetura_civil_casas_igreja_beco.png" id="7"]
-[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/06_elementos_atmosfericos.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://cgjbgn8osm6ao" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/01_arquitetura_civil_casas_igreja_beco.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://bjqimmaohcr3t" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/06_elementos_atmosfericos.png" id="8"]
 
 [sub_resource type="RectangleShape2D" id="RoomShape"]
 size = Vector2(960, 480)
 
-[node name="BecoDosSaqueadores" type="Node2D"]
+[node name="BecoDosSaqueadores" type="Node2D" unique_id=1850228407]
 script = ExtResource("1")
 room_id = &"beco"
 display_name = "09 GRUTAS DA VILA"
-local_bounds = Rect2(0, -120, 960, 480)
-camera_bounds = Rect2(0, -120, 960, 480)
 authored_composition_width = 320.0
-[node name="Environment" type="Node2D" parent="."]
-[node name="Parallax" parent="Environment" instance=ExtResource("2")]
-[node name="Architecture" type="Node2D" parent="Environment"]
-[node name="DustBand" type="Sprite2D" parent="Environment/Architecture"]
-position = Vector2(160, 47)
-scale = Vector2(0.1987, 0.1987)
+
+[node name="Environment" type="Node2D" parent="." unique_id=1250817738]
+
+[node name="Parallax" parent="Environment" unique_id=1711328901 instance=ExtResource("2")]
+
+[node name="Architecture" type="Node2D" parent="Environment" unique_id=1554712754]
+
+[node name="DustBand" type="Sprite2D" parent="Environment/Architecture" unique_id=1912941464]
 z_index = -90
 texture_filter = 1
+position = Vector2(160, 47)
+scale = Vector2(0.1987, 0.1987)
 texture = ExtResource("8")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(82, 79, 1385, 70)
-[node name="RuinWest" type="Sprite2D" parent="Environment/Architecture"]
+region_filter_clip_enabled = true
+
+[node name="RuinWest" type="Sprite2D" parent="Environment/Architecture" unique_id=1261165933]
+texture_filter = 1
 position = Vector2(70, 97)
 scale = Vector2(0.27, 0.27)
-texture_filter = 1
 texture = ExtResource("4")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(55, 30, 500, 390)
-[node name="RuinCenter" type="Sprite2D" parent="Environment/Architecture"]
+region_filter_clip_enabled = true
+
+[node name="RuinCenter" type="Sprite2D" parent="Environment/Architecture" unique_id=877221876]
+texture_filter = 1
 position = Vector2(186, 67)
 scale = Vector2(0.26471, 0.26471)
-texture_filter = 1
 texture = ExtResource("4")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(570, 95, 510, 340)
-[node name="RuinEast" type="Sprite2D" parent="Environment/Architecture"]
+region_filter_clip_enabled = true
+
+[node name="RuinEast" type="Sprite2D" parent="Environment/Architecture" unique_id=1394165713]
+texture_filter = 1
 position = Vector2(269, 89)
 scale = Vector2(0.27143, 0.27143)
-texture_filter = 1
 texture = ExtResource("4")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(1100, 170, 350, 255)
-[node name="CivilCenter" type="Sprite2D" parent="Environment/Architecture"]
-position = Vector2(160, 101)
-scale = Vector2(0.27861, 0.27861)
+region_filter_clip_enabled = true
+
+[node name="CivilCenter" type="Sprite2D" parent="Environment/Architecture" unique_id=21062058]
 z_index = -1
 texture_filter = 1
+position = Vector2(160, 101)
+scale = Vector2(0.27861, 0.27861)
 texture = ExtResource("7")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(553, 536, 402, 351)
-[node name="CivilWest" type="Sprite2D" parent="Environment/Architecture"]
-position = Vector2(26, 104)
-scale = Vector2(0.20091, 0.20091)
+region_filter_clip_enabled = true
+
+[node name="CivilWest" type="Sprite2D" parent="Environment/Architecture" unique_id=1905029846]
 z_index = -2
 texture_filter = 1
+position = Vector2(26, 104)
+scale = Vector2(0.20091, 0.20091)
 texture = ExtResource("7")
 region_enabled = true
-region_filter_clip_enabled = true
 region_rect = Rect2(77, 29, 438, 460)
-[node name="OccupiedOnly" type="Node2D" parent="Environment" groups=["room_occupied_only"]]
-[node name="LiberatedOnly" type="Node2D" parent="Environment" groups=["room_liberated_only"]]
+region_filter_clip_enabled = true
+
+[node name="OccupiedOnly" type="Node2D" parent="Environment" unique_id=549696526 groups=["room_occupied_only"]]
+
+[node name="LiberatedOnly" type="Node2D" parent="Environment" unique_id=1140444383 groups=["room_liberated_only"]]
 visible = false
-[node name="Geometry" type="Node2D" parent="."]
-[node name="Ground" parent="Geometry" instance=ExtResource("3")]
-[node name="Gameplay" type="Node2D" parent="."]
-[node name="Actors" type="Node2D" parent="Gameplay"]
-[node name="Entrances" type="Node2D" parent="Gameplay"]
-[node name="LEFT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances"]
+
+[node name="Geometry" type="Node2D" parent="." unique_id=532926182]
+
+[node name="Ground" parent="Geometry" unique_id=1130410460 instance=ExtResource("3")]
+
+[node name="Gameplay" type="Node2D" parent="." unique_id=442098717]
+
+[node name="Actors" type="Node2D" parent="Gameplay" unique_id=1883192725]
+
+[node name="Entrances" type="Node2D" parent="Gameplay" unique_id=2063508756]
+
+[node name="LEFT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances" unique_id=743341175]
 position = Vector2(18, 138)
-[node name="RIGHT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances"]
+
+[node name="RIGHT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances" unique_id=1990609204]
 position = Vector2(942, 138)
-[node name="EnemySpawns" type="Node2D" parent="Gameplay"]
-[node name="Pistoleiro" type="Marker2D" parent="Gameplay/EnemySpawns"]
+
+[node name="EnemySpawns" type="Node2D" parent="Gameplay" unique_id=2073703535]
+
+[node name="Pistoleiro" type="Marker2D" parent="Gameplay/EnemySpawns" unique_id=1134029800]
 position = Vector2(180, 132)
 script = ExtResource("5")
 enemy_scene = ExtResource("6")
 spawn_id = &"beco_pistoleiro"
-[node name="Triggers" type="Node2D" parent="Gameplay"]
-[node name="RoomArea" type="Area2D" parent="Gameplay/Triggers"]
+
+[node name="Triggers" type="Node2D" parent="Gameplay" unique_id=604717823]
+
+[node name="RoomArea" type="Area2D" parent="Gameplay/Triggers" unique_id=575186151]
 position = Vector2(480, 120)
 collision_layer = 0
 collision_mask = 2
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Triggers/RoomArea"]
 shape = SubResource("RoomShape")
-[node name="Camera" type="Node2D" parent="."]
+
+[node name="Camera" type="Node2D" parent="." unique_id=426964602]

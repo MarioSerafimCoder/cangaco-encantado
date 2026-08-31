@@ -1,9 +1,11 @@
 # Changelog
 
-## Refatoração de autoria — Casa de Nilo
+## Refatoração de autoria — Casa de Nilo e Rua das Cinzas
 
 - A composição visual, colisões, portas, lembrança, checkpoint e rota secreta da Casa de Nilo foram materializados diretamente em `casa_de_nilo.tscn`.
 - Aparência e gameplay foram preservados, eliminando a geração runtime duplicada para permitir autoria visual pelo editor 2D e Inspector.
+- Os cinco obstáculos, suas superfícies físicas e os moradores Dona Tereza e Raimundo foram materializados diretamente em `rua_das_cinzas.tscn`.
+- Corrigidas colisões invisíveis que prendiam Nilo na Casa e na Rua, restaurados os triggers das salas e normalizados os fades e limites de câmera nas portas.
 
 ## UI/UX Polish — 0.4.2
 
