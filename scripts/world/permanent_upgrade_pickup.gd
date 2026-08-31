@@ -15,20 +15,26 @@ var _visual: Sprite2D
 func _ready() -> void:
 	collision_layer = 16
 	collision_mask = 2
-	var collision := CollisionShape2D.new()
-	var shape := CircleShape2D.new()
-	shape.radius = 10.0
-	collision.shape = shape
-	add_child(collision)
-	_visual = Sprite2D.new()
-	_visual.texture = UI_ATLAS
-	_visual.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	_visual.region_enabled = true
-	_visual.region_filter_clip_enabled = true
-	_visual.region_rect = MEDAL_REGION
-	_visual.scale = Vector2.ONE * 0.17
-	_visual.z_index = 8
-	add_child(_visual)
+	var collision := get_node_or_null("InteractionCollision") as CollisionShape2D
+	if collision == null:
+		collision = CollisionShape2D.new()
+		collision.name = "InteractionCollision"
+		var shape := CircleShape2D.new()
+		shape.radius = 10.0
+		collision.shape = shape
+		add_child(collision)
+	_visual = get_node_or_null("UpgradeSprite") as Sprite2D
+	if _visual == null:
+		_visual = Sprite2D.new()
+		_visual.name = "UpgradeSprite"
+		_visual.texture = UI_ATLAS
+		_visual.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		_visual.region_enabled = true
+		_visual.region_filter_clip_enabled = true
+		_visual.region_rect = MEDAL_REGION
+		_visual.scale = Vector2.ONE * 0.17
+		_visual.z_index = 8
+		add_child(_visual)
 	body_entered.connect(_on_body_entered)
 	_collected = bool(GameState.permanent_upgrades.get(String(upgrade_id), false))
 	visible = not _collected

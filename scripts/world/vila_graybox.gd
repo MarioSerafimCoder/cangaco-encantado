@@ -16,22 +16,12 @@ const PATIO_DO_ARMAZEM_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms
 const BECO_DOS_SAQUEADORES_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/beco_dos_saqueadores.tscn")
 const POCO_DO_ROMAOZINHO_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/poco_do_romaozinho.tscn")
 const BARRICADA_DA_COMPANHIA_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/barricada_da_companhia.tscn")
-const CASA_INTERIOR_ATLAS := preload("res://assets/area_01/environment/casa_nilo_interior_atlas.png")
-const CASA_ARCHITECTURE_ATLAS := preload("res://assets/area_01/environment/casa_nilo_arquitetura_atlas.png")
 const TRAVERSAL_ATLAS := preload("res://assets/area_01/environment/traversal_props_atlas.png")
 const ARCHITECTURE_ATLAS := preload("res://assets/area_01/environment/arquitetura_vila_atlas.png")
 const UNDERGROUND_ATLAS := preload("res://assets/area_01/environment/cripta_subterraneo_atlas.png")
 const CAVERN_ATLAS := preload("res://assets/area_01/environment/grutas_cavernas_atlas.png")
 const CAVERN_STRUCTURE_ATLAS := preload("res://assets/area_01/environment/cavernas_estrutura_atlas.png")
 const CAVE_FLOOR_REGION := Rect2(60, 150, 650, 270)
-const HOME_WALL_REGION := Rect2(302, 108, 910, 340)
-const HOME_LEFT_WALL_REGION := Rect2(28, 54, 196, 420)
-const HOME_RIGHT_WALL_REGION := Rect2(1283, 55, 205, 420)
-const HOME_CEILING_REGION := Rect2(207, 500, 1090, 108)
-const HOME_FLOOR_REGION := Rect2(90, 697, 500, 158)
-const HOME_DOOR_CLOSED_REGION := Rect2(693, 648, 235, 298)
-const HOME_DOOR_OPEN_REGION := Rect2(965, 647, 273, 300)
-const HOME_WINDOW_REGION := Rect2(1294, 672, 216, 238)
 const CAVE_WALL_REGION := Rect2(40, 34, 720, 320)
 const CAVE_CEILING_REGION := Rect2(804, 32, 695, 200)
 const UNDERGROUND_WALL_REGION := Rect2(720, 425, 510, 280)
@@ -95,7 +85,6 @@ func _build_rooms() -> void:
 		_add_production_room(bounds, production_scene)
 		cursor_x += room.width
 	world_width = cursor_x
-	_add_solid(Rect2(-24.0, -120.0, 24.0, 480.0))
 	_add_solid(Rect2(world_width, -120.0, 24.0, 480.0))
 
 
@@ -114,31 +103,17 @@ func _add_production_room(bounds: Rect2, scene: PackedScene) -> void:
 		room.suppress_authored_environment = true
 	elif room.room_id == &"telhados":
 		room.camera_profile = "rooftops"
-	elif room.room_id == &"casa_nilo":
-		room.suppress_authored_environment = true
 	add_child(room)
 	_normalize_room_art(room)
 	if room.suppress_authored_environment:
 		_hide_authored_ground(room)
-	if room.room_id == &"casa_nilo":
-		_add_home_backdrop(bounds)
-	elif room.room_id in UNDERGROUND_ROOMS:
+	if room.room_id in UNDERGROUND_ROOMS:
 		_add_cave_backdrop(bounds, false)
 	elif room.room_id in CAVERN_ROOMS:
 		_add_cave_backdrop(bounds, true)
 
 
 func _build_area01_composition() -> void:
-	var home: Rect2 = room_bounds[&"casa_nilo"]
-	_add_prop(CASA_INTERIOR_ATLAS, Rect2(28, 105, 455, 330), home.position.x + 88, 150, 108, 76, 8, -3)
-	_add_prop(CASA_INTERIOR_ATLAS, Rect2(500, 120, 240, 300), home.position.x + 218, 150, 58, 42, 7, -3)
-	_add_prop(CASA_INTERIOR_ATLAS, Rect2(805, 145, 395, 275), home.position.x + 344, 150, 98, 72, 7, -3)
-	_add_prop(CASA_INTERIOR_ATLAS, Rect2(90, 560, 280, 170), home.position.x + 172, 112, 46, 0, 0, 2)
-	_add_prop(CASA_INTERIOR_ATLAS, Rect2(245, 780, 460, 180), home.position.x + 430, 112, 108, 0, 0, -2)
-	_add_prop(CASA_INTERIOR_ATLAS, Rect2(55, 750, 120, 205), home.position.x + 486, 150, 28, 0, 0, 2)
-	_add_narrative(CASA_INTERIOR_ATLAS, Rect2(1210, 20, 300, 380), home.position.x + 164, 112, 43, &"lembranca_nilo")
-	_add_home_doors(home)
-
 	var street: Rect2 = room_bounds[&"rua_cinzas"]
 	# Obstáculos baixos, legíveis e alcançáveis com o salto básico. As bases ficam
 	# presas à linha do chão e a colisão acompanha exatamente a parte caminhável.
@@ -298,13 +273,6 @@ func _production_scene_for(room_id: StringName) -> PackedScene:
 
 
 func _build_gameplay() -> void:
-	var home: Rect2 = room_bounds[&"casa_nilo"]
-	var home_checkpoint := Checkpoint.new()
-	home_checkpoint.checkpoint_id = &"vila_casa"
-	home_checkpoint.show_visual = false
-	add_child(home_checkpoint)
-	home_checkpoint.position = Vector2(home.position.x + 92.0, 132.0)
-
 	var church: Rect2 = room_bounds[&"igreja_velha"]
 	var checkpoint := Checkpoint.new()
 	checkpoint.checkpoint_id = &"vila_igreja"
@@ -329,7 +297,6 @@ func _build_gameplay() -> void:
 
 
 func _build_metroidvania_routes() -> void:
-	var home: Rect2 = room_bounds[&"casa_nilo"]
 	var church: Rect2 = room_bounds[&"igreja_velha"]
 	var roofs: Rect2 = room_bounds[&"telhados"]
 	var square: Rect2 = room_bounds[&"praca_umbu"]
@@ -363,22 +330,6 @@ func _build_metroidvania_routes() -> void:
 	dash_pickup.description = "C PARA ATRAVESSAR SELOS E VÃOS"
 	add_child(dash_pickup)
 	dash_pickup.position = Vector2(roofs.position.x + 890.0, 72.0)
-
-	# Segredo na casa inicial: só abre no retorno com Pedra + Poeira.
-	_add_traversal_platform(Vector2(home.position.x + 176.0, 112.0), Vector2(42.0, 7.0), false, &"dash")
-	_add_traversal_platform(Vector2(home.position.x + 224.0, 82.0), Vector2(46.0, 7.0), false, &"dash")
-	_add_traversal_platform(Vector2(home.position.x + 281.0, 72.0), Vector2(66.0, 7.0), false, &"dash")
-	var home_gate := AbilityGate.new()
-	home_gate.required_ability = &"dash"
-	home_gate.label = "SELO DA POEIRA"
-	home_gate.gate_size = Vector2(8.0, 52.0)
-	add_child(home_gate)
-	home_gate.position = Vector2(home.position.x + 252.0, 49.0)
-	var heart_upgrade := PermanentUpgradePickup.new()
-	heart_upgrade.upgrade_id = &"coracao_casa_nilo"
-	heart_upgrade.display_name = "CORAÇÃO DO SERTÃO"
-	add_child(heart_upgrade)
-	heart_upgrade.position = Vector2(home.position.x + 292.0, 57.0)
 
 	# Rota alternativa: Praça -> fundos do Armazém. Abre nos dois sentidos.
 	_add_connector(&"praca_armazem_alto", Vector2(square.position.x + 1165.0, 125.0), Vector2(warehouse.position.x + 1140.0, 125.0), &"dash", "TRILHA ALTA", &"armazem")
@@ -461,21 +412,6 @@ func _normalize_room_art(room: RoomController) -> void:
 					(old_roof as CollisionObject2D).collision_layer = 0
 
 
-func _add_home_backdrop(bounds: Rect2) -> void:
-	_add_gradient_backdrop(bounds, Color("5a4130"), Color("211711"))
-	# A arquitetura precisa ficar acima dos parallax das salas vizinhas. Sem isso,
-	# a rua atravessava visualmente a parede quando a câmera se aproximava da porta.
-	_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_WALL_REGION, bounds.get_center().x, 150.0, 620.0, 0.0, 0.0, -9)
-	_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_LEFT_WALL_REGION, bounds.position.x + 36.0, 150.0, 78.0, 0.0, 0.0, -8)
-	_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_RIGHT_WALL_REGION, bounds.end.x - 36.0, 150.0, 78.0, 0.0, 0.0, -8)
-	_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_CEILING_REGION, bounds.get_center().x, 0.0, 620.0, 0.0, 0.0, -7)
-	# Usa apenas o centro retangular do piso e sobrepõe levemente os módulos.
-	# As bordas em perspectiva do sprite completo deixavam uma fenda escura.
-	for index in 2:
-		_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_FLOOR_REGION, bounds.position.x + 160.0 + index * 320.0, 242.0, 324.0, 0.0, 0.0, -6)
-	_add_prop(CASA_ARCHITECTURE_ATLAS, HOME_WINDOW_REGION, bounds.position.x + 424.0, 115.0, 76.0, 0.0, 0.0, -4)
-
-
 func _add_cave_backdrop(bounds: Rect2, deep: bool) -> void:
 	_add_gradient_backdrop(bounds, Color("17171a") if deep else Color("231d19"), Color("070708"))
 	var wall_region := CAVE_WALL_REGION if deep else UNDERGROUND_WALL_REGION
@@ -497,24 +433,6 @@ func _add_cave_backdrop(bounds: Rect2, deep: bool) -> void:
 		sprite.position = Vector2(bounds.position.x + segment_width * (index + 0.5), 150.0 + CAVE_FLOOR_REGION.size.y * scale_value * 0.5)
 		sprite.z_index = -2
 		add_child(sprite)
-
-
-func _add_home_doors(home: Rect2) -> void:
-	var inside := TransitionDoor.new().configure_visual(CASA_ARCHITECTURE_ATLAS, HOME_DOOR_CLOSED_REGION, HOME_DOOR_OPEN_REGION, 90.0)
-	inside.door_id = &"casa_nilo_saida"
-	inside.destination = Vector2(home.end.x + 82.0, 138.0)
-	inside.destination_room = &"rua_cinzas"
-	inside.display_name = "SAIR PARA A RUA"
-	add_child(inside)
-	inside.position = Vector2(home.end.x - 105.0, 150.0)
-	var outside := TransitionDoor.new().configure_visual(CASA_ARCHITECTURE_ATLAS, HOME_DOOR_CLOSED_REGION, HOME_DOOR_OPEN_REGION, 84.0)
-	outside.door_id = &"casa_nilo_entrada"
-	outside.destination = Vector2(home.end.x - 155.0, 138.0)
-	outside.destination_room = &"casa_nilo"
-	outside.display_name = "ENTRAR NA CASA"
-	add_child(outside)
-	outside.position = Vector2(home.end.x + 42.0, 150.0)
-	_add_solid(Rect2(home.end.x - 16.0, -120.0, 16.0, 270.0))
 
 
 func _add_gradient_backdrop(bounds: Rect2, top_color: Color, bottom_color: Color) -> void:

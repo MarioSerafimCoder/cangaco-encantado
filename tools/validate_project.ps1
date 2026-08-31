@@ -26,6 +26,7 @@ $requiredFiles = @(
 	'scenes/ui/components/input_glyph.tscn',
 	'scenes/ui/components/notification_toast.tscn',
 	'tools/ui_ux_polish_validation.tscn',
+	'tools/casa_de_nilo_authored_validation.tscn',
     'README.md',
     'docs/IMPLEMENTATION.md',
     'docs/ROOM_PRODUCTION_PIPELINE.md',

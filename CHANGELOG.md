@@ -1,5 +1,10 @@
 # Changelog
 
+## Refatoração de autoria — Casa de Nilo
+
+- A composição visual, colisões, portas, lembrança, checkpoint e rota secreta da Casa de Nilo foram materializados diretamente em `casa_de_nilo.tscn`.
+- Aparência e gameplay foram preservados, eliminando a geração runtime duplicada para permitir autoria visual pelo editor 2D e Inspector.
+
 ## UI/UX Polish — 0.4.2
 
 - Criado Theme central inspirado em couro, madeira, areia, ferrugem e ouro envelhecido, além de componentes reutilizáveis para painel, botão, glyph, toast, moeda e diálogo.

@@ -13,6 +13,7 @@ var prompt: Label
 
 func configure_visual(texture: Texture2D, region: Rect2, target_width: float, z := 4) -> void:
 	var sprite := Sprite2D.new()
+	sprite.name = "NarrativeSprite"
 	sprite.texture = texture
 	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	sprite.region_enabled = true
@@ -28,21 +29,27 @@ func configure_visual(texture: Texture2D, region: Rect2, target_width: float, z 
 func _ready() -> void:
 	collision_layer = 16
 	collision_mask = 2
-	var collision := CollisionShape2D.new()
-	var shape := RectangleShape2D.new()
-	shape.size = Vector2(34, 44)
-	collision.shape = shape
-	collision.position.y = -14
-	add_child(collision)
-	prompt = Label.new()
-	prompt.position = Vector2(-40, -58)
-	prompt.size = Vector2(80, 14)
-	prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	prompt.add_theme_font_override("font", PIXEL_FONT)
-	prompt.add_theme_font_size_override("font_size", 8)
-	prompt.add_theme_color_override("font_color", Color("ffe4a8"))
-	prompt.visible = false
-	add_child(prompt)
+	var collision := get_node_or_null("InteractionCollision") as CollisionShape2D
+	if collision == null:
+		collision = CollisionShape2D.new()
+		collision.name = "InteractionCollision"
+		var shape := RectangleShape2D.new()
+		shape.size = Vector2(34, 44)
+		collision.shape = shape
+		collision.position.y = -14
+		add_child(collision)
+	prompt = get_node_or_null("Prompt") as Label
+	if prompt == null:
+		prompt = Label.new()
+		prompt.name = "Prompt"
+		prompt.position = Vector2(-40, -58)
+		prompt.size = Vector2(80, 14)
+		prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		prompt.add_theme_font_override("font", PIXEL_FONT)
+		prompt.add_theme_font_size_override("font_size", 8)
+		prompt.add_theme_color_override("font_color", Color("ffe4a8"))
+		prompt.visible = false
+		add_child(prompt)
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 

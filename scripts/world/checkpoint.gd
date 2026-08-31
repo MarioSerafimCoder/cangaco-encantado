@@ -14,19 +14,24 @@ var visual: Sprite2D
 func _ready() -> void:
 	collision_layer = 16
 	collision_mask = 2
-	var collision := CollisionShape2D.new()
-	var shape := RectangleShape2D.new()
-	shape.size = Vector2(20.0, 34.0)
-	collision.shape = shape
-	add_child(collision)
-	visual = Sprite2D.new()
-	visual.name = "CheckpointSprite"
-	visual.texture = INTERACTIVE_ATLAS
-	visual.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	visual.region_enabled = true
-	visual.region_filter_clip_enabled = true
-	visual.z_index = 8
-	add_child(visual)
+	var collision := get_node_or_null("InteractionCollision") as CollisionShape2D
+	if collision == null:
+		collision = CollisionShape2D.new()
+		collision.name = "InteractionCollision"
+		var shape := RectangleShape2D.new()
+		shape.size = Vector2(20.0, 34.0)
+		collision.shape = shape
+		add_child(collision)
+	visual = get_node_or_null("CheckpointSprite") as Sprite2D
+	if visual == null:
+		visual = Sprite2D.new()
+		visual.name = "CheckpointSprite"
+		visual.texture = INTERACTIVE_ATLAS
+		visual.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		visual.region_enabled = true
+		visual.region_filter_clip_enabled = true
+		visual.z_index = 8
+		add_child(visual)
 	visual.visible = show_visual
 	body_entered.connect(_on_body_entered)
 	_refresh_visual()

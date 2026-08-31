@@ -19,12 +19,26 @@ var _sprite: Sprite2D
 func _ready() -> void:
 	collision_layer = 1
 	collision_mask = 0
-	_collision = CollisionShape2D.new()
-	var shape := RectangleShape2D.new()
-	shape.size = platform_size
-	_collision.shape = shape
-	add_child(_collision)
-	_sprite = Sprite2D.new()
+	_collision = get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if _collision == null:
+		_collision = CollisionShape2D.new()
+		_collision.name = "CollisionShape2D"
+		var shape := RectangleShape2D.new()
+		shape.size = platform_size
+		_collision.shape = shape
+		add_child(_collision)
+	_sprite = get_node_or_null("PlatformSprite") as Sprite2D
+	if _sprite == null:
+		_sprite = Sprite2D.new()
+		_sprite.name = "PlatformSprite"
+		_configure_runtime_sprite()
+		add_child(_sprite)
+	if not reveal_ability.is_empty():
+		EventBus.ability_unlocked.connect(_on_ability_unlocked)
+	_refresh_visibility()
+
+
+func _configure_runtime_sprite() -> void:
 	var vertical := platform_size.y > platform_size.x
 	var region: Rect2
 	if stone_style:
@@ -41,10 +55,6 @@ func _ready() -> void:
 	if not vertical:
 		_sprite.position.y = -region.size.y * art_scale * 0.5 + platform_size.y * 0.5
 	_sprite.z_index = 2
-	add_child(_sprite)
-	if not reveal_ability.is_empty():
-		EventBus.ability_unlocked.connect(_on_ability_unlocked)
-	_refresh_visibility()
 
 
 func _on_ability_unlocked(ability_id: StringName, _display_name: String) -> void:

@@ -77,6 +77,8 @@ func _validate_home_opening(main: Node, world: VilaGraybox, player: NiloPlayer) 
 	var hud := main.get_node("HUD") as GameHUD
 	# O runner restaura/resetta o estado depois que os filhos entram na árvore;
 	# reinicia aqui o mesmo guia que o fluxo real de Novo jogo aciona no boot.
+	hud.set("_tutorial_id", &"")
+	hud.opening_guide_active = false
 	hud.begin_opening_guide()
 	if not hud.opening_guide_active or hud.get("_tutorial_id") != &"move":
 		failures.append("A abertura não iniciou o tutorial contextual de movimento.")

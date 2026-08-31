@@ -16,20 +16,26 @@ var _visual: Sprite2D
 func _ready() -> void:
 	collision_layer = 1
 	collision_mask = 0
-	_collision = CollisionShape2D.new()
-	var shape := RectangleShape2D.new()
-	shape.size = gate_size
-	_collision.shape = shape
-	add_child(_collision)
-	_visual = Sprite2D.new()
-	_visual.texture = UI_ATLAS
-	_visual.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	_visual.region_enabled = true
-	_visual.region_filter_clip_enabled = true
-	_visual.region_rect = SEAL_REGION
-	_visual.scale = Vector2.ONE * 0.18
-	_visual.z_index = 7
-	add_child(_visual)
+	_collision = get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if _collision == null:
+		_collision = CollisionShape2D.new()
+		_collision.name = "CollisionShape2D"
+		var shape := RectangleShape2D.new()
+		shape.size = gate_size
+		_collision.shape = shape
+		add_child(_collision)
+	_visual = get_node_or_null("GateSprite") as Sprite2D
+	if _visual == null:
+		_visual = Sprite2D.new()
+		_visual.name = "GateSprite"
+		_visual.texture = UI_ATLAS
+		_visual.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		_visual.region_enabled = true
+		_visual.region_filter_clip_enabled = true
+		_visual.region_rect = SEAL_REGION
+		_visual.scale = Vector2.ONE * 0.18
+		_visual.z_index = 7
+		add_child(_visual)
 	EventBus.ability_unlocked.connect(_on_ability_unlocked)
 	_refresh()
 

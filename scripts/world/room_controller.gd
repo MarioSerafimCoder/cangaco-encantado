@@ -15,6 +15,7 @@ signal player_exited(room_id: StringName)
 @export var liberated_tint := Color("fff8e9")
 @export_enum("surface", "rooftops", "underground", "cavern") var camera_profile := "surface"
 @export var suppress_authored_environment := false
+@export var round_authored_sprite_positions := true
 
 var _active_player: NiloPlayer
 var _debug_visible := false
@@ -105,7 +106,8 @@ func _apply_rendering_profile() -> void:
 	for candidate in find_children("*", "Sprite2D", true, false):
 		var sprite := candidate as Sprite2D
 		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		sprite.position = sprite.position.round()
+		if round_authored_sprite_positions:
+			sprite.position = sprite.position.round()
 
 
 func _set_group_visibility(group_id: StringName, value: bool) -> void:
