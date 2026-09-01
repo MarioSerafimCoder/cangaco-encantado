@@ -53,6 +53,8 @@ func _validate_obstacles(street: RoomController, world: VilaGraybox) -> void:
 			failures.append("A composição runtime não foi preservada em %s." % obstacle_name)
 		if collision.position.distance_to(values[4]) > 0.001 or shape.size != values[5] or body.collision_layer != 1:
 			failures.append("A superfície física não foi preservada em %s." % obstacle_name)
+		if not bool(body.get_meta("_edit_group_", false)) or not bool(collision.get_meta("_edit_lock_", false)):
+			failures.append("Obstáculo sem agrupamento seguro no editor: %s." % obstacle_name)
 		if sprite.texture == null or not sprite.region_enabled or sprite.texture_filter != CanvasItem.TEXTURE_FILTER_NEAREST:
 			failures.append("Atlas pixel-perfect inválido em %s." % obstacle_name)
 	for child in world.get_children():
@@ -97,6 +99,11 @@ func _validate_existing_room_tree(street: RoomController) -> void:
 	]:
 		if street.get_node_or_null(path) == null:
 			failures.append("Elemento anterior da sala foi perdido: %s." % path)
+	var ground_shape := street.get_node_or_null("Geometry/Ground/GroundCollision/CollisionShape2D") as CollisionShape2D
+	var room_shape := street.get_node_or_null("Gameplay/Triggers/RoomArea/CollisionShape2D") as CollisionShape2D
+	for technical_shape in [ground_shape, room_shape]:
+		if technical_shape == null or technical_shape.visible or not bool(technical_shape.get_meta("_edit_lock_", false)):
+			failures.append("Uma grande forma azul da rua não está oculta e bloqueada no editor.")
 	var cactus := street.get_node_or_null("Environment/GameplayDecor/CactoExtremoLeste") as Sprite2D
 	var cart := street.get_node_or_null("Environment/GameplayDecor/Carroca") as Sprite2D
 	if cactus == null or cactus.scale.distance_to(Vector2(0.1156, 0.1156)) > 0.00001:

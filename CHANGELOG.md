@@ -1,5 +1,13 @@
 # Changelog
 
+## Proteção de edição visual — Casa de Nilo e Rua das Cinzas
+
+- Restauradas as colisões, os gatilhos de câmera, os fades das portas e os componentes apagados acidentalmente nas duas primeiras cenas.
+- As grandes formas azuis de piso e `RoomArea` continuam ativas no jogo, mas agora ficam ocultas e bloqueadas no editor 2D.
+- Cama, armário e bancada da Casa, além dos obstáculos caminháveis da Rua, foram agrupados para que o nó-pai mova sprite e colisão em conjunto.
+- Adicionada orientação de edição dentro das cenas e no guia `docs/EDICAO_VISUAL_CENAS.md`.
+- As validações agora impedem regressões nas proteções do editor; toda a bateria automatizada permanece aprovada.
+
 ## Refatoração de autoria — Casa de Nilo e Rua das Cinzas
 
 - A composição visual, colisões, portas, lembrança, checkpoint e rota secreta da Casa de Nilo foram materializados diretamente em `casa_de_nilo.tscn`.

@@ -338,17 +338,22 @@ region_filter_clip_enabled = true
 [node name="GroundCollision" type="StaticBody2D" parent="Geometry/Ground" unique_id=695258670]
 position = Vector2(640, 255)
 collision_mask = 0
+metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/Ground/GroundCollision" unique_id=112323997]
+visible = false
 shape = SubResource("GroundShape")
+metadata/_edit_lock_ = true
 
 [node name="Platforms" type="Node2D" parent="Geometry" unique_id=1964281409]
 
 [node name="EditableObstacles" type="Node2D" parent="Geometry" unique_id=1168147275]
+editor_description = "EDITE AQUI: selecione CarrocaOeste, CaixaOeste, ToldoCentral, CarrocaRampa ou CaixaLeste e mova o nó-pai. Sprite e colisão se movem juntos."
 
 [node name="CarrocaOeste" type="StaticBody2D" parent="Geometry/EditableObstacles" unique_id=14393493]
 position = Vector2(300, 150)
 collision_mask = 0
+metadata/_edit_group_ = true
 
 [node name="ObstacleSprite" type="Sprite2D" parent="Geometry/EditableObstacles/CarrocaOeste" unique_id=666198182]
 z_index = -1
@@ -363,10 +368,12 @@ region_filter_clip_enabled = true
 [node name="WalkableSurface" type="CollisionShape2D" parent="Geometry/EditableObstacles/CarrocaOeste" unique_id=1553172701]
 position = Vector2(0, -31.79661)
 shape = SubResource("CartWestShape")
+metadata/_edit_lock_ = true
 
 [node name="CaixaOeste" type="StaticBody2D" parent="Geometry/EditableObstacles" unique_id=1589144464]
 position = Vector2(510, 150)
 collision_mask = 0
+metadata/_edit_group_ = true
 
 [node name="ObstacleSprite" type="Sprite2D" parent="Geometry/EditableObstacles/CaixaOeste" unique_id=947394865]
 z_index = -1
@@ -381,10 +388,12 @@ region_filter_clip_enabled = true
 [node name="WalkableSurface" type="CollisionShape2D" parent="Geometry/EditableObstacles/CaixaOeste" unique_id=677512031]
 position = Vector2(0, -34.634148)
 shape = SubResource("CrateShape")
+metadata/_edit_lock_ = true
 
 [node name="ToldoCentral" type="StaticBody2D" parent="Geometry/EditableObstacles" unique_id=750531710]
 position = Vector2(690, 150)
 collision_mask = 0
+metadata/_edit_group_ = true
 
 [node name="ObstacleSprite" type="Sprite2D" parent="Geometry/EditableObstacles/ToldoCentral" unique_id=508657456]
 z_index = -1
@@ -399,10 +408,12 @@ region_filter_clip_enabled = true
 [node name="WalkableSurface" type="CollisionShape2D" parent="Geometry/EditableObstacles/ToldoCentral" unique_id=1487579463]
 position = Vector2(0, -94.96774)
 shape = SubResource("CanopyShape")
+metadata/_edit_lock_ = true
 
 [node name="CarrocaRampa" type="StaticBody2D" parent="Geometry/EditableObstacles" unique_id=1477948701]
 position = Vector2(900, 150)
 collision_mask = 0
+metadata/_edit_group_ = true
 
 [node name="ObstacleSprite" type="Sprite2D" parent="Geometry/EditableObstacles/CarrocaRampa" unique_id=1080666670]
 z_index = -1
@@ -417,10 +428,12 @@ region_filter_clip_enabled = true
 [node name="WalkableSurface" type="CollisionShape2D" parent="Geometry/EditableObstacles/CarrocaRampa" unique_id=1137081354]
 position = Vector2(-5, -36.8867)
 shape = SubResource("RampCartShape")
+metadata/_edit_lock_ = true
 
 [node name="CaixaLeste" type="StaticBody2D" parent="Geometry/EditableObstacles" unique_id=2005013912]
 position = Vector2(1090, 150)
 collision_mask = 0
+metadata/_edit_group_ = true
 
 [node name="ObstacleSprite" type="Sprite2D" parent="Geometry/EditableObstacles/CaixaLeste" unique_id=1459514722]
 z_index = -1
@@ -435,6 +448,7 @@ region_filter_clip_enabled = true
 [node name="WalkableSurface" type="CollisionShape2D" parent="Geometry/EditableObstacles/CaixaLeste" unique_id=1031707131]
 position = Vector2(0, -34.634148)
 shape = SubResource("CrateShape")
+metadata/_edit_lock_ = true
 
 [node name="Walls" type="Node2D" parent="Geometry" unique_id=469079379]
 
@@ -459,10 +473,12 @@ npc_id = &"dona_tereza"
 display_name = "DONA TEREZA"
 dialogue_id = &"dona_tereza"
 room_id = &"rua_cinzas"
+metadata/_edit_group_ = true
 
 [node name="InteractionCollision" type="CollisionShape2D" parent="Gameplay/Actors/DonaTereza" unique_id=2018138584]
 position = Vector2(0, -10)
 shape = SubResource("NPCShape")
+metadata/_edit_lock_ = true
 
 [node name="NPCSprite" type="Sprite2D" parent="Gameplay/Actors/DonaTereza" unique_id=1591268077]
 z_index = 6
@@ -496,10 +512,12 @@ display_name = "RAIMUNDO"
 dialogue_id = &"ferido"
 room_id = &"rua_cinzas"
 atlas_index = 1
+metadata/_edit_group_ = true
 
 [node name="InteractionCollision" type="CollisionShape2D" parent="Gameplay/Actors/Raimundo" unique_id=353746125]
 position = Vector2(0, -10)
 shape = SubResource("NPCShape")
+metadata/_edit_lock_ = true
 
 [node name="NPCSprite" type="Sprite2D" parent="Gameplay/Actors/Raimundo" unique_id=2004321566]
 z_index = 6
@@ -541,9 +559,12 @@ activation_flag = &"first_combat_unlocked"
 position = Vector2(640, 120)
 collision_layer = 0
 collision_mask = 2
+metadata/_edit_lock_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Triggers/RoomArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Triggers/RoomArea" unique_id=1748881088]
+visible = false
 shape = SubResource("RoomShape")
+metadata/_edit_lock_ = true
 
 [node name="Camera" type="Node2D" parent="." unique_id=938584581]
 

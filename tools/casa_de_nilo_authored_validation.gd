@@ -40,9 +40,9 @@ func _validate_authored_tree(home: RoomController) -> void:
 		"Environment/Architecture/Interior/Floor/FloorWest",
 		"Environment/Architecture/Interior/Floor/FloorEast",
 		"Environment/Architecture/Interior/Window",
-		"Environment/Architecture/Interior/Furniture/Bed",
-		"Environment/Architecture/Interior/Furniture/Cabinet",
-		"Environment/Architecture/Interior/Furniture/Workbench",
+		"Geometry/EditableFurniture/Bed/FurnitureSprite",
+		"Geometry/EditableFurniture/Cabinet/FurnitureSprite",
+		"Geometry/EditableFurniture/Workbench/FurnitureSprite",
 		"Environment/Architecture/Interior/Furniture/WallShelf",
 		"Environment/Architecture/Interior/Furniture/LongShelf",
 		"Environment/Architecture/Interior/Furniture/Lamp",
@@ -58,14 +58,14 @@ func _validate_visual_values(home: RoomController) -> void:
 	var expected := {
 		"Environment/Architecture/Interior/BackWall": [Vector2(305, 49), Rect2(302, 108, 910, 340), Vector2(0.681319, 0.681319), -9],
 		"Environment/Architecture/Interior/Window": [Vector2(424, 77), Rect2(1294, 672, 216, 238), Vector2(0.351852, 0.351852), -4],
-		"Environment/Architecture/Interior/Furniture/Bed": [Vector2(81.45503, 126), Rect2(28, 105, 455, 330), Vector2(0.20853055, 0.1818182), -3],
-		"Environment/Architecture/Interior/Furniture/Cabinet": [Vector2(181.00002, 125), Rect2(500, 120, 240, 300), Vector2(0.17916685, 0.19555682), -3],
-		"Environment/Architecture/Interior/Furniture/Workbench": [Vector2(337, 129), Rect2(805, 145, 395, 275), Vector2(0.20342602, 0.18419215), -3],
+		"Geometry/EditableFurniture/Bed/FurnitureSprite": [Vector2(81.45503, 126), Rect2(28, 105, 455, 330), Vector2(0.20853055, 0.1818182), -3],
+		"Geometry/EditableFurniture/Cabinet/FurnitureSprite": [Vector2(181.00002, 125), Rect2(500, 120, 240, 300), Vector2(0.17916685, 0.19555682), -3],
+		"Geometry/EditableFurniture/Workbench/FurnitureSprite": [Vector2(337, 129), Rect2(805, 145, 395, 275), Vector2(0.20342602, 0.18419215), -3],
 	}
 	for path in expected:
 		var sprite := home.get_node(path) as Sprite2D
 		var values: Array = expected[path]
-		if sprite.position.distance_to(values[0]) > 0.01 or sprite.region_rect != values[1] or sprite.scale.distance_to(values[2]) > 0.00001 or sprite.z_index != values[3]:
+		if sprite.global_position.distance_to(values[0]) > 0.01 or sprite.region_rect != values[1] or sprite.scale.distance_to(values[2]) > 0.00001 or sprite.z_index != values[3]:
 			failures.append("Valor visual runtime não foi preservado em %s." % path)
 
 
@@ -80,14 +80,22 @@ func _validate_collisions(home: RoomController) -> void:
 			failures.append("Piso editável não preservou a baseline y=150.")
 	for path in [
 		"Geometry/InteriorCollision/LeftBoundary/CollisionShape2D",
-		"Geometry/InteriorCollision/BedSurface/CollisionShape2D",
-		"Geometry/InteriorCollision/CabinetSurface/CollisionShape2D",
-		"Geometry/InteriorCollision/WorkbenchSurface/CollisionShape2D",
+		"Geometry/EditableFurniture/Bed/CollisionShape2D",
+		"Geometry/EditableFurniture/Cabinet/CollisionShape2D",
+		"Geometry/EditableFurniture/Workbench/CollisionShape2D",
 		"Geometry/DoorCollision/InteriorDoorWall/CollisionShape2D",
 	]:
 		var collision := home.get_node_or_null(path) as CollisionShape2D
 		if collision == null or collision.shape == null:
 			failures.append("Colisão autoral ausente: %s." % path)
+		elif not bool(collision.get_meta("_edit_lock_", false)):
+			failures.append("Colisão técnica desprotegida no editor: %s." % path)
+	for furniture_name in ["Bed", "Cabinet", "Workbench"]:
+		var furniture := home.get_node_or_null("Geometry/EditableFurniture/%s" % furniture_name) as StaticBody2D
+		if furniture == null or not bool(furniture.get_meta("_edit_group_", false)):
+			failures.append("Móvel sem agrupamento seguro no editor: %s." % furniture_name)
+	if ground != null and ground.visible:
+		failures.append("A grande forma azul do piso deve ficar oculta no editor.")
 
 
 func _validate_interactions(home: RoomController, world: VilaGraybox) -> void:
@@ -136,6 +144,8 @@ func _validate_player_and_rooms(home: RoomController, _player: NiloPlayer) -> vo
 	var room_area := home.get_node_or_null("Gameplay/Triggers/RoomArea/CollisionShape2D") as CollisionShape2D
 	if room_area == null or room_area.shape == null:
 		failures.append("Trigger da sala não está materializado.")
+	elif room_area.visible or not bool(room_area.get_meta("_edit_lock_", false)):
+		failures.append("A grande forma azul do RoomArea deve ficar oculta e bloqueada no editor.")
 
 
 func _finish() -> void:
