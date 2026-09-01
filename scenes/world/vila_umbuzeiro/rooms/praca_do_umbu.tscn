@@ -160,14 +160,14 @@ default_color = Color(0.38, 0.3, 0.24, 0.65)
 [node name="StonePavement" type="Sprite2D" parent="Environment" unique_id=254944045]
 z_index = -2
 texture_filter = 1
-position = Vector2(320, 130)
+position = Vector2(640, 130)
 scale = Vector2(0.24, 0.08)
 texture = ExtResource("7_pavement")
 
 [node name="Umbuzeiro" type="Sprite2D" parent="Environment" unique_id=1386245297]
 z_index = -1
 texture_filter = 1
-position = Vector2(320, 77.6)
+position = Vector2(640, 77.6)
 scale = Vector2(0.2541, 0.2541)
 texture = ExtResource("4")
 region_enabled = true
@@ -236,7 +236,7 @@ region_filter_clip_enabled = true
 [node name="Ground" parent="Geometry" unique_id=1568296270 instance=ExtResource("3")]
 
 [node name="TreeBase" type="StaticBody2D" parent="Geometry" unique_id=828781628]
-position = Vector2(320, 138)
+position = Vector2(640, 138)
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/TreeBase" unique_id=1402999438]

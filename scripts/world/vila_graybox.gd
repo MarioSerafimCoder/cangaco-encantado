@@ -49,6 +49,7 @@ const UNDERGROUND_ROOMS := [&"armazem", &"patio"]
 const CAVERN_ROOMS := [&"beco", &"poco", &"barricada", &"posto", &"arena"]
 
 var room_bounds: Dictionary = {}
+var room_nodes: Dictionary = {}
 var solid_rects: Array[Rect2] = []
 var world_width := 0.0
 var player: NiloPlayer
@@ -91,6 +92,7 @@ func _build_rooms() -> void:
 func _add_production_room(bounds: Rect2, scene: PackedScene) -> void:
 	var room := scene.instantiate() as RoomController
 	room.position = bounds.position
+	room_nodes[room.room_id] = room
 	if room.room_id in UNDERGROUND_ROOMS:
 		room.occupied_tint = Color("7f8080")
 		room.liberated_tint = Color("8b8c88")
@@ -128,7 +130,7 @@ func _build_area01_composition() -> void:
 	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), square.position.x + 870, 150, 52, 43, 8, -1)
 	_add_roofed_building(Rect2(35, 425, 530, 280), square.position.x + 960, 150, 280, 232)
 	_add_prop(TRAVERSAL_ATLAS, Rect2(1110, 405, 340, 215), square.position.x + 1140, 150, 150, 120, 8, -2)
-	_add_narrative(ARCHITECTURE_ATLAS, Rect2(1070, 400, 250, 310), square.position.x + 1165, 150, 125, &"saida_beta")
+	_add_narrative(ARCHITECTURE_ATLAS, Rect2(1070, 400, 250, 310), square.position.x + 1165, 150, 125, &"portao_selado")
 
 	var church: Rect2 = room_bounds[&"igreja_velha"]
 	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), church.position.x + 380, 150, 48, 40, 8, -1)
@@ -198,15 +200,18 @@ func _add_npc(id: StringName, name_value: String, dialogue: StringName, atlas_in
 	npc.atlas_index = atlas_index
 	npc.room_id = room_id
 	npc.idle_walk_radius = walk_radius
-	add_child(npc)
-	var bounds: Rect2 = room_bounds[room_id]
-	npc.position = Vector2(bounds.position.x + local_x, 138)
+	var actors := _ensure_room_layer(room_id, "Gameplay/Actors")
+	actors.add_child(npc)
+	npc.position = Vector2(local_x, 138)
 
 
 func _add_prop(texture: Texture2D, region: Rect2, x: float, baseline: float, target_width: float, walkable_width: float, walkable_height: float, z: int, surface_height := -1.0) -> AtlasWorldProp:
 	var prop := AtlasWorldProp.new().configure(texture, region, target_width, walkable_width, walkable_height, z, surface_height)
-	add_child(prop)
-	prop.position = Vector2(x, baseline)
+	prop.add_to_group("atlas_world_props")
+	var room := _room_for_world_x(x)
+	var parent := _ensure_runtime_layer(room, "Environment/RuntimeComposition") if room != null else self
+	parent.add_child(prop)
+	prop.global_position = Vector2(x, baseline)
 	return prop
 
 
@@ -224,9 +229,12 @@ func _add_roofed_building(region: Rect2, x: float, baseline: float, target_width
 func _add_narrative(texture: Texture2D, region: Rect2, x: float, baseline: float, target_width: float, dialogue: StringName) -> void:
 	var interactable := NarrativeInteractable.new()
 	interactable.dialogue_id = dialogue
+	interactable.enchanted_presence = dialogue == &"manifestacao"
 	interactable.configure_visual(texture, region, target_width)
-	add_child(interactable)
-	interactable.position = Vector2(x, baseline)
+	var room := _room_for_world_x(x)
+	var parent := _ensure_runtime_layer(room, "Gameplay/Interactables") if room != null else self
+	parent.add_child(interactable)
+	interactable.global_position = Vector2(x, baseline)
 
 
 func _production_scene_for(room_id: StringName) -> PackedScene:
@@ -299,10 +307,11 @@ func _build_metroidvania_routes() -> void:
 	add_child(wall_jump_pickup)
 	wall_jump_pickup.position = Vector2(church.position.x + 104.0, 130.0)
 
-	# Campanário: uma chaminé curta que exige alternar saltos nas paredes.
-	_add_traversal_platform(Vector2(church.position.x + 214.0, 117.0), Vector2(9.0, 66.0), true)
-	_add_traversal_platform(Vector2(church.position.x + 250.0, 117.0), Vector2(9.0, 66.0), true)
-	_add_traversal_platform(Vector2(church.position.x + 278.0, 54.0), Vector2(64.0, 8.0), true)
+	# Campanário: as próprias paredes da torre ensinam o quique. As colisões
+	# acompanham a alvenaria visível, sem pilares escuros sobrepostos à fachada.
+	_add_solid(Rect2(church.position.x + 208.0, 72.0, 6.0, 78.0))
+	_add_solid(Rect2(church.position.x + 252.0, 72.0, 6.0, 78.0))
+	_add_solid(Rect2(church.position.x + 208.0, 68.0, 50.0, 8.0))
 	_add_traversal_platform(Vector2(roofs.position.x + 18.0, 75.0), Vector2(54.0, 8.0), false)
 
 	# Fachadas autorais da Praça e da Igreja também obedecem à regra global:
@@ -351,8 +360,10 @@ func _add_traversal_platform(at: Vector2, size: Vector2, stone_style: bool, reve
 	platform.platform_size = size
 	platform.stone_style = stone_style
 	platform.reveal_ability = reveal_ability
-	add_child(platform)
-	platform.position = at
+	var room := _room_for_world_x(at.x)
+	var parent := _ensure_runtime_layer(room, "Geometry/RuntimeComposition") if room != null else self
+	parent.add_child(platform)
+	platform.global_position = at
 
 
 func _add_invisible_roof(rect: Rect2, wall_height: float) -> void:
@@ -365,8 +376,36 @@ func _add_lore_collectible(id: StringName, display_name: String, at: Vector2) ->
 	var collectible := LoreCollectible.new()
 	collectible.collectible_id = id
 	collectible.display_name = display_name
-	add_child(collectible)
-	collectible.position = at
+	var room := _room_for_world_x(at.x)
+	var parent := _ensure_runtime_layer(room, "Gameplay/Interactables") if room != null else self
+	parent.add_child(collectible)
+	collectible.global_position = at
+
+
+func _room_for_world_x(world_x: float) -> RoomController:
+	for room_id in room_bounds:
+		var bounds: Rect2 = room_bounds[room_id]
+		if world_x >= bounds.position.x and world_x < bounds.end.x:
+			return room_nodes.get(room_id) as RoomController
+	return null
+
+
+func _ensure_room_layer(room_id: StringName, path: String) -> Node2D:
+	return _ensure_runtime_layer(room_nodes.get(room_id) as RoomController, path)
+
+
+func _ensure_runtime_layer(room: RoomController, path: String) -> Node2D:
+	if room == null:
+		return self
+	var current: Node = room
+	for part in path.split("/"):
+		var child := current.get_node_or_null(part)
+		if child == null:
+			child = Node2D.new()
+			child.name = part
+			current.add_child(child)
+		current = child
+	return current as Node2D
 
 
 func _hide_authored_ground(room: RoomController) -> void:
@@ -484,9 +523,12 @@ func _add_solid(rect: Rect2) -> void:
 	var shape := RectangleShape2D.new()
 	shape.size = rect.size
 	collision.shape = shape
+	var room := _room_for_world_x(rect.get_center().x)
+	var parent := _ensure_runtime_layer(room, "Geometry/RuntimeComposition") if room != null else self
 	body.position = rect.get_center()
 	body.add_child(collision)
-	add_child(body)
+	parent.add_child(body)
+	body.global_position = rect.get_center()
 
 
 func _on_world_state_changed(region_id: StringName, _state: StringName) -> void:

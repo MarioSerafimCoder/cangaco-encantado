@@ -26,18 +26,26 @@ func _validate_world_graph(world: VilaGraybox) -> void:
 	var connectors := world.find_children("*", "WorldConnector", true, false)
 	var pickups := world.find_children("*", "AbilityPickup", true, false)
 	var upgrades := world.find_children("*", "PermanentUpgradePickup", true, false)
-	var platforms := world.find_children("*", "TraversalPlatform", true, false)
+	var platforms: Array[Node] = []
+	for candidate in world.find_children("*", "", true, false):
+		if candidate is TraversalPlatform:
+			platforms.append(candidate)
 	if connectors.size() < 4:
 		failures.append("O mapa não possui os dois pares de atalhos planejados.")
 	if pickups.size() < 2:
 		failures.append("A progressão não contém as duas habilidades de travessia.")
 	if upgrades.size() < 1:
 		failures.append("Nenhuma melhoria permanente foi colocada no retorno à Casa de Nilo.")
-	if platforms.size() < 6:
-		failures.append("A rota vertical possui plataformas insuficientes.")
+	var vertical_surface_count := platforms.size()
 	var min_y := 150.0
 	for platform in platforms:
-		min_y = minf(min_y, (platform as TraversalPlatform).position.y)
+		min_y = minf(min_y, (platform as TraversalPlatform).global_position.y)
+	for rect in world.solid_rects:
+		if rect.size.y <= 10.0 and rect.position.y < 150.0:
+			vertical_surface_count += 1
+			min_y = minf(min_y, rect.position.y)
+	if vertical_surface_count < 6:
+		failures.append("A rota vertical possui superfícies caminháveis insuficientes.")
 	if min_y > 60.0:
 		failures.append("As rotas continuam planas; nenhuma plataforma alcança a camada alta.")
 

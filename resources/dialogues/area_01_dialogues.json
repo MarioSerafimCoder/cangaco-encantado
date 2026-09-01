@@ -28,11 +28,11 @@
   "ferido": {"lines":[{"speaker":"RAIMUNDO","text":"Os homens armados passaram pela rua de baixo."},{"speaker":"RAIMUNDO","text":"Um ficou para trás, vigiando a carroça.","events":[{"type":"world_flag","id":"first_combat_unlocked","value":true}]}]},
   "sacristao": {"lines":[{"speaker":"IRMÃO TOMÉ","text":"O altar é seguro. A cripta, não."},{"speaker":"IRMÃO TOMÉ","text":"Se ouvir pedra arranhando pedra lá embaixo, volte."}]},
   "vigia": {"lines":[{"speaker":"ZÉ LINO","text":"No telhado, olhe antes de saltar. Toldo segura gente; fumaça, não."}]},
-  "viajante": {"lines":[{"speaker":"MARIANO","text":"Depois da serra há caminhos demais para um homem só."},{"speaker":"MARIANO","text":"Nesta versão da jornada, a estrada termina no portão da Vila."}]},
+  "viajante": {"lines":[{"speaker":"MARIANO","text":"Depois da serra há caminhos demais para um homem só."},{"speaker":"MARIANO","text":"O portão está selado. Primeiro descubra o que despertou sob a Vila."}]},
   "lembranca_nilo": {"lines":[{"speaker":"NILO","text":"O retrato está gasto nas bordas. Ainda lembro da voz dela."},{"speaker":"NILO","text":"Não posso deixar a Vila esquecer também.","events":[{"type":"dialogue_flag","id":"examined_family_keepsake","value":true}]}]},
   "manifestacao": {
     "variants":[{"conditions":{"world_flags":{"area01_encantado_discovered":true}},"lines":[{"speaker":"NILO","text":"A marca continua pulsando, mas agora mantém distância."}]}],
-    "lines":[{"speaker":"NILO","text":"Essa marca... não foi talhada por mãos comuns."},{"speaker":"NILO","text":"Por um instante, parece que ela me reconhece.","events":[{"type":"give_item","category":"collectibles","id":"fragmento_encantado","amount":1},{"type":"complete_area01"}]}]
+    "lines":[{"speaker":"NILO","text":"Essa marca... não foi talhada por mãos comuns."},{"speaker":"NILO","text":"O chão vibra no mesmo ritmo da marca. Há algo vivo sob a Vila."},{"speaker":"NILO","text":"Se ela me reconhece, preciso descobrir o motivo.","events":[{"type":"give_item","category":"collectibles","id":"fragmento_encantado","amount":1},{"type":"complete_area01"}]}]
   },
-  "saida_beta": {"lines":[{"speaker":"","text":"CAMINHO AINDA NÃO DISPONÍVEL NESTA VERSÃO."}]}
+  "portao_selado": {"lines":[{"speaker":"","text":"O PORTÃO ESTÁ SELADO POR DENTRO."}]}
 }

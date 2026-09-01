@@ -18,10 +18,12 @@ func _ready() -> void:
 	_validate_macroarea(world)
 	_validate_art_pipeline(world)
 	await _validate_home_opening(main, world, player)
+	await _validate_first_combat_onboarding(main, world)
 	_validate_npcs_and_dialogue(main, player)
 	_validate_shop_and_economy(main)
 	_validate_progression_and_save(main)
 	_validate_generated_assets()
+	_validate_diegetic_dialogue()
 	GameState.apply_dictionary(_game_snapshot)
 	WorldState.apply_dictionary(_world_snapshot)
 	SaveManager.autosave_enabled = true
@@ -56,6 +58,8 @@ func _validate_macroarea(world: VilaGraybox) -> void:
 			first_spawn = candidate
 	if first_spawn == null or first_spawn.activation_flag != &"first_combat_unlocked":
 		failures.append("O primeiro combate não está condicionado à conversa com o ferido.")
+	elif first_spawn.required_tutorial != &"melee":
+		failures.append("O primeiro inimigo deve aguardar a execução do tutorial do facão.")
 
 
 func _validate_art_pipeline(world: VilaGraybox) -> void:
@@ -65,7 +69,7 @@ func _validate_art_pipeline(world: VilaGraybox) -> void:
 	for room in get_tree().get_nodes_in_group("production_rooms"):
 		if (room as RoomController).authored_composition_width > 0.0 and (room as RoomController).get_method_list().any(func(method): return method.name == "_extend_authored_composition"):
 			failures.append("Duplicação automática de arquitetura voltou a ser usada.")
-	if world.find_children("*", "AtlasWorldProp", true, false).size() < 25:
+	if get_tree().get_nodes_in_group("atlas_world_props").size() < 25:
 		failures.append("A composição manual não cobre os setores com props suficientes.")
 	for npc in get_tree().get_nodes_in_group("npcs"):
 		var actor := npc as NPCActor
@@ -133,6 +137,40 @@ func _validate_npcs_and_dialogue(main: Node, player: NiloPlayer) -> void:
 		failures.append("Manifestação pode repetir a recompensa depois de concluída.")
 
 
+func _validate_first_combat_onboarding(main: Node, world: VilaGraybox) -> void:
+	var hud := main.get_node("HUD") as GameHUD
+	var first_spawn: EnemySpawn
+	for candidate in world.find_children("*", "EnemySpawn", true, false):
+		if (candidate as EnemySpawn).spawn_id == &"rua_saqueador_01":
+			first_spawn = candidate
+			break
+	if first_spawn == null:
+		failures.append("Spawn do primeiro combate ausente para validar o onboarding.")
+		return
+	WorldState.set_flag(&"first_combat_unlocked", false)
+	GameState.tutorial_flags.erase("melee")
+	await get_tree().process_frame
+	WorldState.set_flag(&"first_combat_unlocked", true)
+	await get_tree().process_frame
+	if first_spawn.has_live_enemy():
+		failures.append("O saqueador apareceu antes de Nilo executar o comando do facão.")
+	if hud.get("_tutorial_id") == &"jump":
+		Input.action_press("jump")
+		hud.call("_update_context_tutorial")
+		Input.action_release("jump")
+		await get_tree().process_frame
+	if hud.get("_tutorial_id") != &"melee":
+		failures.append("A conversa com Raimundo não encadeou o tutorial contextual do facão.")
+		return
+	Input.action_press("melee")
+	hud.call("_update_context_tutorial")
+	Input.action_release("melee")
+	await get_tree().process_frame
+	await get_tree().process_frame
+	if not first_spawn.has_live_enemy():
+		failures.append("O primeiro saqueador não apareceu depois que o facão foi aprendido.")
+
+
 func _validate_shop_and_economy(main: Node) -> void:
 	var director := main.get_node("DialogueDirector") as DialogueDirector
 	var shop := director.get("_shop_ui") as ShopUI
@@ -187,3 +225,10 @@ func _validate_generated_assets() -> void:
 			if image.get_pixelv(point).a > 0.02:
 				failures.append("Atlas ainda possui fundo opaco: %s." % path)
 				break
+
+
+func _validate_diegetic_dialogue() -> void:
+	var source := FileAccess.get_file_as_string("res://resources/dialogues/area_01_dialogues.json").to_lower()
+	for forbidden in ["nesta versão", "beta", "versão de teste"]:
+		if source.contains(forbidden):
+			failures.append("Diálogo da vila ainda quebra a quarta parede com: %s." % forbidden)

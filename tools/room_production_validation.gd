@@ -47,6 +47,7 @@ func _ready() -> void:
 		await _validate_player_baseline(by_id[&"rua_cinzas"])
 	if by_id.has(&"telhados"):
 		_validate_roof_collisions(by_id[&"telhados"])
+		_validate_spawns(by_id[&"telhados"], 1)
 	if by_id.has(&"barracos"):
 		_validate_spawns(by_id[&"barracos"], 2)
 	if by_id.has(&"armazem"):
@@ -228,9 +229,9 @@ func _validate_dynamic_traversal(world: VilaGraybox) -> void:
 	for room_id in minimums:
 		var bounds: Rect2 = world.room_bounds[room_id]
 		var walkable_count := 0
-		for candidate in world.find_children("*", "AtlasWorldProp", false, false):
+		for candidate in get_tree().get_nodes_in_group("atlas_world_props"):
 			var prop := candidate as AtlasWorldProp
-			if not bounds.has_point(prop.position) or prop.collision_layer == 0:
+			if not bounds.has_point(prop.global_position) or prop.collision_layer == 0:
 				continue
 			walkable_count += 1
 			var collision: CollisionShape2D
@@ -280,9 +281,9 @@ func _validate_representative_platform_landings(world: VilaGraybox) -> void:
 	for room_id in [&"rua_cinzas", &"barracos", &"telhados"]:
 		var bounds: Rect2 = world.room_bounds[room_id]
 		var candidates: Array[Dictionary] = []
-		for candidate in world.find_children("*", "AtlasWorldProp", false, false):
+		for candidate in get_tree().get_nodes_in_group("atlas_world_props"):
 			var prop := candidate as AtlasWorldProp
-			if bounds.has_point(prop.position) and prop.collision_layer != 0 and prop.walkable_surface_height <= jump_height - 2.0:
+			if bounds.has_point(prop.global_position) and prop.collision_layer != 0 and prop.walkable_surface_height <= jump_height - 2.0:
 				candidates.append({"position": prop.global_position, "surface_height": prop.walkable_surface_height})
 		for surface in _authored_walkable_surfaces(room_id):
 			if float(surface["surface_height"]) <= jump_height - 2.0:

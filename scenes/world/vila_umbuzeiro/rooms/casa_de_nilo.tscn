@@ -76,6 +76,7 @@ size = Vector2(640, 480)
 script = ExtResource("1_room")
 room_id = &"casa_nilo"
 display_name = "01 CASA DE NILO"
+camera_profile = "interior"
 local_bounds = Rect2(0, -120, 640, 480)
 camera_bounds = Rect2(0, -120, 640, 480)
 authored_composition_width = 640.0
@@ -129,6 +130,11 @@ z_index = -40
 texture_filter = 1
 position = Vector2(320, 120)
 texture = SubResource("GradientTexture_home")
+
+[node name="CeilingCap" type="Polygon2D" parent="Environment/Architecture/Interior"]
+z_index = -11
+polygon = PackedVector2Array(0, -120, 640, -120, 640, -35, 0, -35)
+color = Color(0.105, 0.067, 0.045, 1)
 
 [node name="BackWall" type="Sprite2D" parent="Environment/Architecture/Interior" unique_id=1918163430]
 z_index = -9
@@ -186,6 +192,26 @@ region_filter_clip_enabled = true
 z_index = -6
 texture_filter = 1
 position = Vector2(480, 190.808)
+scale = Vector2(0.648, 0.648)
+texture = ExtResource("6_architecture")
+region_enabled = true
+region_rect = Rect2(90, 697, 500, 158)
+region_filter_clip_enabled = true
+
+[node name="FloorWestLower" type="Sprite2D" parent="Environment/Architecture/Interior/Floor"]
+z_index = -6
+texture_filter = 1
+position = Vector2(160, 293.2)
+scale = Vector2(0.648, 0.648)
+texture = ExtResource("6_architecture")
+region_enabled = true
+region_rect = Rect2(90, 697, 500, 158)
+region_filter_clip_enabled = true
+
+[node name="FloorEastLower" type="Sprite2D" parent="Environment/Architecture/Interior/Floor"]
+z_index = -6
+texture_filter = 1
+position = Vector2(480, 293.2)
 scale = Vector2(0.648, 0.648)
 texture = ExtResource("6_architecture")
 region_enabled = true

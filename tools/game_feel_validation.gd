@@ -37,17 +37,20 @@ func _validate_continuous_run(nilo: NiloPlayer) -> void:
 	var start_contacts := visual.foot_contact_count
 	var phase_advanced := false
 	var bob_matches_phase := true
-	var ran_before_two_seconds := false
+	var reached_full_speed_at := -1.0
+	var speed_during_first_three_frames := 0.0
 	var previous_phase := visual.run_phase
 	Input.action_press("move_right")
-	for _frame in 180:
+	for frame in 90:
 		await get_tree().physics_frame
+		if frame < 3:
+			speed_during_first_three_frames = maxf(speed_during_first_three_frames, absf(nilo.velocity.x))
+		if reached_full_speed_at < 0.0 and absf(nilo.velocity.x) >= nilo.config.move_speed * 0.95:
+			reached_full_speed_at = float(frame + 1) / 60.0
 		if visual.locomotion_frame >= 4 and visual.locomotion_frame <= 7:
 			seen_walk_frames[visual.locomotion_frame] = true
 		elif visual.locomotion_frame >= 8 and visual.locomotion_frame <= 11:
 			seen_run_frames[visual.locomotion_frame] = true
-		if nilo.movement.movement_hold_time < nilo.config.run_hold_duration - 0.02 and nilo.movement.running_active:
-			ran_before_two_seconds = true
 		if not is_equal_approx(previous_phase, visual.run_phase):
 			phase_advanced = true
 		previous_phase = visual.run_phase
@@ -59,12 +62,14 @@ func _validate_continuous_run(nilo: NiloPlayer) -> void:
 	var automatic_run_speed := absf(nilo.velocity.x)
 	var jump_did_not_accelerate := automatic_run_speed <= nilo.config.move_speed * 1.05 and not InputMap.has_action("sprint")
 	Input.action_release("move_right")
-	if seen_walk_frames.size() != 4:
-		failures.append("Caminhada deveria percorrer 4 frames antes da corrida; observados: %s" % [seen_walk_frames.keys()])
+	if seen_walk_frames.size() < 2:
+		failures.append("A aceleração deveria mostrar a caminhada antes da corrida; observados: %s" % [seen_walk_frames.keys()])
 	if seen_run_frames.size() != 4:
-		failures.append("Corrida deveria percorrer 4 frames após 2 segundos; observados: %s" % [seen_run_frames.keys()])
-	if ran_before_two_seconds:
-		failures.append("Corrida foi ativada antes de 2 segundos de movimento contínuo.")
+		failures.append("A corrida deveria percorrer os 4 frames ao atingir velocidade; observados: %s" % [seen_run_frames.keys()])
+	if speed_during_first_three_frames <= 0.0:
+		failures.append("O início do movimento não respondeu nos três primeiros frames físicos.")
+	if reached_full_speed_at < 0.35 or reached_full_speed_at > 0.55:
+		failures.append("A velocidade máxima deve chegar entre 0,35 s e 0,55 s; medida: %.3f s." % reached_full_speed_at)
 	if not phase_advanced:
 		failures.append("run_phase não avançou continuamente durante a corrida.")
 	if not bob_matches_phase:
@@ -72,7 +77,7 @@ func _validate_continuous_run(nilo: NiloPlayer) -> void:
 	if visual.foot_contact_count - start_contacts < 2:
 		failures.append("Corrida não registrou contatos de pé suficientes para sincronizar poeira.")
 	if automatic_run_speed < nilo.config.move_speed * 0.9:
-		failures.append("A corrida automática não alcançou a velocidade esperada.")
+		failures.append("A aceleração progressiva não alcançou a velocidade esperada.")
 	if not jump_did_not_accelerate:
 		failures.append("Espaço ainda acelerou horizontalmente durante a corrida.")
 

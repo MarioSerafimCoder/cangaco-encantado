@@ -6,7 +6,9 @@
 script = ExtResource("1")
 move_speed = 120.0
 walk_speed_multiplier = 0.58
-run_hold_duration = 2.0
+time_to_max_speed = 0.46
+run_animation_threshold = 0.76
+direction_change_multiplier = 1.35
 ground_acceleration = 1400.0
 ground_deceleration = 1800.0
 air_control = 0.75

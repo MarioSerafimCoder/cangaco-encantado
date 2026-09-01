@@ -17,6 +17,7 @@ var _sprite: Sprite2D
 
 
 func _ready() -> void:
+	add_to_group("traversal_platforms")
 	collision_layer = 1
 	collision_mask = 0
 	_collision = get_node_or_null("CollisionShape2D") as CollisionShape2D

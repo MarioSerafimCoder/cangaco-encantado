@@ -61,7 +61,13 @@ func _update_composition(delta: float, immediate := false) -> void:
 	var profile_horizontal := maximum_horizontal_look_ahead
 	var profile_up := ascending_look_ahead
 	var profile_down := falling_look_ahead
+	var profile_vertical_base := base_vertical_offset
 	match profile:
+		"interior":
+			profile_horizontal = 38.0
+			profile_up = 0.0
+			profile_down = 0.0
+			profile_vertical_base = 0.0
 		"rooftops":
 			profile_horizontal = 76.0
 			profile_up = -48.0
@@ -79,10 +85,10 @@ func _update_composition(delta: float, immediate := false) -> void:
 		horizontal_target = player.facing * lerpf(minf(54.0, profile_horizontal), profile_horizontal, smoothstep(0.15, 1.0, speed_ratio))
 	var vertical_target := 0.0
 	var has_vertical_intent := false
-	if not player.is_on_floor() and player.velocity.y < -145.0:
+	if profile != "interior" and not player.is_on_floor() and player.velocity.y < -145.0:
 		vertical_target = profile_up
 		has_vertical_intent = true
-	elif not player.is_on_floor() and player.velocity.y > 155.0:
+	elif profile != "interior" and not player.is_on_floor() and player.velocity.y > 155.0:
 		vertical_target = profile_down
 		has_vertical_intent = true
 	if has_vertical_intent:
@@ -95,7 +101,7 @@ func _update_composition(delta: float, immediate := false) -> void:
 	var vertical_response := 1.0 if immediate else 1.0 - exp(-delta * (3.2 if vertical_target != 0.0 else 2.6))
 	_horizontal_look = lerpf(_horizontal_look, horizontal_target, horizontal_response)
 	_vertical_look = lerpf(_vertical_look, vertical_target, vertical_response)
-	camera.position = Vector2(round(_horizontal_look), round(base_vertical_offset + _vertical_look))
+	camera.position = Vector2(round(_horizontal_look), round(profile_vertical_base + _vertical_look))
 
 
 func _select_room(immediate: bool, teleported := false) -> void:

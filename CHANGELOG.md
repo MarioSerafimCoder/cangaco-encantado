@@ -1,5 +1,19 @@
 # Changelog
 
+## Polimento da experiência inicial — 0.4.3
+
+- Substituída a espera rígida de dois segundos por aceleração progressiva até a velocidade máxima em aproximadamente 0,46 s, com frenagem curta e inversão mais responsiva.
+- WALK e RUN agora seguem a velocidade horizontal real e compartilham a mesma fase de passos, sem reiniciar a animação ao cruzar a faixa de corrida.
+- O onboarding da Rua foi reordenado: salto, conversa com Raimundo, apresentação do facão e só então surgimento do primeiro saqueador.
+- A pistola deixou a Praça e aparece contextualmente na segunda metade da Igreja; o rifle é apresentado na rota dos Telhados antes do pistoleiro elevado.
+- A Praça ganhou o umbu como centro visual e a Igreja deixou de sobrepor pilares subterrâneos escuros à fachada do campanário.
+- A Casa recebeu fechamento superior e extensão modular do piso; sua câmera usa um perfil interior mais contido.
+- Telhados ganhou um inimigo na rota alta, mantendo trecho seguro para aquisição e prática do Passo da Pedra.
+- Objetivos temporários foram compactados e deslocados para a margem superior direita, fora do centro da ação.
+- Complementos runtime de arte, colisão, moradores e colecionáveis passaram a ficar organizados sob a hierarquia da respectiva sala.
+- Diálogos que mencionavam “versão” ou “beta” foram reescritos de forma diegética; a manifestação final ganhou texto adicional e pulsação visual com arte já existente.
+- A revisão visual passou a registrar treze momentos consecutivos da experiência inicial, da Casa ao clímax, em 1920×1080.
+
 ## Proteção de edição visual — Casa de Nilo e Rua das Cinzas
 
 - Restauradas as colisões, os gatilhos de câmera, os fades das portas e os componentes apagados acidentalmente nas duas primeiras cenas.

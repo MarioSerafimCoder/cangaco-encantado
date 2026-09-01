@@ -8,8 +8,8 @@ Abra o projeto no Godot e pressione **F6** para executar a cena atual ou **F5** 
 
 | Comando | Tecla | Uso |
 |---|---|---|
-| Andar/correr para a esquerda | `A` ou `←` | Anda para a esquerda e corre depois de manter por 2 segundos; a corrida aumenta o alcance do salto. |
-| Andar/correr para a direita | `D` ou `→` | Anda para a direita e corre depois de manter por 2 segundos; a corrida aumenta o alcance do salto. |
+| Andar/correr para a esquerda | `A` ou `←` | Acelera progressivamente para a esquerda e atinge a corrida em cerca de 0,46 s; a corrida aumenta o alcance do salto. |
+| Andar/correr para a direita | `D` ou `→` | Acelera progressivamente para a direita e atinge a corrida em cerca de 0,46 s; a corrida aumenta o alcance do salto. |
 | Direção para cima | `W` ou `↑` | Combina com mira ou facão. |
 | Direção para baixo | `S` ou `↓` | Fast fall no ar e ataque descendente. |
 | Pular | `Espaço` | Segure para um salto mais alto; solte cedo para salto curto. |

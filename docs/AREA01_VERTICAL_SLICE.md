@@ -9,11 +9,11 @@ O áudio não faz parte desta entrega. Música, efeitos e mixagem ficam reservad
 ## Fluxo
 
 1. Nilo desperta em uma casa delimitada por paredes, recebe orientação contextual, pode examinar uma lembrança e usa a porta para sair à Rua das Cinzas.
-2. O primeiro combate é liberado depois de encontrar o morador ferido.
-3. A Praça do Umbu funciona como centro seguro, com moradores e mercador.
-4. Igreja, Telhados, Cripta, Subterrâneo, Grutas e Poço apresentam rotas verticais, habilidades e atalhos.
+2. Na Rua, Nilo aprende o salto, encontra Raimundo, recebe a apresentação do facão e só então enfrenta o primeiro saqueador.
+3. Vila Baixa combina obstáculos e combate já aprendido; a Praça do Umbu funciona como centro seguro, com moradores e mercador.
+4. A Igreja concede o Passo da Pedra e apresenta a pistola somente depois da travessia inicial; os Telhados introduzem o rifle antes do inimigo da rota alta.
 5. As cavernas aprofundam a exploração e conduzem ao Santuário.
-6. A manifestação conclui a área sem chefe, muda o estado da Vila e libera retorno rápido e saída segura do beta.
+6. A manifestação conclui a área sem chefe, muda o estado da Vila e libera retorno rápido por uma saída diegética.
 
 ## Sistemas entregues
 
@@ -24,7 +24,7 @@ O áudio não faz parte desta entrega. Música, efeitos e mixagem ficam reservad
 - Quatro cordéis colecionáveis e um coração permanente secreto.
 - Três checkpoints, atalhos persistentes e diário navegável com mapa, inventário, habilidades e amuletos.
 - Save para progressão, moeda, inventário, compras, estados de NPC, diálogos, áreas, salas e atalhos.
-- Encerramento de beta que não deixa o jogador preso e não cria um chefe na Área 01.
+- Encerramento da demonstração que não deixa o jogador preso, permanece diegético dentro do mundo e não cria um chefe na Área 01.
 
 ## Arte
 
@@ -37,7 +37,7 @@ Volumes geométricos simples são usados apenas para colisão e depuração. A a
 - `res://tools/area01_vertical_slice_validation.tscn`: fluxo, porta da casa, tutorial, recortes de NPCs, diálogo, loja, economia, conclusão e persistência.
 - `res://tools/boot_menu_validation.tscn`: abertura determinística do menu inicial, pausa do mundo e visibilidade correta do HUD.
 - `res://tools/room_production_validation.tscn`: estrutura das treze salas, bounds, chão, entradas, câmera e pousos reais em caixas/carroças/telhados.
-- `res://tools/area01_visual_review.tscn`: quinze capturas 1920x1080 em `prints_do_jogo/area_01_vertical_slice/`, incluindo menu inicial, pausa e conferência de oclusão na Rua.
+- `res://tools/area01_visual_review.tscn`: capturas 1920x1080 em `prints_do_jogo/area_01_vertical_slice/`, incluindo a sequência principal de treze imagens da Casa ao clímax, menu inicial, pausa e estados de UI.
 - `tools/validate_project.ps1`: suíte automatizada consolidada.
 
 O fechamento da beta ainda requer uma sessão manual completa com teclado e gamepad para calibrar duração, dificuldade e economia com observação humana.

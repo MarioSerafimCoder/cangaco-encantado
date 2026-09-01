@@ -10,6 +10,7 @@ enum RespawnBehavior { ON_ROOM_LOAD, ON_WORLD_RESET, NEVER }
 @export var patrol_radius := -1.0
 @export var respawn_behavior := RespawnBehavior.ON_ROOM_LOAD
 @export var activation_flag: StringName
+@export var required_tutorial: StringName
 
 var spawned_enemy: EnemyBase
 
@@ -18,6 +19,7 @@ func _ready() -> void:
 	add_to_group("enemy_spawn_points")
 	EventBus.world_state_changed.connect(_on_world_state_changed)
 	EventBus.world_flag_changed.connect(_on_world_flag_changed)
+	EventBus.tutorial_completed.connect(_on_tutorial_completed)
 	_refresh_spawn.call_deferred()
 
 
@@ -27,7 +29,8 @@ func has_live_enemy() -> bool:
 
 func _refresh_spawn() -> void:
 	var flag_allows := activation_flag.is_empty() or bool(WorldState.flags.get(String(activation_flag), false))
-	var should_be_active := flag_allows and (not active_if_occupied or not WorldState.is_vila_liberated())
+	var tutorial_allows := required_tutorial.is_empty() or GameState.tutorial_learned(required_tutorial)
+	var should_be_active := flag_allows and tutorial_allows and (not active_if_occupied or not WorldState.is_vila_liberated())
 	if not should_be_active:
 		if has_live_enemy():
 			spawned_enemy.queue_free()
@@ -51,4 +54,9 @@ func _on_world_state_changed(region_id: StringName, _state: StringName) -> void:
 
 func _on_world_flag_changed(flag_id: StringName, _value: bool) -> void:
 	if flag_id == activation_flag:
+		_refresh_spawn.call_deferred()
+
+
+func _on_tutorial_completed(tutorial_id: StringName) -> void:
+	if tutorial_id == required_tutorial:
 		_refresh_spawn.call_deferred()

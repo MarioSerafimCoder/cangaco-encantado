@@ -13,7 +13,7 @@ signal player_exited(room_id: StringName)
 @export var repeat_platform_geometry := false
 @export var occupied_tint := Color("f0e6db")
 @export var liberated_tint := Color("fff8e9")
-@export_enum("surface", "rooftops", "underground", "cavern") var camera_profile := "surface"
+@export_enum("surface", "interior", "rooftops", "underground", "cavern") var camera_profile := "surface"
 @export var suppress_authored_environment := false
 @export var round_authored_sprite_positions := true
 

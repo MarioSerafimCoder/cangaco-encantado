@@ -39,6 +39,7 @@ func _ready() -> void:
 	EventBus.player_ammo_changed.connect(_on_ammo_changed)
 	EventBus.player_heal_charges_changed.connect(_on_heals_changed)
 	EventBus.room_entered.connect(_on_room_entered)
+	EventBus.world_flag_changed.connect(_on_world_flag_changed)
 	_on_health_changed(GameState.player_health, 5)
 	_on_ammo_changed(&"pistol", 8, 8)
 	_on_ammo_changed(&"rifle", 4, 4)
@@ -59,6 +60,7 @@ func _process(delta: float) -> void:
 		player = get_tree().get_first_node_in_group("player") as NiloPlayer
 	if player != null:
 		player_status.bind_player(player)
+		_update_spatial_tutorials()
 		if debug_visible:
 			debug_label.text = "%s\nPOS %d,%d  VEL %d,%d" % [
 				player.state_machine.state_name(),
@@ -244,6 +246,7 @@ func _begin_context_tutorial(tutorial_id: StringName, action: StringName, verb: 
 
 
 func _complete_context_tutorial() -> void:
+	var completed_id := _tutorial_id
 	GameState.mark_tutorial_learned(_tutorial_id)
 	if _tutorial_id == &"move":
 		opening_guide_stage = 1
@@ -253,17 +256,43 @@ func _complete_context_tutorial() -> void:
 	opening_guide_active = false
 	help_fade = 0.0
 	help_panel.visible = false
+	if completed_id != &"melee":
+		_try_begin_first_combat_tutorial.call_deferred()
 
 
 func _queue_room_tutorial(room_id: StringName) -> void:
 	match room_id:
 		&"rua_cinzas":
 			_begin_context_tutorial(&"jump", &"jump", "PULAR")
-		&"barracos":
-			_begin_context_tutorial(&"melee", &"melee", "ATACAR COM FACÃO")
-		&"praca_umbu":
-			_begin_context_tutorial(&"pistol", &"shoot_pistol", "ATIRAR COM PISTOLA")
-		&"igreja_velha":
-			_begin_context_tutorial(&"rifle", &"shoot_rifle", "ATIRAR COM RIFLE")
 		&"posto":
 			_begin_context_tutorial(&"special", &"special_attack", "ATAQUE ESPECIAL")
+
+
+func _on_world_flag_changed(flag_id: StringName, value: bool) -> void:
+	if flag_id == &"first_combat_unlocked" and value:
+		_try_begin_first_combat_tutorial()
+
+
+func _try_begin_first_combat_tutorial() -> void:
+	if bool(WorldState.flags.get("first_combat_unlocked", false)):
+		_begin_context_tutorial(&"melee", &"melee", "ATACAR COM FACÃO")
+
+
+func _update_spatial_tutorials() -> void:
+	if player == null or not _tutorial_id.is_empty() or get_tree().paused:
+		return
+	var room_id := GameState.current_room_id
+	if room_id not in [&"igreja_velha", &"telhados"]:
+		return
+	var active_room: RoomController
+	for candidate in get_tree().get_nodes_in_group("production_rooms"):
+		if (candidate as RoomController).room_id == room_id:
+			active_room = candidate as RoomController
+			break
+	if active_room == null:
+		return
+	var local_x := active_room.to_local(player.global_position).x
+	if room_id == &"igreja_velha" and local_x >= 520.0:
+		_begin_context_tutorial(&"pistol", &"shoot_pistol", "ATIRAR COM PISTOLA")
+	elif room_id == &"telhados" and local_x >= 720.0:
+		_begin_context_tutorial(&"rifle", &"shoot_rifle", "ATIRAR COM RIFLE")

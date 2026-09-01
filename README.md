@@ -48,7 +48,7 @@ Os scripts de gameplay usam somente ações do `InputMap`; nenhum controle depen
 ## Vertical slice atual
 
 - Treze salas contínuas formam a macroárea: Casa de Nilo, Rua das Cinzas, Vila Baixa, Praça, Igreja, Telhados, Cripta, Subterrâneo, Grutas, Poço, Caverna Rasa, Caverna Profunda e Santuário.
-- Nilo possui locomoção chibi, caminhada, transição automática para corrida após dois segundos, salto variável, salto de parede, investida e câmera 640x360 com transições suaves. Espaço/A é exclusivo do salto.
+- Nilo possui locomoção chibi com aceleração progressiva até a corrida em cerca de 0,46 s, frenagem rápida, inversão responsiva, salto variável, salto de parede, investida e câmera 640x360 com transições suaves. Espaço/A é exclusivo do salto.
 - Combate completo com pistola, rifle, facão, especial, postura, antecipação inimiga, linha de visão e projéteis bloqueados pelo cenário.
 - Oito moradores têm diálogo contextual; a Praça funciona como centro seguro e abriga uma loja com cinco itens.
 - Moeda, inventário, compras únicas, estados de NPC, diálogos, habilidades, atalhos, colecionáveis e sala atual persistem no save.
@@ -107,7 +107,7 @@ No PowerShell:
 powershell -ExecutionPolicy Bypass -File tools/validate_project.ps1
 ```
 
-O teste automatizado específico de game feel também pode ser executado com a cena `res://tools/game_feel_validation.tscn`. Ele valida a corrida automática sem acelerador manual, bob, contatos de pé, virada, fases do salto, pouso, hurtbox agachado, disparo semiautomático, buffer/variante do facão, orientação do projétil, configuração de hitstop e HUD temporário.
+O teste automatizado específico de game feel também pode ser executado com a cena `res://tools/game_feel_validation.tscn`. Ele valida a curva de aceleração de 0,35–0,55 s, sincronização de caminhada/corrida com a velocidade, bob, contatos de pé, virada, fases do salto, pouso, hurtbox agachado, disparo semiautomático, buffer/variante do facão, orientação do projétil, configuração de hitstop e HUD temporário.
 
 O passe de UI/UX possui validação dedicada em `res://tools/ui_ux_polish_validation.tscn`, cobrindo glyphs, onboarding persistente, origem do Diário, layout de diálogo, foco da loja, fila de notificações, compatibilidade de save e componentes do design system.
 

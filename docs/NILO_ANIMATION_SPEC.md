@@ -21,15 +21,15 @@ Chapéu, arma, facão, clarão e poeira devem permanecer dentro da área segura.
 | Linha | Estado | Frames | Observação |
 |---:|---|---:|---|
 | 0 | `IDLE` | 4 | respiração discreta; pés imóveis |
-| 1 | `WALK` | 4 | caminhada antes de completar 2 segundos |
-| 2 | `RUN` | 4 | corrida depois de completar 2 segundos |
+| 1 | `WALK` | 4 | faixa inicial e intermediária da aceleração |
+| 2 | `RUN` | 4 | faixa alta da velocidade real, sem espera rígida |
 | 3 | `DEATH` | 4 | queda, chão e repouso |
 
 Combate deve ficar em outra folha 4×4, mantendo célula, pivot, direção e baseline: linha 0 para pistola, linha 1 para rifle, linha 2 para facão e linha 3 para ataque especial. Turn, salto, queda, pouso, agachamento e dano podem ocupar folhas adicionais quando receberem arte própria.
 
 ## Corrida
 
-Os contatos principais ocorrem nos frames 0 e 2. Nesses frames, o pé plantado deve permanecer na baseline. Frames de passagem elevam discretamente o corpo, sem transformar a corrida em pequenos saltos. O `run_phase` continua sendo a fonte de sincronização para frame, poeira e contato.
+Os contatos principais ocorrem nos frames 0 e 2. Nesses frames, o pé plantado deve permanecer na baseline. Frames de passagem elevam discretamente o corpo, sem transformar a corrida em pequenos saltos. O `run_phase` continua sendo a fonte de sincronização para frame, poeira e contato. A troca WALK→RUN ocorre pela velocidade horizontal real e preserva a fase do passo, evitando reinício visível da animação.
 
 ## Exceção da folha 0.2.6
 

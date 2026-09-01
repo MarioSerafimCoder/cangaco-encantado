@@ -23,21 +23,29 @@ func _ready() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUTPUT_DIRECTORY))
 	_freeze_enemies()
 	await _capture_front_end(main)
+	NotificationManager.set_suppressed(true)
 	await _capture_room(world, nilo, camera, hud, &"casa_nilo", "01_casa_de_nilo.png")
 	await _capture_context_tutorials(world, nilo, camera, hud)
 	await _capture_home_exit(world, nilo, camera, hud)
 	await _capture_street_clearance(world, nilo, camera, hud)
+	await _capture_raimundo(main, world, nilo, camera, hud)
+	await _capture_first_combat(world, nilo, camera, hud)
+	await _capture_street_final(world, nilo, camera, hud)
 	await _capture_hud_states(world, nilo, camera, hud)
-	await _capture_room(world, nilo, camera, hud, &"barracos", "02_vila_baixa.png")
-	await _capture_room(world, nilo, camera, hud, &"praca_umbu", "03_praca_do_umbu.png")
+	await _capture_room(world, nilo, camera, hud, &"barracos", "07_vila_baixa.png")
+	await _capture_room(world, nilo, camera, hud, &"praca_umbu", "08_praca_do_umbu.png")
 	await _capture_shop(main, world, nilo, camera, hud)
 	await _capture_dialogue(main, world, nilo, camera, hud)
-	await _capture_room(world, nilo, camera, hud, &"igreja_velha", "06_igreja_e_cemiterio.png")
-	await _capture_room(world, nilo, camera, hud, &"telhados", "07_telhados.png")
+	await _capture_room(world, nilo, camera, hud, &"igreja_velha", "09_igreja_e_cemiterio.png")
+	await _capture_ability_acquisition(world, nilo, camera, hud)
+	await _capture_room(world, nilo, camera, hud, &"telhados", "10_telhados.png")
+	await _capture_roof_traversal(world, nilo, camera, hud)
 	await _capture_room(world, nilo, camera, hud, &"patio", "08_subterraneo.png")
 	await _capture_room(world, nilo, camera, hud, &"beco", "09_grutas.png")
 	await _capture_room(world, nilo, camera, hud, &"arena", "10_caverna_santuario.png")
+	await _capture_manifestation(main, world, nilo, camera, hud)
 	await _capture_character_menu(main)
+	NotificationManager.set_suppressed(false)
 	await _capture_notification()
 	SaveManager.autosave_enabled = true
 	if _capture_failed:
@@ -75,10 +83,11 @@ func _capture_room(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: 
 	camera.limit_right = roundi(bounds.end.x)
 	camera.limit_top = -120
 	camera.limit_bottom = 360
-	camera.position = Vector2.ZERO
+	camera.position = Vector2.ZERO if room_id == &"casa_nilo" else Vector2(0, -42)
 	camera.position_smoothing_enabled = false
 	hud.room_fade = 0.0
 	hud.help_fade = 0.0
+	_hide_review_overlays(hud)
 	await _wait_frames(18)
 	await _capture(OUTPUT_DIRECTORY.path_join(file_name))
 
@@ -97,7 +106,7 @@ func _capture_home_exit(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, 
 	hud.room_fade = 0.0
 	hud.help_fade = 0.0
 	await _wait_frames(16)
-	await _capture(OUTPUT_DIRECTORY.path_join("01b_porta_de_saida_da_casa.png"))
+	await _capture(OUTPUT_DIRECTORY.path_join("02_saida_da_casa.png"))
 
 
 func _capture_street_clearance(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: GameHUD) -> void:
@@ -108,13 +117,66 @@ func _capture_street_clearance(world: VilaGraybox, nilo: NiloPlayer, camera: Cam
 	camera.limit_right = roundi(bounds.end.x)
 	camera.limit_top = -120
 	camera.limit_bottom = 360
-	camera.position = Vector2.ZERO
+	camera.position = Vector2(0, -42)
 	camera.position_smoothing_enabled = false
 	camera.reset_smoothing()
 	hud.room_fade = 0.0
 	hud.help_fade = 0.0
 	await _wait_frames(16)
-	await _capture(OUTPUT_DIRECTORY.path_join("01c_rua_das_cinzas_sem_oclusao.png"))
+	await _capture(OUTPUT_DIRECTORY.path_join("03_rua_inicio.png"))
+
+
+func _capture_raimundo(main: Node, world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: GameHUD) -> void:
+	var street := world.room_nodes[&"rua_cinzas"] as RoomController
+	var raimundo := street.get_node("Gameplay/Actors/Raimundo") as NPCActor
+	nilo.global_position = raimundo.global_position + Vector2(-36, 0)
+	nilo.velocity = Vector2.ZERO
+	EventBus.room_entered.emit(&"rua_cinzas", "")
+	_set_review_camera(camera, world.room_bounds[&"rua_cinzas"])
+	hud.room_fade = 0.0
+	hud.help_fade = 0.0
+	var director := main.get_node("DialogueDirector") as DialogueDirector
+	director.start(&"ferido", raimundo)
+	await _wait_frames(3)
+	var text_label := director.get("_text_label") as Label
+	text_label.visible_characters = text_label.text.length()
+	await _wait_frames(2)
+	await _capture(OUTPUT_DIRECTORY.path_join("04_conversa_com_raimundo.png"))
+	director.call("_finish")
+	NotificationManager.set_suppressed(true)
+
+
+func _capture_first_combat(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: GameHUD) -> void:
+	GameState.mark_tutorial_learned(&"melee")
+	WorldState.set_flag(&"first_combat_unlocked", true)
+	await _wait_frames(4)
+	var bounds: Rect2 = world.room_bounds[&"rua_cinzas"]
+	nilo.global_position = Vector2(bounds.position.x + 478, 138)
+	nilo.velocity = Vector2.ZERO
+	EventBus.room_entered.emit(&"rua_cinzas", "")
+	_set_review_camera(camera, bounds)
+	hud.set("_tutorial_id", &"")
+	hud.opening_guide_active = false
+	_hide_review_overlays(hud)
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		if bounds.has_point((enemy as Node2D).global_position):
+			enemy.process_mode = Node.PROCESS_MODE_DISABLED
+	nilo.combat.request_melee_input()
+	await _wait_frames(4)
+	await _capture(OUTPUT_DIRECTORY.path_join("05_primeiro_combate.png"))
+
+
+func _capture_street_final(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: GameHUD) -> void:
+	var bounds: Rect2 = world.room_bounds[&"rua_cinzas"]
+	nilo.state_machine.request(PlayerStateMachine.State.IDLE, 0.0, true)
+	nilo.global_position = Vector2(bounds.position.x + 1090, 138)
+	nilo.velocity = Vector2.ZERO
+	_set_review_camera(camera, bounds)
+	hud.room_fade = 0.0
+	hud.help_fade = 0.0
+	_hide_review_overlays(hud)
+	await _wait_frames(12)
+	await _capture(OUTPUT_DIRECTORY.path_join("06_rua_final.png"))
 
 
 func _capture_shop(main: Node, world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: GameHUD) -> void:
@@ -125,6 +187,7 @@ func _capture_shop(main: Node, world: VilaGraybox, nilo: NiloPlayer, camera: Cam
 	await _wait_frames(4)
 	await _capture(OUTPUT_DIRECTORY.path_join("04_mercador_loja.png"))
 	shop.close()
+	NotificationManager.set_suppressed(true)
 
 
 func _capture_dialogue(main: Node, world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: GameHUD) -> void:
@@ -148,6 +211,7 @@ func _capture_dialogue(main: Node, world: VilaGraybox, nilo: NiloPlayer, camera:
 		text_label.visible_characters = text_label.text.length()
 		await _capture(OUTPUT_DIRECTORY.path_join("05b_dialogo_com_escolhas.png"))
 		director.call("_finish")
+		NotificationManager.set_suppressed(true)
 
 
 func _position_in_square(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: GameHUD) -> void:
@@ -159,12 +223,98 @@ func _position_in_square(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D,
 	camera.limit_right = roundi(bounds.end.x)
 	camera.limit_top = -120
 	camera.limit_bottom = 360
-	camera.position = Vector2.ZERO
+	camera.position = Vector2(0, -42)
 	camera.position_smoothing_enabled = false
 	camera.reset_smoothing()
 	hud.room_fade = 0.0
 	hud.help_fade = 0.0
 	await _wait_frames(16)
+
+
+func _capture_ability_acquisition(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: GameHUD) -> void:
+	var pickup: AbilityPickup
+	for candidate in world.find_children("*", "AbilityPickup", true, false):
+		if (candidate as AbilityPickup).ability_id == &"wall_jump":
+			pickup = candidate
+			break
+	if pickup == null:
+		return
+	GameState.abilities["wall_jump"] = false
+	pickup.set("_collected", false)
+	pickup.visible = true
+	pickup.set_process(true)
+	nilo.global_position = pickup.global_position + Vector2(-26, 0)
+	nilo.velocity = Vector2.ZERO
+	_set_review_camera(camera, world.room_bounds[&"igreja_velha"])
+	pickup.call("_on_body_entered", nilo)
+	hud.room_fade = 0.0
+	hud.help_fade = 0.0
+	await _wait_frames(5)
+	await _capture(OUTPUT_DIRECTORY.path_join("11_aquisicao_passo_da_pedra.png"))
+	pickup.call("_collect")
+	NotificationManager.set_suppressed(true)
+
+
+func _capture_roof_traversal(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: GameHUD) -> void:
+	var bounds: Rect2 = world.room_bounds[&"telhados"]
+	GameState.abilities["wall_jump"] = true
+	GameState.tutorial_flags["rifle"] = true
+	nilo.global_position = Vector2(bounds.position.x + 1040, -34)
+	nilo.velocity = Vector2.ZERO
+	EventBus.room_entered.emit(&"telhados", "")
+	_set_review_camera(camera, bounds)
+	hud.room_fade = 0.0
+	hud.help_fade = 0.0
+	_hide_review_overlays(hud)
+	await _wait_frames(24)
+	await _capture(OUTPUT_DIRECTORY.path_join("12_travessia_pelos_telhados.png"))
+
+
+func _capture_manifestation(main: Node, world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: GameHUD) -> void:
+	var manifestation: NarrativeInteractable
+	for candidate in world.find_children("*", "NarrativeInteractable", true, false):
+		if (candidate as NarrativeInteractable).dialogue_id == &"manifestacao":
+			manifestation = candidate
+			break
+	if manifestation == null:
+		return
+	var bounds: Rect2 = world.room_bounds[&"arena"]
+	nilo.global_position = manifestation.global_position + Vector2(-54, 0)
+	nilo.velocity = Vector2.ZERO
+	EventBus.room_entered.emit(&"arena", "")
+	_set_review_camera(camera, bounds)
+	hud.room_fade = 0.0
+	hud.help_fade = 0.0
+	var director := main.get_node("DialogueDirector") as DialogueDirector
+	director.start(&"manifestacao")
+	await _wait_frames(3)
+	var text_label := director.get("_text_label") as Label
+	text_label.visible_characters = text_label.text.length()
+	director.call("_advance")
+	await _wait_frames(3)
+	text_label.visible_characters = text_label.text.length()
+	await _wait_frames(2)
+	await _capture(OUTPUT_DIRECTORY.path_join("13_climax_manifestacao_encantada.png"))
+	director.call("_finish")
+	NotificationManager.set_suppressed(true)
+
+
+func _set_review_camera(camera: Camera2D, bounds: Rect2) -> void:
+	camera.limit_left = roundi(bounds.position.x)
+	camera.limit_right = roundi(bounds.end.x)
+	camera.limit_top = -120
+	camera.limit_bottom = 360
+	camera.position = Vector2(0, -42)
+	camera.position_smoothing_enabled = false
+	camera.reset_smoothing()
+
+
+func _hide_review_overlays(hud: GameHUD) -> void:
+	hud.room_fade = 0.0
+	hud.help_fade = 0.0
+	hud.room_panel.visible = false
+	hud.help_panel.visible = false
+	NotificationManager.set_suppressed(true)
 
 
 func _capture_character_menu(main: Node) -> void:

@@ -13,8 +13,8 @@ func _ready() -> void:
 	layer = 92
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_toast = TOAST_SCENE.instantiate()
-	_toast.position = Vector2(210, 42)
-	_toast.size = Vector2(220, 34)
+	_toast.position = Vector2(438, 24)
+	_toast.size = Vector2(190, 30)
 	_toast.modulate.a = 0.0
 	_toast.visible = false
 	add_child(_toast)
@@ -45,12 +45,12 @@ func _show_next() -> void:
 	_active = true
 	var entry: Dictionary = _queue.pop_front()
 	_label.text = String(entry.message)
-	_toast.position = Vector2(210, 38)
+	_toast.position = Vector2(438, 20)
 	_toast.modulate.a = 0.0
 	_toast.visible = not _suppressed
 	var tween := create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 	tween.tween_property(_toast, "modulate:a", 1.0, 0.12)
-	tween.parallel().tween_property(_toast, "position:y", 42.0, 0.12)
+	tween.parallel().tween_property(_toast, "position:y", 24.0, 0.12)
 	tween.tween_interval(float(entry.duration))
 	tween.tween_property(_toast, "modulate:a", 0.0, 0.22)
 	tween.tween_callback(_finish_active)

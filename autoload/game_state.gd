@@ -163,6 +163,7 @@ func mark_tutorial_learned(tutorial_id: StringName) -> void:
 	if bool(tutorial_flags.get(String(tutorial_id), false)):
 		return
 	tutorial_flags[String(tutorial_id)] = true
+	EventBus.tutorial_completed.emit(tutorial_id)
 	EventBus.request_autosave.emit(&"tutorial")
 
 

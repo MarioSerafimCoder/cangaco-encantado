@@ -78,6 +78,7 @@ var _state_elapsed := 0.0
 var _last_state := -1
 var _last_frame := -1
 var _previous_grounded := false
+var _previous_moving := false
 var _previous_running := false
 var _previous_facing := 1.0
 var _last_running_facing := 1.0
@@ -126,6 +127,7 @@ func _process(delta: float) -> void:
 	_apply_current_frame()
 	_apply_visual_transform()
 	_previous_grounded = _player.is_on_floor()
+	_previous_moving = moving_active
 	_previous_running = _is_running()
 	_previous_facing = _player.facing
 
@@ -160,15 +162,15 @@ func _update_state_clock(delta: float) -> void:
 func _update_transitions(delta: float) -> void:
 	var grounded := _player.is_on_floor()
 	var running := _is_running()
-	if grounded and running and not _previous_running:
+	if grounded and moving_active and not _previous_moving:
 		run_phase = 0.0
+		_start_transition(VisualTransition.RUN_START, 0.085)
+		_spawn_foot_dust(0, 0.55)
+	elif grounded and running and not _previous_running:
 		if signf(_player.facing) != signf(_last_running_facing):
 			_start_transition(VisualTransition.TURN, 0.105)
 			_spawn_foot_dust(0, 0.9)
-		else:
-			_start_transition(VisualTransition.RUN_START, 0.085)
-			_spawn_foot_dust(0, 0.55)
-	elif grounded and not running and _previous_running:
+	elif grounded and not moving_active and _previous_moving:
 		_start_transition(VisualTransition.RUN_STOP, 0.105)
 		_spawn_foot_dust(0, 0.72)
 	if grounded and moving_active and signf(_player.facing) != signf(_previous_facing):

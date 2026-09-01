@@ -550,6 +550,7 @@ enemy_scene = ExtResource("10_saqueador")
 spawn_id = &"rua_saqueador_01"
 facing = 1.0
 activation_flag = &"first_combat_unlocked"
+required_tutorial = &"melee"
 
 [node name="Interactables" type="Node2D" parent="Gameplay" unique_id=191961063]
 

@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://bnqoy2xece0a1"]
+[gd_scene load_steps=15 format=3 uid="uid://bnqoy2xece0a1"]
 
 [ext_resource type="Script" uid="uid://dvifhv6p8unas" path="res://scripts/world/room_controller.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_1280.tscn" id="2"]
@@ -7,6 +7,8 @@
 [ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/fillers/parede_quebrada_esquerda.tres" id="5"]
 [ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/fillers/parede_quebrada_direita.tres" id="6"]
 [ext_resource type="Texture2D" uid="uid://hsmyb863yfm7" path="res://assets/environments/vila_umbuzeiro/generated_0_2_7/telhados_fachadas_completas.png" id="7_facades"]
+[ext_resource type="Script" path="res://scripts/world/enemy_spawn.gd" id="8_spawn"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/pistoleiro.tscn" id="9_pistoleiro"]
 
 [sub_resource type="RectangleShape2D" id="Roof1Shape"]
 size = Vector2(86, 10)
@@ -342,6 +344,14 @@ position = Vector2(18, 138)
 position = Vector2(1262, 138)
 
 [node name="EnemySpawns" type="Node2D" parent="Gameplay" unique_id=427753116]
+
+[node name="PistoleiroTelhadoSpawn" type="Marker2D" parent="Gameplay/EnemySpawns"]
+position = Vector2(1040, -18)
+script = ExtResource("8_spawn")
+enemy_scene = ExtResource("9_pistoleiro")
+spawn_id = &"telhados_pistoleiro_01"
+facing = -1.0
+patrol_radius = 46.0
 
 [node name="Triggers" type="Node2D" parent="Gameplay" unique_id=854531848]
 
