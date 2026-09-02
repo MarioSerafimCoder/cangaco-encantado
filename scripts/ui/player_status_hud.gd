@@ -1,7 +1,7 @@
 class_name PlayerStatusHUD
 extends Control
 
-const HUD_ATLAS := preload("res://assets/ui/hud/hud_personalizado_atlas.png")
+const HUD_ATLAS := preload("res://assets/sprites/usados/interface/hud/hud_personalizado_atlas.png")
 const PANEL_TEXTURE := preload("res://assets/ui/hud/world_plaque.tres")
 
 const FULL_HEART_REGION := Rect2(620.0, 43.0, 88.0, 98.0)

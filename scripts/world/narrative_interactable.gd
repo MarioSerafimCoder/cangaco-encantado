@@ -15,6 +15,7 @@ var _visual_base_scale := Vector2.ONE
 var _aura_center := Vector2.ZERO
 var _aura_radius := 20.0
 var _elapsed := 0.0
+var _staging_time := 0.0
 
 
 func configure_visual(texture: Texture2D, region: Rect2, target_width: float, z := 4) -> void:
@@ -61,13 +62,16 @@ func _ready() -> void:
 		add_child(prompt)
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
+	EventBus.dialogue_started.connect(_on_dialogue_started)
 
 
 func _process(delta: float) -> void:
 	_elapsed += delta
+	_staging_time = maxf(0.0, _staging_time - delta)
 	if enchanted_presence and _visual != null:
-		var pulse := sin(_elapsed * 2.1)
-		_visual.scale = _visual_base_scale * (1.0 + pulse * 0.012)
+		var pulse := sin(_elapsed * (4.2 if _staging_time > 0.0 else 2.1))
+		var staging_scale := 0.035 if _staging_time > 0.0 else 0.012
+		_visual.scale = _visual_base_scale * (1.0 + pulse * staging_scale)
 		_visual.modulate = Color(1.0, 0.86 + pulse * 0.035, 0.82 + pulse * 0.04, 1.0)
 		queue_redraw()
 	if player_inside == null:
@@ -91,11 +95,17 @@ func _on_body_exited(body: Node) -> void:
 		prompt.visible = false
 
 
+func _on_dialogue_started(started_dialogue_id: StringName, _npc: Node) -> void:
+	if enchanted_presence and started_dialogue_id == dialogue_id:
+		_staging_time = 1.6
+
+
 func _draw() -> void:
 	if not enchanted_presence:
 		return
-	var pulse := (sin(_elapsed * 1.7) + 1.0) * 0.5
-	for index in 3:
+	var pulse := (sin(_elapsed * (3.4 if _staging_time > 0.0 else 1.7)) + 1.0) * 0.5
+	var ring_count := 5 if _staging_time > 0.0 else 3
+	for index in ring_count:
 		var radius := _aura_radius + float(index) * 10.0 + pulse * 4.0
-		var alpha := (0.18 - float(index) * 0.045) * (0.72 + pulse * 0.28)
+		var alpha := maxf(0.025, 0.22 - float(index) * 0.038) * (0.72 + pulse * 0.28)
 		draw_arc(_aura_center, radius, 0.0, TAU, 32, Color(0.82, 0.18, 0.16, alpha), 1.0)

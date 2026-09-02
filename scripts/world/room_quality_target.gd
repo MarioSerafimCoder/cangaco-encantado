@@ -1,9 +1,9 @@
 class_name RoomQualityTarget
 extends Node2D
 
-const SKY_TEXTURE := preload("res://assets/environments/rua_das_cinzas/rua_sky_far.png")
-const VILLAGE_TEXTURE := preload("res://assets/environments/rua_das_cinzas/rua_village_mid.png")
-const FOREGROUND_TEXTURE := preload("res://assets/environments/rua_das_cinzas/rua_foreground.png")
+const SKY_TEXTURE := preload("res://assets/sprites/usados/cenarios/rua_das_cinzas/fundos/rua_sky_far.png")
+const VILLAGE_TEXTURE := preload("res://assets/sprites/usados/cenarios/rua_das_cinzas/fundos/rua_village_mid.png")
+const FOREGROUND_TEXTURE := preload("res://assets/sprites/usados/cenarios/rua_das_cinzas/fundos/rua_foreground.png")
 
 var room_bounds := Rect2()
 var player: NiloPlayer

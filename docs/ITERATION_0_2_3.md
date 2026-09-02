@@ -18,8 +18,8 @@ A HUD recebeu molduras próprias para status, avisos de sala e mundo, ajuda e ch
 
 - `assets/ui/hud/`: atlas e recortes das molduras.
 - `assets/environments/rua_das_cinzas/fillers/`: atlas e recortes de preenchimentos/transições.
-- `assets/fx/vfx_ocupacao_e_tiros.png`: atlas de fogo, fumaça, poeira e impactos.
-- `assets/player/nilo_animacoes_de_tiro.png`: duas sequências de seis poses.
+- `assets/sprites/usados/efeitos/vfx_ocupacao_e_tiros.png`: atlas de fogo, fumaça, poeira e impactos.
+- `assets/sprites/usados/personagens/jogador/nilo_animacoes_de_tiro.png`: duas sequências de seis poses.
 - `scripts/fx/atlas_strip_animator.gd`: animação reutilizável de faixas horizontais.
 
 ## Validação

@@ -19,12 +19,10 @@ func _ready() -> void:
 	_toast.visible = false
 	add_child(_toast)
 	_label = _toast.get_node("Margin/Message") as Label
-	EventBus.ability_unlocked.connect(func(_id, display_name): enqueue("NOVA HABILIDADE\n%s" % display_name, 90, &"ability"))
 	EventBus.permanent_upgrade_collected.connect(func(_id, display_name): enqueue("MELHORIA PERMANENTE\n%s" % display_name, 80, &"upgrade"))
 	EventBus.secret_discovered.connect(func(_id): enqueue("SEGREDO DESCOBERTO", 55, &"secret"))
 	EventBus.lore_collectible_found.connect(func(_id, display_name): enqueue("RELATO ENCONTRADO\n%s" % display_name, 60, &"lore"))
 	EventBus.world_state_changed.connect(_on_world_state_changed)
-	EventBus.objective_changed.connect(func(text): enqueue("RASTRO ATUAL\n%s" % text, 70, &"objective", 3.4))
 
 
 func enqueue(message: String, priority := 50, kind: StringName = &"info", duration := 2.4) -> void:

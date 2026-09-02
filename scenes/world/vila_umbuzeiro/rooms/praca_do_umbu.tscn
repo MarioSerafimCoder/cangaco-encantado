@@ -3,11 +3,14 @@
 [ext_resource type="Script" uid="uid://dvifhv6p8unas" path="res://scripts/world/room_controller.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_1280.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/ground_1280.tscn" id="3"]
-[ext_resource type="Texture2D" uid="uid://ch7wrln0jnsbx" path="res://assets/environments/vila_umbuzeiro/atlases/03_telhados_e_praca_umbu.png" id="4"]
-[ext_resource type="Texture2D" uid="uid://duf0ll2myapvk" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/07_moradores_chibi_da_vila.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://ch7wrln0jnsbx" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_base/03_telhados_e_praca_umbu.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://duf0ll2myapvk" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_expansao/07_moradores_chibi_da_vila.png" id="5"]
 [ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/props/barricada_01.tres" id="6"]
-[ext_resource type="Texture2D" uid="uid://coq4de8y1lt84" path="res://assets/environments/vila_umbuzeiro/generated_0_2_7/praca_pavimento_pedra.png" id="7_pavement"]
-[ext_resource type="Texture2D" uid="uid://hsmyb863yfm7" path="res://assets/environments/vila_umbuzeiro/generated_0_2_7/telhados_fachadas_completas.png" id="8_facades"]
+[ext_resource type="Texture2D" uid="uid://coq4de8y1lt84" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/fundos/praca_pavimento_pedra.png" id="7_pavement"]
+[ext_resource type="Texture2D" uid="uid://hsmyb863yfm7" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/fundos/telhados_fachadas_completas.png" id="8_facades"]
+[ext_resource type="Texture2D" path="res://assets/sprites/usados/cenarios/polimento_experiencia_0_4_4/03_praca_atlas_transparente.png" id="9_praca"]
+[ext_resource type="Texture2D" path="res://assets/sprites/usados/cenarios/polimento_experiencia_0_4_4/07_vila_baixa_casas_pequenas_suplemento_transparente.png" id="10_houses"]
+[ext_resource type="Script" path="res://scripts/npc/npc_actor.gd" id="11_npc"]
 
 [sub_resource type="RectangleShape2D" id="TreeBaseShape"]
 size = Vector2(122, 24)
@@ -21,7 +24,7 @@ room_id = &"praca_umbu"
 display_name = "04 PRAÇA DO UMBU"
 local_bounds = Rect2(0, -120, 1280, 480)
 camera_bounds = Rect2(0, -120, 1280, 480)
-authored_composition_width = 640.0
+authored_composition_width = 1280.0
 
 [node name="Environment" type="Node2D" parent="." unique_id=2089467905]
 
@@ -165,6 +168,7 @@ scale = Vector2(0.24, 0.08)
 texture = ExtResource("7_pavement")
 
 [node name="Umbuzeiro" type="Sprite2D" parent="Environment" unique_id=1386245297]
+visible = false
 z_index = -1
 texture_filter = 1
 position = Vector2(640, 77.6)
@@ -173,6 +177,66 @@ texture = ExtResource("4")
 region_enabled = true
 region_rect = Rect2(880, 260, 610, 570)
 region_filter_clip_enabled = true
+
+[node name="ExperiencePolish" type="Node2D" parent="Environment"]
+z_index = -1
+
+[node name="CasaOeste" type="Sprite2D" parent="Environment/ExperiencePolish"]
+position = Vector2(130, 108)
+scale = Vector2(0.26, 0.26)
+texture_filter = 1
+texture = ExtResource("10_houses")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(211, 163, 425, 324)
+
+[node name="CasaOesteInterna" type="Sprite2D" parent="Environment/ExperiencePolish"]
+position = Vector2(345, 104)
+scale = Vector2(0.23, 0.23)
+texture_filter = 1
+texture = ExtResource("10_houses")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(184, 626, 553, 284)
+
+[node name="UmbuzeiroLandmark" type="Sprite2D" parent="Environment/ExperiencePolish"]
+z_index = 1
+position = Vector2(640, 65)
+scale = Vector2(0.25, 0.25)
+texture_filter = 1
+texture = ExtResource("9_praca")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(26, 136, 880, 683)
+
+[node name="BancoDaPraca" type="Sprite2D" parent="Environment/ExperiencePolish"]
+z_index = 2
+position = Vector2(840, 124)
+scale = Vector2(0.31, 0.31)
+texture_filter = 1
+texture = ExtResource("9_praca")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(808, 632, 305, 173)
+
+[node name="BarracaMercado" type="Sprite2D" parent="Environment/ExperiencePolish"]
+z_index = 2
+position = Vector2(1080, 95)
+scale = Vector2(0.28, 0.28)
+texture_filter = 1
+texture = ExtResource("9_praca")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(1170, 418, 344, 387)
+
+[node name="CasaLeste" type="Sprite2D" parent="Environment/ExperiencePolish"]
+position = Vector2(1230, 104)
+scale = Vector2(0.25, 0.25)
+texture_filter = 1
+texture = ExtResource("10_houses")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(852, 600, 468, 310)
 
 [node name="OccupiedOnly" type="Node2D" parent="Environment" unique_id=370144427 groups=["room_occupied_only"]]
 
@@ -246,6 +310,35 @@ shape = SubResource("TreeBaseShape")
 [node name="Gameplay" type="Node2D" parent="." unique_id=1329036357]
 
 [node name="Actors" type="Node2D" parent="Gameplay" unique_id=1165685964]
+
+[node name="Lia" type="Area2D" parent="Gameplay/Actors"]
+position = Vector2(440, 138)
+script = ExtResource("11_npc")
+npc_id = &"lia"
+display_name = "LIA"
+dialogue_id = &"crianca"
+room_id = &"praca_umbu"
+atlas_index = 4
+idle_walk_radius = 20.0
+
+[node name="SeuAnselmo" type="Area2D" parent="Gameplay/Actors"]
+position = Vector2(650, 138)
+script = ExtResource("11_npc")
+npc_id = &"anselmo"
+display_name = "SEU ANSELMO"
+dialogue_id = &"mercador"
+room_id = &"praca_umbu"
+atlas_index = 6
+
+[node name="Mariano" type="Area2D" parent="Gameplay/Actors"]
+position = Vector2(850, 138)
+script = ExtResource("11_npc")
+npc_id = &"mariano"
+display_name = "MARIANO"
+dialogue_id = &"viajante"
+room_id = &"praca_umbu"
+atlas_index = 6
+idle_walk_radius = 18.0
 
 [node name="Entrances" type="Node2D" parent="Gameplay" unique_id=353158538]
 

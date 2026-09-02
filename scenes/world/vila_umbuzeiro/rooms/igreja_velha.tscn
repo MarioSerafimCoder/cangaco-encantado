@@ -1,13 +1,21 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/room_controller.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_1280.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/ground_960.tscn" id="3"]
-[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/atlases/02_igreja_velha_e_checkpoint.png" id="4"]
-[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/06_elementos_atmosfericos.png" id="5"]
+[ext_resource type="Texture2D" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_base/02_igreja_velha_e_checkpoint.png" id="4"]
+[ext_resource type="Texture2D" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_expansao/06_elementos_atmosfericos.png" id="5"]
+[ext_resource type="Texture2D" path="res://assets/sprites/usados/cenarios/polimento_experiencia_0_4_4/02_igreja_cemiterio_atlas_transparente.png" id="6_cemetery"]
+[ext_resource type="Script" path="res://scripts/npc/npc_actor.gd" id="7_npc"]
+[ext_resource type="Script" path="res://scripts/world/tutorial_trigger.gd" id="8_tutorial"]
+[ext_resource type="Script" path="res://scripts/world/checkpoint.gd" id="9_checkpoint"]
+[ext_resource type="Script" path="res://scripts/world/ability_pickup.gd" id="10_ability"]
 
 [sub_resource type="RectangleShape2D" id="RoomShape"]
 size = Vector2(960, 480)
+
+[sub_resource type="RectangleShape2D" id="PistolTutorialShape"]
+size = Vector2(96, 480)
 
 [node name="IgrejaVelha" type="Node2D"]
 script = ExtResource("1")
@@ -15,12 +23,13 @@ room_id = &"igreja_velha"
 display_name = "05 IGREJA E CEMITÉRIO"
 local_bounds = Rect2(0, -120, 960, 480)
 camera_bounds = Rect2(0, -120, 960, 480)
-authored_composition_width = 320.0
+authored_composition_width = 960.0
 
 [node name="Environment" type="Node2D" parent="."]
 [node name="Parallax" parent="Environment" instance=ExtResource("2")]
 [node name="Architecture" type="Node2D" parent="Environment"]
 [node name="DustBand" type="Sprite2D" parent="Environment/Architecture"]
+visible = false
 position = Vector2(160, 47)
 scale = Vector2(0.1987, 0.1987)
 z_index = -90
@@ -46,6 +55,57 @@ texture = ExtResource("4")
 region_enabled = true
 region_filter_clip_enabled = true
 region_rect = Rect2(70, 690, 390, 220)
+
+[node name="Cemetery" type="Node2D" parent="Environment"]
+z_index = -2
+
+[node name="MuroOeste" type="Sprite2D" parent="Environment/Cemetery"]
+position = Vector2(370, 117)
+scale = Vector2(0.30, 0.30)
+texture_filter = 1
+texture = ExtResource("6_cemetery")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(69, 75, 402, 220)
+
+[node name="PortaoPrincipal" type="Sprite2D" parent="Environment/Cemetery"]
+z_index = 2
+position = Vector2(540, 108)
+scale = Vector2(0.30, 0.30)
+texture_filter = 1
+texture = ExtResource("6_cemetery")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(155, 340, 490, 280)
+
+[node name="MuroQuebrado" type="Sprite2D" parent="Environment/Cemetery"]
+position = Vector2(705, 117)
+scale = Vector2(0.30, 0.30)
+texture_filter = 1
+texture = ExtResource("6_cemetery")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(1103, 75, 325, 220)
+
+[node name="TumuloAntigo" type="Sprite2D" parent="Environment/Cemetery"]
+z_index = 1
+position = Vector2(790, 124)
+scale = Vector2(0.24, 0.24)
+texture_filter = 1
+texture = ExtResource("6_cemetery")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(744, 385, 190, 235)
+
+[node name="TumuloOrnamentado" type="Sprite2D" parent="Environment/Cemetery"]
+z_index = 1
+position = Vector2(875, 121)
+scale = Vector2(0.23, 0.23)
+texture_filter = 1
+texture = ExtResource("6_cemetery")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(970, 385, 210, 235)
 [node name="OccupiedOnly" type="Node2D" parent="Environment" groups=["room_occupied_only"]]
 [node name="LiberatedOnly" type="Node2D" parent="Environment" groups=["room_liberated_only"]]
 visible = false
@@ -55,6 +115,27 @@ visible = false
 
 [node name="Gameplay" type="Node2D" parent="."]
 [node name="Actors" type="Node2D" parent="Gameplay"]
+[node name="IrmaoTome" type="Area2D" parent="Gameplay/Actors"]
+position = Vector2(430, 138)
+script = ExtResource("7_npc")
+npc_id = &"tome"
+display_name = "IRMÃO TOMÉ"
+dialogue_id = &"sacristao"
+room_id = &"igreja_velha"
+atlas_index = 7
+
+[node name="Interactables" type="Node2D" parent="Gameplay"]
+
+[node name="CheckpointIgreja" type="Area2D" parent="Gameplay/Interactables"]
+position = Vector2(72, 132)
+script = ExtResource("9_checkpoint")
+checkpoint_id = &"vila_igreja"
+
+[node name="PassoDaPedra" type="Area2D" parent="Gameplay/Interactables"]
+position = Vector2(104, 130)
+script = ExtResource("10_ability")
+ability_id = &"wall_jump"
+display_name = "PASSO DA PEDRA"
 [node name="Entrances" type="Node2D" parent="Gameplay"]
 [node name="LEFT_ENTRANCE" type="Marker2D" parent="Gameplay/Entrances"]
 position = Vector2(18, 138)
@@ -68,4 +149,14 @@ collision_layer = 0
 collision_mask = 2
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Triggers/RoomArea"]
 shape = SubResource("RoomShape")
+
+[node name="TutorialPistola" type="Area2D" parent="Gameplay/Triggers"]
+position = Vector2(520, 120)
+script = ExtResource("8_tutorial")
+tutorial_id = &"pistol"
+action = &"shoot_pistol"
+verb = "ATIRAR COM PISTOLA"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Triggers/TutorialPistola"]
+shape = SubResource("PistolTutorialShape")
 [node name="Camera" type="Node2D" parent="."]

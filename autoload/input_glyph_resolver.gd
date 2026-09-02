@@ -1,6 +1,6 @@
 extends Node
 
-const COMMAND_ATLAS := preload("res://assets/ui/generated_0_4_2/atlas_comandos.png")
+const COMMAND_ATLAS := preload("res://assets/sprites/usados/interface/menu_diario/atlas_comandos.png")
 const COLUMN_WIDTH := 156.75
 const ROW_TOPS := [238.0, 420.0, 610.0, 800.0]
 const GLYPH_SIZE := Vector2(132.0, 170.0)

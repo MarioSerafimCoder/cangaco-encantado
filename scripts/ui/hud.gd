@@ -18,6 +18,11 @@ var boss_status: BossStatusHUD
 var help_panel: Panel
 var help_label: Label
 var help_prompt_row: HBoxContainer
+var objective_panel: Panel
+var objective_label: Label
+var objective_text := ""
+var objective_full_time := 0.0
+var ability_presentation: AbilityUnlockPresentation
 var player: NiloPlayer
 var room_fade := 0.0
 var help_fade := 0.0
@@ -40,6 +45,8 @@ func _ready() -> void:
 	EventBus.player_heal_charges_changed.connect(_on_heals_changed)
 	EventBus.room_entered.connect(_on_room_entered)
 	EventBus.world_flag_changed.connect(_on_world_flag_changed)
+	EventBus.tutorial_requested.connect(_on_tutorial_requested)
+	EventBus.objective_changed.connect(_on_objective_changed)
 	_on_health_changed(GameState.player_health, 5)
 	_on_ammo_changed(&"pistol", 8, 8)
 	_on_ammo_changed(&"rifle", 4, 4)
@@ -60,7 +67,6 @@ func _process(delta: float) -> void:
 		player = get_tree().get_first_node_in_group("player") as NiloPlayer
 	if player != null:
 		player_status.bind_player(player)
-		_update_spatial_tutorials()
 		if debug_visible:
 			debug_label.text = "%s\nPOS %d,%d  VEL %d,%d" % [
 				player.state_machine.state_name(),
@@ -75,6 +81,10 @@ func _process(delta: float) -> void:
 		_update_context_tutorial()
 	_apply_temporary_visibility(room_panel, room_fade)
 	_apply_temporary_visibility(help_panel, help_fade)
+	if objective_full_time > 0.0:
+		objective_full_time = maxf(0.0, objective_full_time - delta)
+		if objective_full_time == 0.0:
+			_set_objective_compact()
 
 
 func _apply_temporary_visibility(control: Control, remaining: float) -> void:
@@ -97,7 +107,7 @@ func _build_hud() -> void:
 	debug_label = _make_label(debug_panel, Vector2(5.0, 3.0), Vector2(103.0, 25.0), 6, Color("bce8ee"))
 	debug_panel.visible = false
 
-	room_panel = _make_panel(Rect2(228.0, 56.0, 184.0, 21.0), Color("241d1ae6"), Color("d59a4a"), ROOM_PANEL_TEXTURE)
+	room_panel = _make_panel(Rect2(210.0, 56.0, 184.0, 21.0), Color("241d1ae6"), Color("d59a4a"), ROOM_PANEL_TEXTURE)
 	var room_text_backing := ColorRect.new()
 	room_text_backing.position = Vector2(18.0, 5.0)
 	room_text_backing.size = Vector2(148.0, 10.0)
@@ -124,6 +134,15 @@ func _build_hud() -> void:
 	help_prompt_row.add_theme_constant_override("separation", 5)
 	help_panel.add_child(help_prompt_row)
 	help_panel.visible = false
+
+	objective_panel = _make_panel(Rect2(402.0, 58.0, 226.0, 31.0), Color("171311e8"), Color("9e7440"), HELP_PANEL_TEXTURE)
+	objective_label = _make_label(objective_panel, Vector2(9.0, 4.0), Vector2(208.0, 23.0), 7, Color("f1ddb6"))
+	objective_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	objective_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	objective_panel.visible = false
+
+	ability_presentation = AbilityUnlockPresentation.new()
+	add_child(ability_presentation)
 
 
 func _update_boss_bar() -> void:
@@ -273,26 +292,34 @@ func _on_world_flag_changed(flag_id: StringName, value: bool) -> void:
 		_try_begin_first_combat_tutorial()
 
 
+func _on_tutorial_requested(tutorial_id: StringName, action: StringName, verb: String) -> void:
+	_begin_context_tutorial(tutorial_id, action, verb)
+
+
+func _on_objective_changed(text: String) -> void:
+	objective_text = text
+	objective_full_time = 2.6
+	objective_panel.position = Vector2(402.0, 58.0)
+	objective_panel.size = Vector2(226.0, 31.0)
+	objective_label.size = Vector2(208.0, 23.0)
+	objective_label.text = "RASTRO ATUAL  •  %s" % objective_text
+	objective_panel.visible = true
+	objective_panel.modulate.a = 1.0
+
+
+func _set_objective_compact() -> void:
+	if objective_text.is_empty():
+		objective_panel.visible = false
+		return
+	objective_panel.position = Vector2(438.0, 58.0)
+	objective_panel.size = Vector2(190.0, 19.0)
+	objective_label.position = Vector2(7.0, 2.0)
+	objective_label.size = Vector2(176.0, 15.0)
+	objective_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	objective_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	objective_label.text = "OBJETIVO  ›  %s" % objective_text
+
+
 func _try_begin_first_combat_tutorial() -> void:
 	if bool(WorldState.flags.get("first_combat_unlocked", false)):
 		_begin_context_tutorial(&"melee", &"melee", "ATACAR COM FACÃO")
-
-
-func _update_spatial_tutorials() -> void:
-	if player == null or not _tutorial_id.is_empty() or get_tree().paused:
-		return
-	var room_id := GameState.current_room_id
-	if room_id not in [&"igreja_velha", &"telhados"]:
-		return
-	var active_room: RoomController
-	for candidate in get_tree().get_nodes_in_group("production_rooms"):
-		if (candidate as RoomController).room_id == room_id:
-			active_room = candidate as RoomController
-			break
-	if active_room == null:
-		return
-	var local_x := active_room.to_local(player.global_position).x
-	if room_id == &"igreja_velha" and local_x >= 520.0:
-		_begin_context_tutorial(&"pistol", &"shoot_pistol", "ATIRAR COM PISTOLA")
-	elif room_id == &"telhados" and local_x >= 720.0:
-		_begin_context_tutorial(&"rifle", &"shoot_rifle", "ATIRAR COM RIFLE")

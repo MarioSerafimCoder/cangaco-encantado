@@ -2,7 +2,7 @@ class_name BossStatusHUD
 extends Control
 
 const PANEL_TEXTURE := preload("res://assets/ui/hud/boss_bar_panel.tres")
-const HUD_ATLAS := preload("res://assets/ui/hud/hud_personalizado_atlas.png")
+const HUD_ATLAS := preload("res://assets/sprites/usados/interface/hud/hud_personalizado_atlas.png")
 const PIXEL_FONT := preload("res://assets/ui/fonts/Tiny5-Regular.ttf")
 const PHASE_REGION := Rect2(828.0, 925.0, 74.0, 78.0)
 

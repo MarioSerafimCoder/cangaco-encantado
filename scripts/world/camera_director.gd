@@ -62,6 +62,7 @@ func _update_composition(delta: float, immediate := false) -> void:
 	var profile_up := ascending_look_ahead
 	var profile_down := falling_look_ahead
 	var profile_vertical_base := base_vertical_offset
+	var composition_zone := _active_composition_zone()
 	match profile:
 		"interior":
 			profile_horizontal = 38.0
@@ -80,6 +81,10 @@ func _update_composition(delta: float, immediate := false) -> void:
 			profile_horizontal = 66.0
 			profile_up = -44.0
 			profile_down = 50.0
+	if composition_zone != null:
+		if not composition_zone.profile_override.is_empty():
+			profile = composition_zone.profile_override
+		profile_vertical_base += composition_zone.vertical_offset
 	var horizontal_target := 0.0
 	if speed_ratio > 0.08:
 		horizontal_target = player.facing * lerpf(minf(54.0, profile_horizontal), profile_horizontal, smoothstep(0.15, 1.0, speed_ratio))
@@ -101,7 +106,19 @@ func _update_composition(delta: float, immediate := false) -> void:
 	var vertical_response := 1.0 if immediate else 1.0 - exp(-delta * (3.2 if vertical_target != 0.0 else 2.6))
 	_horizontal_look = lerpf(_horizontal_look, horizontal_target, horizontal_response)
 	_vertical_look = lerpf(_vertical_look, vertical_target, vertical_response)
-	camera.position = Vector2(round(_horizontal_look), round(profile_vertical_base + _vertical_look))
+	var zone_horizontal := composition_zone.horizontal_offset if composition_zone != null else 0.0
+	camera.position = Vector2(round(_horizontal_look + zone_horizontal), round(profile_vertical_base + _vertical_look))
+
+
+func _active_composition_zone() -> CameraCompositionZone:
+	var selected: CameraCompositionZone
+	for candidate in get_tree().get_nodes_in_group("camera_composition_zones"):
+		var zone := candidate as CameraCompositionZone
+		if zone == null or not zone.is_active_for(player):
+			continue
+		if selected == null or zone.composition_priority > selected.composition_priority:
+			selected = zone
+	return selected
 
 
 func _select_room(immediate: bool, teleported := false) -> void:

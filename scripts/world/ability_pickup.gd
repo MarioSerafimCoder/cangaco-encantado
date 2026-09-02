@@ -1,7 +1,7 @@
 class_name AbilityPickup
 extends Area2D
 
-const UI_ATLAS := preload("res://assets/area_01/ui/dialogo_loja_atlas.png")
+const UI_ATLAS := preload("res://assets/sprites/usados/interface/dialogo_loja/dialogo_loja_atlas.png")
 const ABILITY_REGION := Rect2(1245, 112, 120, 150)
 const PIXEL_FONT := preload("res://assets/ui/fonts/Tiny5-Regular.ttf")
 

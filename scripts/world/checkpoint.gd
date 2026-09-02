@@ -1,7 +1,7 @@
 class_name Checkpoint
 extends Area2D
 
-const INTERACTIVE_ATLAS := preload("res://assets/environments/vila_umbuzeiro/generated_0_2_5/08_objetos_interativos_e_estados.png")
+const INTERACTIVE_ATLAS := preload("res://assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_expansao/08_objetos_interativos_e_estados.png")
 const INACTIVE_REGION := Rect2(96, 45, 268, 402)
 const ACTIVE_REGION := Rect2(449, 45, 270, 402)
 

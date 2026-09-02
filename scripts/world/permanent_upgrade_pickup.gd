@@ -1,7 +1,7 @@
 class_name PermanentUpgradePickup
 extends Area2D
 
-const UI_ATLAS := preload("res://assets/area_01/ui/dialogo_loja_atlas.png")
+const UI_ATLAS := preload("res://assets/sprites/usados/interface/dialogo_loja/dialogo_loja_atlas.png")
 const MEDAL_REGION := Rect2(1000, 778, 155, 180)
 
 @export var upgrade_id: StringName = &"coracao_casa_nilo"

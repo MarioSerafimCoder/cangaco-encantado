@@ -1,5 +1,14 @@
 # Changelog
 
+## Direção visual da experiência inicial — 0.4.4
+
+- Materializadas em cena as composições da Vila Baixa, Praça do Umbu, Igreja/Cemitério e Telhados, junto com seus moradores estáticos e superfícies caminháveis.
+- Integrados atlas antes não utilizados para fachadas, ruínas, umbuzeiro, cemitério, varanda, vigas e telhado quebrado; fontes e derivados tratados permanecem separados.
+- Criados perfis locais de câmera, gatilhos autorais de tutorial, objetivo compacto persistente e apresentação especial de nova habilidade.
+- Melhoradas a encenação da manifestação e as reações dos moradores, sem qualquer alteração de áudio.
+- A revisão visual passou a preservar um arquivo histórico e publicar capturas novas em `current/`.
+- Adicionada validação dedicada de direção visual e mantidas todas as suítes anteriores.
+
 ## Polimento da experiência inicial — 0.4.3
 
 - Substituída a espera rígida de dois segundos por aceleração progressiva até a velocidade máxima em aproximadamente 0,46 s, com frenagem curta e inversão mais responsiva.

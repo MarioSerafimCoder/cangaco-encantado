@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/camera_parallax_layer.gd" id="1"]
-[ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/rua_sky_far.png" id="2"]
-[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/04_parallax_serras_e_vila_distante.png" id="3"]
+[ext_resource type="Texture2D" path="res://assets/sprites/usados/cenarios/rua_das_cinzas/fundos/rua_sky_far.png" id="2"]
+[ext_resource type="Texture2D" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_expansao/04_parallax_serras_e_vila_distante.png" id="3"]
 
 [node name="ParallaxBackground" type="Node2D"]
 

@@ -1,5 +1,9 @@
 # Assets
 
-As subpastas `characters`, `enemies`, `bosses`, `environments`, `ui`, `fx` e `audio` são destinos para assets de produção. O material bruto preservado está em `source/reference` e não deve ser sobrescrito.
+- `sprites/usados/`: imagens carregadas pelo jogo, cenas e ferramentas de validação.
+- `sprites/nao_utilizados/`: folhas de origem, conceitos, versões com fundo e material aguardando tratamento.
+- `source/reference/`: material conceitual original preservado, que não deve ser sobrescrito.
+- `ui/`: fontes, temas e recursos `.tres`; as texturas da interface ficam em `sprites/usados/interface/`.
+- `audio/`: destino reservado para a futura etapa de áudio.
 
-`sprite_guides/` contém referências geradas para a padronização chibi. A folha `generic_sertanejo_chibi_4x4_64px.png` é usada como placeholder jogável de Nilo: 256x256 px, grade 4x4, células 64x64 e alpha real. Ela não substitui o design narrativo definitivo do herói.
+Consulte [`sprites/README.md`](sprites/README.md) antes de adicionar ou promover uma nova folha de sprites.

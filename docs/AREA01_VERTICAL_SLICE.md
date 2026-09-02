@@ -28,7 +28,7 @@ O áudio não faz parte desta entrega. Música, efeitos e mixagem ficam reservad
 
 ## Arte
 
-Os oito atlas da rodada estão em `assets/area_01/`. Eles cobrem interior e estrutura da Casa de Nilo, travessia, arquitetura, Cripta/Subterrâneo, estrutura e decoração de Grutas/Cavernas e interface de diálogo/loja. As folhas entregues para remoção do fundo permanecem arquivadas em `assets_para_remover_fundo/`.
+Os atlas da rodada estão em `assets/sprites/usados/cenarios/area_01/` e `assets/sprites/usados/interface/dialogo_loja/`. Eles cobrem interior e estrutura da Casa de Nilo, travessia, arquitetura, Cripta/Subterrâneo, estrutura e decoração de Grutas/Cavernas e interface de diálogo/loja. As folhas entregues para remoção do fundo permanecem arquivadas em `assets/sprites/nao_utilizados/aguardando_tratamento/area_01_e_interface/`.
 
 Volumes geométricos simples são usados apenas para colisão e depuração. A apresentação normal utiliza sprites e camadas rasterizadas.
 

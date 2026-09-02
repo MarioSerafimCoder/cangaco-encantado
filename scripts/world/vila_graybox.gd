@@ -16,11 +16,10 @@ const PATIO_DO_ARMAZEM_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms
 const BECO_DOS_SAQUEADORES_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/beco_dos_saqueadores.tscn")
 const POCO_DO_ROMAOZINHO_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/poco_do_romaozinho.tscn")
 const BARRICADA_DA_COMPANHIA_SCENE := preload("res://scenes/world/vila_umbuzeiro/rooms/barricada_da_companhia.tscn")
-const TRAVERSAL_ATLAS := preload("res://assets/area_01/environment/traversal_props_atlas.png")
-const ARCHITECTURE_ATLAS := preload("res://assets/area_01/environment/arquitetura_vila_atlas.png")
-const UNDERGROUND_ATLAS := preload("res://assets/area_01/environment/cripta_subterraneo_atlas.png")
-const CAVERN_ATLAS := preload("res://assets/area_01/environment/grutas_cavernas_atlas.png")
-const CAVERN_STRUCTURE_ATLAS := preload("res://assets/area_01/environment/cavernas_estrutura_atlas.png")
+const TRAVERSAL_ATLAS := preload("res://assets/sprites/usados/cenarios/area_01/traversal_props_atlas.png")
+const UNDERGROUND_ATLAS := preload("res://assets/sprites/usados/cenarios/area_01/cripta_subterraneo_atlas.png")
+const CAVERN_ATLAS := preload("res://assets/sprites/usados/cenarios/area_01/grutas_cavernas_atlas.png")
+const CAVERN_STRUCTURE_ATLAS := preload("res://assets/sprites/usados/cenarios/area_01/cavernas_estrutura_atlas.png")
 const CAVE_FLOOR_REGION := Rect2(60, 150, 650, 270)
 const CAVE_WALL_REGION := Rect2(40, 34, 720, 320)
 const CAVE_CEILING_REGION := Rect2(804, 32, 695, 200)
@@ -58,7 +57,6 @@ var player: NiloPlayer
 func _ready() -> void:
 	_build_rooms()
 	_build_area01_composition()
-	_build_npcs()
 	_build_gameplay()
 	_build_metroidvania_routes()
 	EventBus.world_state_changed.connect(_on_world_state_changed)
@@ -116,40 +114,8 @@ func _add_production_room(bounds: Rect2, scene: PackedScene) -> void:
 
 
 func _build_area01_composition() -> void:
-	var lower: Rect2 = room_bounds[&"barracos"]
-	_add_roofed_building(Rect2(50, 75, 270, 325), lower.position.x + 145, 150, 150, 122)
-	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), lower.position.x + 275, 150, 48, 40, 8, -1)
-	_add_roofed_building(Rect2(965, 45, 505, 355), lower.position.x + 470, 150, 225, 190)
-	_add_prop(TRAVERSAL_ATLAS, Rect2(695, 135, 565, 295), lower.position.x + 660, 150, 108, 90, 8, -1, 43)
-	_add_roofed_building(Rect2(50, 75, 270, 325), lower.position.x + 830, 150, 150, 122)
-	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), lower.position.x + 960, 150, 48, 40, 8, -1)
-	_add_roofed_building(Rect2(965, 45, 505, 355), lower.position.x + 1120, 150, 205, 170)
-
-	var square: Rect2 = room_bounds[&"praca_umbu"]
-	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), square.position.x + 820, 150, 48, 40, 8, -1)
-	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), square.position.x + 870, 150, 52, 43, 8, -1)
-	_add_roofed_building(Rect2(35, 425, 530, 280), square.position.x + 960, 150, 280, 232)
-	_add_prop(TRAVERSAL_ATLAS, Rect2(1110, 405, 340, 215), square.position.x + 1140, 150, 150, 120, 8, -2)
-	_add_narrative(ARCHITECTURE_ATLAS, Rect2(1070, 400, 250, 310), square.position.x + 1165, 150, 125, &"portao_selado")
-
-	var church: Rect2 = room_bounds[&"igreja_velha"]
-	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), church.position.x + 380, 150, 48, 40, 8, -1)
-	_add_roofed_building(Rect2(590, 420, 440, 290), church.position.x + 520, 150, 220, 182)
-	_add_roofed_building(Rect2(1070, 400, 250, 310), church.position.x + 810, 150, 145, 116)
-	_add_prop(UNDERGROUND_ATLAS, Rect2(30, 55, 340, 345), church.position.x + 700, 150, 112, 0, 0, -4)
-
-	var roofs: Rect2 = room_bounds[&"telhados"]
-	# Uma única rota arquitetônica coerente: toda cobertura tem colisão e cada vão
-	# possui um degrau visual (caixa, carroça ou varanda) antes do salto seguinte.
-	_add_roofed_building(Rect2(50, 75, 270, 325), roofs.position.x + 120, 150, 150, 122)
-	_add_prop(TRAVERSAL_ATLAS, Rect2(830, 425, 205, 185), roofs.position.x + 245, 150, 48, 40, 8, -1)
-	_add_roofed_building(Rect2(965, 45, 505, 355), roofs.position.x + 405, 150, 220, 184)
-	_add_prop(TRAVERSAL_ATLAS, Rect2(35, 665, 310, 300), roofs.position.x + 575, 150, 116, 96, 8, -1)
-	_add_roofed_building(Rect2(50, 75, 270, 325), roofs.position.x + 720, 150, 148, 120)
-	_add_prop(TRAVERSAL_ATLAS, Rect2(695, 135, 565, 295), roofs.position.x + 850, 150, 108, 90, 8, -1, 43)
-	_add_roofed_building(Rect2(965, 45, 505, 355), roofs.position.x + 1040, 150, 220, 184)
-	_add_prop(TRAVERSAL_ATLAS, Rect2(365, 650, 350, 315), roofs.position.x + 1200, 150, 112, 92, 8, -1)
-
+	# As quatro salas de superfície foram materializadas nos respectivos .tscn.
+	# O compositor runtime permanece apenas para o trecho subterrâneo ainda dinâmico.
 	_build_underground_composition()
 
 
@@ -183,28 +149,6 @@ func _build_underground_composition() -> void:
 	_add_narrative(CAVERN_ATLAS, Rect2(1130, 715, 300, 280), sanctuary.position.x + 700, 150, 200, &"manifestacao")
 
 
-func _build_npcs() -> void:
-	_add_npc(&"bento", "BENTO", &"artesao", 3, &"barracos", 610, 14)
-	_add_npc(&"anselmo", "SEU ANSELMO", &"mercador", 6, &"praca_umbu", 650, 0)
-	_add_npc(&"lia", "LIA", &"crianca", 4, &"praca_umbu", 440, 20)
-	_add_npc(&"tome", "IRMÃO TOMÉ", &"sacristao", 7, &"igreja_velha", 430, 0)
-	_add_npc(&"ze_lino", "ZÉ LINO", &"vigia", 1, &"telhados", 110, 0)
-	_add_npc(&"mariano", "MARIANO", &"viajante", 6, &"praca_umbu", 850, 18)
-
-
-func _add_npc(id: StringName, name_value: String, dialogue: StringName, atlas_index: int, room_id: StringName, local_x: float, walk_radius: float) -> void:
-	var npc := NPCActor.new()
-	npc.npc_id = id
-	npc.display_name = name_value
-	npc.dialogue_id = dialogue
-	npc.atlas_index = atlas_index
-	npc.room_id = room_id
-	npc.idle_walk_radius = walk_radius
-	var actors := _ensure_room_layer(room_id, "Gameplay/Actors")
-	actors.add_child(npc)
-	npc.position = Vector2(local_x, 138)
-
-
 func _add_prop(texture: Texture2D, region: Rect2, x: float, baseline: float, target_width: float, walkable_width: float, walkable_height: float, z: int, surface_height := -1.0) -> AtlasWorldProp:
 	var prop := AtlasWorldProp.new().configure(texture, region, target_width, walkable_width, walkable_height, z, surface_height)
 	prop.add_to_group("atlas_world_props")
@@ -213,17 +157,6 @@ func _add_prop(texture: Texture2D, region: Rect2, x: float, baseline: float, tar
 	parent.add_child(prop)
 	prop.global_position = Vector2(x, baseline)
 	return prop
-
-
-func _add_roofed_building(region: Rect2, x: float, baseline: float, target_width: float, roof_width: float) -> AtlasWorldProp:
-	var building := _add_prop(ARCHITECTURE_ATLAS, region, x, baseline, target_width, roof_width, 8.0, -7)
-	var roof_y := baseline - building.visual_height
-	var wall_height := minf(70.0, maxf(42.0, baseline - roof_y - 34.0))
-	# As laterais superiores tornam as fachadas superfícies de quique depois que
-	# Passo da Pedra é adquirido, sem fechar a circulação no nível da rua.
-	_add_solid(Rect2(x - target_width * 0.5, roof_y + 5.0, 6.0, wall_height))
-	_add_solid(Rect2(x + target_width * 0.5 - 6.0, roof_y + 5.0, 6.0, wall_height))
-	return building
 
 
 func _add_narrative(texture: Texture2D, region: Rect2, x: float, baseline: float, target_width: float, dialogue: StringName) -> void:
@@ -270,12 +203,6 @@ func _production_scene_for(room_id: StringName) -> PackedScene:
 
 
 func _build_gameplay() -> void:
-	var church: Rect2 = room_bounds[&"igreja_velha"]
-	var checkpoint := Checkpoint.new()
-	checkpoint.checkpoint_id = &"vila_igreja"
-	add_child(checkpoint)
-	checkpoint.position = Vector2(church.position.x + 72.0, 132.0)
-
 	var warehouse: Rect2 = room_bounds[&"armazem"]
 	var square: Rect2 = room_bounds[&"praca_umbu"]
 	var shortcut := ShortcutDoor.new()
@@ -300,19 +227,24 @@ func _build_metroidvania_routes() -> void:
 	var warehouse: Rect2 = room_bounds[&"armazem"]
 	var well: Rect2 = room_bounds[&"poco"]
 
-	# Primeiro poder: muda imediatamente a forma de ler a igreja e os telhados.
-	var wall_jump_pickup := AbilityPickup.new()
-	wall_jump_pickup.ability_id = &"wall_jump"
-	wall_jump_pickup.display_name = "PASSO DA PEDRA"
-	add_child(wall_jump_pickup)
-	wall_jump_pickup.position = Vector2(church.position.x + 104.0, 130.0)
-
 	# Campanário: as próprias paredes da torre ensinam o quique. As colisões
 	# acompanham a alvenaria visível, sem pilares escuros sobrepostos à fachada.
 	_add_solid(Rect2(church.position.x + 208.0, 72.0, 6.0, 78.0))
 	_add_solid(Rect2(church.position.x + 252.0, 72.0, 6.0, 78.0))
 	_add_solid(Rect2(church.position.x + 208.0, 68.0, 50.0, 8.0))
 	_add_traversal_platform(Vector2(roofs.position.x + 18.0, 75.0), Vector2(54.0, 8.0), false)
+	# Laterais das fachadas autorais: paredes físicas para o Passo da Pedra.
+	for wall in [
+		Rect2(roofs.position.x + 85.0, 42.0, 6.0, 88.0),
+		Rect2(roofs.position.x + 199.0, 42.0, 6.0, 88.0),
+		Rect2(roofs.position.x + 342.0, 66.0, 6.0, 64.0),
+		Rect2(roofs.position.x + 462.0, 66.0, 6.0, 64.0),
+		Rect2(roofs.position.x + 607.0, 38.0, 6.0, 92.0),
+		Rect2(roofs.position.x + 753.0, 38.0, 6.0, 92.0),
+		Rect2(roofs.position.x + 1067.0, 35.0, 6.0, 95.0),
+		Rect2(roofs.position.x + 1213.0, 35.0, 6.0, 95.0),
+	]:
+		_add_solid(wall)
 
 	# Fachadas autorais da Praça e da Igreja também obedecem à regra global:
 	# qualquer telhado visível oferece um topo físico e uma rota de aproximação.
@@ -320,14 +252,6 @@ func _build_metroidvania_routes() -> void:
 	_add_invisible_roof(Rect2(square.position.x + 72.0, 70.0, 106.0, 8.0), 46.0)
 	_add_invisible_roof(Rect2(square.position.x + 519.0, 35.0, 126.0, 8.0), 64.0)
 	_add_invisible_roof(Rect2(church.position.x + 68.0, 18.0, 196.0, 8.0), 72.0)
-
-	# A habilidade de investida fica na rota alta, visível antes de ser alcançada.
-	var dash_pickup := AbilityPickup.new()
-	dash_pickup.ability_id = &"dash"
-	dash_pickup.display_name = "PASSO DA POEIRA"
-	dash_pickup.description = "C PARA ATRAVESSAR SELOS E VÃOS"
-	add_child(dash_pickup)
-	dash_pickup.position = Vector2(roofs.position.x + 890.0, 72.0)
 
 	# Rota alternativa: Praça -> fundos do Armazém. Abre nos dois sentidos.
 	_add_connector(&"praca_armazem_alto", Vector2(square.position.x + 1165.0, 125.0), Vector2(warehouse.position.x + 1140.0, 125.0), &"dash", "TRILHA ALTA", &"armazem")
@@ -424,21 +348,6 @@ func _normalize_room_art(room: RoomController) -> void:
 			cactus.scale *= 0.68
 			cactus.position.y += old_height * 0.16
 
-	if room.room_id != &"telhados":
-		return
-	# Telhados possuía duas composições sobrepostas. Mantemos o parallax e o chão,
-	# mas substituímos as fachadas/varais e colisões antigas pela rota dinâmica.
-	for path in ["Environment/Architecture", "Environment/Foreground"]:
-		var old_layer := room.get_node_or_null(path) as CanvasItem
-		if old_layer != null:
-			old_layer.visible = false
-	var geometry := room.get_node_or_null("Geometry")
-	if geometry != null:
-		for old_roof in geometry.get_children():
-			if old_roof.name != &"Ground":
-				old_roof.process_mode = Node.PROCESS_MODE_DISABLED
-				if old_roof is CollisionObject2D:
-					(old_roof as CollisionObject2D).collision_layer = 0
 
 
 func _add_cave_backdrop(bounds: Rect2, deep: bool) -> void:

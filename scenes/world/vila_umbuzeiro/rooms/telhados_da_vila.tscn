@@ -1,14 +1,20 @@
-[gd_scene load_steps=15 format=3 uid="uid://bnqoy2xece0a1"]
+[gd_scene load_steps=26 format=3 uid="uid://bnqoy2xece0a1"]
 
 [ext_resource type="Script" uid="uid://dvifhv6p8unas" path="res://scripts/world/room_controller.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_1280.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/ground_1280.tscn" id="3"]
-[ext_resource type="Texture2D" uid="uid://ch7wrln0jnsbx" path="res://assets/environments/vila_umbuzeiro/atlases/03_telhados_e_praca_umbu.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://ch7wrln0jnsbx" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_base/03_telhados_e_praca_umbu.png" id="4"]
 [ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/fillers/parede_quebrada_esquerda.tres" id="5"]
 [ext_resource type="Texture2D" path="res://assets/environments/rua_das_cinzas/fillers/parede_quebrada_direita.tres" id="6"]
-[ext_resource type="Texture2D" uid="uid://hsmyb863yfm7" path="res://assets/environments/vila_umbuzeiro/generated_0_2_7/telhados_fachadas_completas.png" id="7_facades"]
+[ext_resource type="Texture2D" uid="uid://hsmyb863yfm7" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/fundos/telhados_fachadas_completas.png" id="7_facades"]
 [ext_resource type="Script" path="res://scripts/world/enemy_spawn.gd" id="8_spawn"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/pistoleiro.tscn" id="9_pistoleiro"]
+[ext_resource type="Texture2D" path="res://assets/sprites/usados/cenarios/polimento_experiencia_0_4_4/01_telhados_atlas_transparente.png" id="10_roofs"]
+[ext_resource type="Texture2D" path="res://assets/sprites/usados/cenarios/polimento_experiencia_0_4_4/04_vila_baixa_rua_atlas_transparente.png" id="11_facade"]
+[ext_resource type="Script" path="res://scripts/npc/npc_actor.gd" id="12_npc"]
+[ext_resource type="Script" path="res://scripts/world/tutorial_trigger.gd" id="13_tutorial"]
+[ext_resource type="Script" path="res://scripts/world/camera_composition_zone.gd" id="14_camera_zone"]
+[ext_resource type="Script" path="res://scripts/world/ability_pickup.gd" id="15_ability"]
 
 [sub_resource type="RectangleShape2D" id="Roof1Shape"]
 size = Vector2(86, 10)
@@ -25,13 +31,28 @@ size = Vector2(110, 10)
 [sub_resource type="RectangleShape2D" id="RoomShape"]
 size = Vector2(1280, 480)
 
+[sub_resource type="RectangleShape2D" id="RoofWideShape"]
+size = Vector2(126, 10)
+
+[sub_resource type="RectangleShape2D" id="RoofTallShape"]
+size = Vector2(146, 10)
+
+[sub_resource type="RectangleShape2D" id="RoofBalconyShape"]
+size = Vector2(112, 10)
+
+[sub_resource type="RectangleShape2D" id="RifleTutorialShape"]
+size = Vector2(96, 480)
+
+[sub_resource type="RectangleShape2D" id="RoofCameraShape"]
+size = Vector2(1280, 240)
+
 [node name="TelhadosDaVila" type="Node2D" unique_id=888645555]
 script = ExtResource("1")
 room_id = &"telhados"
 display_name = "06 TELHADOS DA VILA"
 local_bounds = Rect2(0, -120, 1280, 480)
 camera_bounds = Rect2(0, -120, 1280, 480)
-authored_composition_width = 640.0
+authored_composition_width = 1280.0
 repeat_platform_geometry = true
 
 [node name="Environment" type="Node2D" parent="." unique_id=328261650]
@@ -39,6 +60,7 @@ repeat_platform_geometry = true
 [node name="Parallax" parent="Environment" unique_id=2064047901 instance=ExtResource("2")]
 
 [node name="Architecture" type="Node2D" parent="Environment" unique_id=683025037]
+visible = false
 z_index = -20
 
 [node name="TransitionLeft" type="Sprite2D" parent="Environment/Architecture" unique_id=47124483]
@@ -281,6 +303,74 @@ region_enabled = true
 region_rect = Rect2(650, 425, 165, 225)
 region_filter_clip_enabled = true
 
+[node name="ExperiencePolish" type="Node2D" parent="Environment"]
+z_index = -20
+
+[node name="FachadaAltaOeste" type="Sprite2D" parent="Environment/ExperiencePolish"]
+position = Vector2(145, 97)
+scale = Vector2(0.34, 0.34)
+texture_filter = 1
+texture = ExtResource("10_roofs")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(32, 94, 300, 313)
+
+[node name="FachadaLarga" type="Sprite2D" parent="Environment/ExperiencePolish"]
+position = Vector2(405, 108)
+scale = Vector2(0.34, 0.34)
+texture_filter = 1
+texture = ExtResource("10_roofs")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(362, 161, 366, 246)
+
+[node name="FachadaDoisPisos" type="Sprite2D" parent="Environment/ExperiencePolish"]
+position = Vector2(680, 94)
+scale = Vector2(0.34, 0.34)
+texture_filter = 1
+texture = ExtResource("10_roofs")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(770, 76, 405, 331)
+
+[node name="VarandaElevada" type="Sprite2D" parent="Environment/ExperiencePolish"]
+position = Vector2(930, 105)
+scale = Vector2(0.42, 0.42)
+texture_filter = 1
+texture = ExtResource("10_roofs")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(1215, 210, 275, 200)
+
+[node name="FachadaLeste" type="Sprite2D" parent="Environment/ExperiencePolish"]
+position = Vector2(1140, 93)
+scale = Vector2(0.28, 0.28)
+texture_filter = 1
+texture = ExtResource("11_facade")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(770, 82, 560, 410)
+
+[node name="TelhadoQuebrado" type="Sprite2D" parent="Environment/ExperiencePolish"]
+z_index = 3
+position = Vector2(805, 54)
+scale = Vector2(0.36, 0.36)
+texture_filter = 1
+texture = ExtResource("10_roofs")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(245, 445, 360, 145)
+
+[node name="VigasESuportes" type="Sprite2D" parent="Environment/ExperiencePolish"]
+z_index = 2
+position = Vector2(845, 109)
+scale = Vector2(0.34, 0.34)
+texture_filter = 1
+texture = ExtResource("10_roofs")
+region_enabled = true
+region_filter_clip_enabled = true
+region_rect = Rect2(38, 706, 400, 115)
+
 [node name="OccupiedOnly" type="Node2D" parent="Environment" unique_id=422915349 groups=["room_occupied_only"]]
 
 [node name="LiberatedOnly" type="Node2D" parent="Environment" unique_id=227537637 groups=["room_liberated_only"]]
@@ -303,8 +393,67 @@ z_index = 30
 
 [node name="Ground" parent="Geometry" unique_id=2123662892 instance=ExtResource("3")]
 
+[node name="EditableObstacles" type="Node2D" parent="Geometry"]
+
+[node name="TelhadoOeste" type="StaticBody2D" parent="Geometry/EditableObstacles"]
+position = Vector2(145, 150)
+
+[node name="WalkableSurface" type="CollisionShape2D" parent="Geometry/EditableObstacles/TelhadoOeste"]
+position = Vector2(0, -101)
+shape = SubResource("RoofWideShape")
+
+[node name="TelhadoLargo" type="StaticBody2D" parent="Geometry/EditableObstacles"]
+position = Vector2(405, 150)
+
+[node name="WalkableSurface" type="CollisionShape2D" parent="Geometry/EditableObstacles/TelhadoLargo"]
+position = Vector2(0, -79)
+shape = SubResource("RoofWideShape")
+
+[node name="TelhadoDoisPisos" type="StaticBody2D" parent="Geometry/EditableObstacles"]
+position = Vector2(680, 150)
+
+[node name="WalkableSurface" type="CollisionShape2D" parent="Geometry/EditableObstacles/TelhadoDoisPisos"]
+position = Vector2(0, -107)
+shape = SubResource("RoofTallShape")
+
+[node name="TelhadoRompido" type="StaticBody2D" parent="Geometry/EditableObstacles"]
+position = Vector2(805, 150)
+
+[node name="WalkableSurface" type="CollisionShape2D" parent="Geometry/EditableObstacles/TelhadoRompido"]
+position = Vector2(0, -89)
+shape = SubResource("RoofWideShape")
+
+[node name="TopoVaranda" type="StaticBody2D" parent="Geometry/EditableObstacles"]
+position = Vector2(930, 150)
+
+[node name="WalkableSurface" type="CollisionShape2D" parent="Geometry/EditableObstacles/TopoVaranda"]
+position = Vector2(0, -82)
+shape = SubResource("RoofBalconyShape")
+
+[node name="TelhadoLeste" type="StaticBody2D" parent="Geometry/EditableObstacles"]
+position = Vector2(1140, 150)
+
+[node name="WalkableSurface" type="CollisionShape2D" parent="Geometry/EditableObstacles/TelhadoLeste"]
+position = Vector2(0, -110)
+shape = SubResource("RoofTallShape")
+
+[node name="VigaDegrau" type="StaticBody2D" parent="Geometry/EditableObstacles"]
+position = Vector2(845, 150)
+
+[node name="WalkableSurface" type="CollisionShape2D" parent="Geometry/EditableObstacles/VigaDegrau"]
+position = Vector2(0, -37)
+shape = SubResource("RoofBalconyShape")
+
+[node name="AcessoCentral" type="StaticBody2D" parent="Geometry/EditableObstacles"]
+position = Vector2(560, 150)
+
+[node name="WalkableSurface" type="CollisionShape2D" parent="Geometry/EditableObstacles/AcessoCentral"]
+position = Vector2(0, -25)
+shape = SubResource("RoofBalconyShape")
+
 [node name="Roof1" type="StaticBody2D" parent="Geometry" unique_id=302801394]
 position = Vector2(113, 117)
+collision_layer = 0
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/Roof1" unique_id=294698955]
@@ -312,6 +461,7 @@ shape = SubResource("Roof1Shape")
 
 [node name="Roof2" type="StaticBody2D" parent="Geometry" unique_id=869500340]
 position = Vector2(250, 93)
+collision_layer = 0
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/Roof2" unique_id=180313427]
@@ -319,6 +469,7 @@ shape = SubResource("Roof2Shape")
 
 [node name="Roof3" type="StaticBody2D" parent="Geometry" unique_id=894187584]
 position = Vector2(396, 121)
+collision_layer = 0
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/Roof3" unique_id=2134142291]
@@ -326,14 +477,65 @@ shape = SubResource("Roof3Shape")
 
 [node name="Roof4" type="StaticBody2D" parent="Geometry" unique_id=2132906734]
 position = Vector2(547, 87)
+collision_layer = 0
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/Roof4" unique_id=1090774224]
 shape = SubResource("Roof4Shape")
 
+[node name="Roof5Authored" type="StaticBody2D" parent="Geometry"]
+position = Vector2(680, 40)
+collision_layer = 0
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/Roof5Authored"]
+shape = SubResource("RoofTallShape")
+
+[node name="Roof6Broken" type="StaticBody2D" parent="Geometry"]
+position = Vector2(805, 56)
+collision_layer = 0
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/Roof6Broken"]
+shape = SubResource("RoofWideShape")
+
+[node name="Roof7Balcony" type="StaticBody2D" parent="Geometry"]
+position = Vector2(930, 63)
+collision_layer = 0
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/Roof7Balcony"]
+shape = SubResource("RoofBalconyShape")
+
+[node name="Roof8Leste" type="StaticBody2D" parent="Geometry"]
+position = Vector2(1140, 38)
+collision_layer = 0
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Geometry/Roof8Leste"]
+shape = SubResource("RoofTallShape")
+
 [node name="Gameplay" type="Node2D" parent="." unique_id=343334483]
 
 [node name="Actors" type="Node2D" parent="Gameplay" unique_id=922906005]
+
+[node name="ZeLino" type="Area2D" parent="Gameplay/Actors"]
+position = Vector2(110, 138)
+script = ExtResource("12_npc")
+npc_id = &"ze_lino"
+display_name = "ZÉ LINO"
+dialogue_id = &"vigia"
+room_id = &"telhados"
+atlas_index = 1
+
+[node name="Interactables" type="Node2D" parent="Gameplay"]
+
+[node name="PassoDaPoeira" type="Area2D" parent="Gameplay/Interactables"]
+position = Vector2(890, 72)
+script = ExtResource("15_ability")
+ability_id = &"dash"
+display_name = "PASSO DA POEIRA"
+description = "C PARA ATRAVESSAR SELOS E VÃOS"
 
 [node name="Entrances" type="Node2D" parent="Gameplay" unique_id=1338865118]
 
@@ -362,5 +564,24 @@ collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Triggers/RoomArea"]
 shape = SubResource("RoomShape")
+
+[node name="TutorialRifle" type="Area2D" parent="Gameplay/Triggers"]
+position = Vector2(720, 120)
+script = ExtResource("13_tutorial")
+tutorial_id = &"rifle"
+action = &"shoot_rifle"
+verb = "ATIRAR COM RIFLE"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Triggers/TutorialRifle"]
+shape = SubResource("RifleTutorialShape")
+
+[node name="RoofCompositionZone" type="Area2D" parent="Gameplay/Triggers"]
+position = Vector2(640, 0)
+script = ExtResource("14_camera_zone")
+vertical_offset = -16.0
+composition_priority = 10
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Triggers/RoofCompositionZone"]
+shape = SubResource("RoofCameraShape")
 
 [node name="Camera" type="Node2D" parent="." unique_id=1991805111]

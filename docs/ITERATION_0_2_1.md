@@ -29,7 +29,7 @@ Camadas em uso:
 2. `rua_village_mid.png` — casas, ruínas, cercas e ocupação, fator 0,52.
 3. `rua_foreground.png` — vegetação, pedras e cercas próximas, fator 1,10.
 
-As imagens-fonte continuam preservadas em `assets/environments/rua_das_cinzas/source/`. As camadas intermediária e frontal agora usam canal alfa RGBA real e não dependem mais de shader de matte.
+As imagens-fonte continuam preservadas em `assets/sprites/nao_utilizados/fontes/rua_das_cinzas/`. As camadas intermediária e frontal agora usam canal alfa RGBA real e não dependem mais de shader de matte.
 
 ## Decisões técnicas
 

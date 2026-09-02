@@ -7,9 +7,9 @@ enum Mode { HIDDEN, TITLE, PAUSE, SETTINGS, CONTROLS, CONFIRM_NEW_GAME }
 
 const PIXEL_FONT := preload("res://assets/ui/fonts/Tiny5-Regular.ttf")
 const PANEL_TEXTURE := preload("res://assets/ui/hud/status_panel.tres")
-const MENU_BACKGROUND := preload("res://assets/ui/generated_0_4_2/fundo_menu_principal.png")
-const GAME_LOGO := preload("res://assets/ui/generated_0_4_2/logo_cangaco_encantado.png")
-const COMMAND_ATLAS := preload("res://assets/ui/generated_0_4_2/atlas_comandos.png")
+const MENU_BACKGROUND := preload("res://assets/sprites/usados/interface/menu_diario/fundo_menu_principal.png")
+const GAME_LOGO := preload("res://assets/sprites/usados/interface/menu_diario/logo_cangaco_encantado.png")
+const COMMAND_ATLAS := preload("res://assets/sprites/usados/interface/menu_diario/atlas_comandos.png")
 const UI_THEME := preload("res://assets/ui/themes/cangaco_ui_theme.tres")
 const MENU_BUTTON_SCENE := preload("res://scenes/ui/components/menu_button.tscn")
 

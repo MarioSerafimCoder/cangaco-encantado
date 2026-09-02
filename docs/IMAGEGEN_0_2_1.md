@@ -3,13 +3,13 @@
 Referências usadas em todas as criações:
 
 - `prints_do_jogo/andando_no_mapa_01.png`
-- `assets/characters/nilo_concept_sheet.png`
+- `assets/sprites/nao_utilizados/personagens/conceitos/nilo_concept_sheet.png`
 
 ## Céu e distância
 
 Modo: criação de asset.
 
-Saída integrada: `assets/environments/rua_das_cinzas/rua_sky_far.png`.
+Saída integrada: `assets/sprites/usados/cenarios/rua_das_cinzas/fundos/rua_sky_far.png`.
 
 Prompt:
 
@@ -19,7 +19,7 @@ Prompt:
 
 Modo: criação de asset.
 
-Saída integrada: `assets/environments/rua_das_cinzas/rua_village_mid.png`.
+Saída integrada: `assets/sprites/usados/cenarios/rua_das_cinzas/fundos/rua_village_mid.png`.
 
 Prompt:
 
@@ -29,7 +29,7 @@ Prompt:
 
 Modo: criação de asset.
 
-Saída integrada: `assets/environments/rua_das_cinzas/rua_foreground.png`.
+Saída integrada: `assets/sprites/usados/cenarios/rua_das_cinzas/fundos/rua_foreground.png`.
 
 Prompt:
 

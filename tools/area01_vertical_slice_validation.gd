@@ -207,14 +207,14 @@ func _validate_progression_and_save(main: Node) -> void:
 
 func _validate_generated_assets() -> void:
 	for path in [
-		"res://assets/area_01/environment/casa_nilo_interior_atlas.png",
-		"res://assets/area_01/environment/casa_nilo_arquitetura_atlas.png",
-		"res://assets/area_01/environment/traversal_props_atlas.png",
-		"res://assets/area_01/environment/arquitetura_vila_atlas.png",
-		"res://assets/area_01/environment/cripta_subterraneo_atlas.png",
-		"res://assets/area_01/environment/grutas_cavernas_atlas.png",
-		"res://assets/area_01/environment/cavernas_estrutura_atlas.png",
-		"res://assets/area_01/ui/dialogo_loja_atlas.png",
+		"res://assets/sprites/usados/cenarios/area_01/casa_nilo_interior_atlas.png",
+		"res://assets/sprites/usados/cenarios/area_01/casa_nilo_arquitetura_atlas.png",
+		"res://assets/sprites/usados/cenarios/area_01/traversal_props_atlas.png",
+		"res://assets/sprites/usados/cenarios/area_01/arquitetura_vila_atlas.png",
+		"res://assets/sprites/usados/cenarios/area_01/cripta_subterraneo_atlas.png",
+		"res://assets/sprites/usados/cenarios/area_01/grutas_cavernas_atlas.png",
+		"res://assets/sprites/usados/cenarios/area_01/cavernas_estrutura_atlas.png",
+		"res://assets/sprites/usados/interface/dialogo_loja/dialogo_loja_atlas.png",
 	]:
 		var texture := load(path) as Texture2D
 		if texture == null:

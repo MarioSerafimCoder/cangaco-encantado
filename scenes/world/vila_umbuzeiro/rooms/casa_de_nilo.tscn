@@ -2,10 +2,10 @@
 
 [ext_resource type="Script" uid="uid://dvifhv6p8unas" path="res://scripts/world/room_controller.gd" id="1_room"]
 [ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_1280.tscn" id="2_parallax"]
-[ext_resource type="Texture2D" uid="uid://cm1onjsa24m4w" path="res://assets/environments/vila_umbuzeiro/atlases/01_casa_nilo_e_rua_props.png" id="3_exterior"]
-[ext_resource type="Texture2D" uid="uid://bjqimmaohcr3t" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/06_elementos_atmosfericos.png" id="4_atmosphere"]
-[ext_resource type="Texture2D" uid="uid://d1cmv6mb5qb8f" path="res://assets/area_01/environment/casa_nilo_interior_atlas.png" id="5_interior"]
-[ext_resource type="Texture2D" uid="uid://c3co4fbl17ony" path="res://assets/area_01/environment/casa_nilo_arquitetura_atlas.png" id="6_architecture"]
+[ext_resource type="Texture2D" uid="uid://cm1onjsa24m4w" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_base/01_casa_nilo_e_rua_props.png" id="3_exterior"]
+[ext_resource type="Texture2D" uid="uid://bjqimmaohcr3t" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_expansao/06_elementos_atmosfericos.png" id="4_atmosphere"]
+[ext_resource type="Texture2D" uid="uid://d1cmv6mb5qb8f" path="res://assets/sprites/usados/cenarios/area_01/casa_nilo_interior_atlas.png" id="5_interior"]
+[ext_resource type="Texture2D" uid="uid://c3co4fbl17ony" path="res://assets/sprites/usados/cenarios/area_01/casa_nilo_arquitetura_atlas.png" id="6_architecture"]
 [ext_resource type="Script" uid="uid://u6mgt8aqk0b1" path="res://scripts/world/narrative_interactable.gd" id="7_narrative"]
 [ext_resource type="Script" uid="uid://dimd5j40tf86s" path="res://scripts/world/transition_door.gd" id="8_door"]
 [ext_resource type="Script" uid="uid://dkmcv78j8o41l" path="res://scripts/world/checkpoint.gd" id="9_checkpoint"]
@@ -13,9 +13,10 @@
 [ext_resource type="Script" uid="uid://b6nef4jkefg2t" path="res://scripts/world/ability_gate.gd" id="11_gate"]
 [ext_resource type="Script" uid="uid://docl6kupwsxgl" path="res://scripts/world/permanent_upgrade_pickup.gd" id="12_upgrade"]
 [ext_resource type="FontFile" uid="uid://dn8i4yhvcne74" path="res://assets/ui/fonts/Tiny5-Regular.ttf" id="13_font"]
-[ext_resource type="Texture2D" uid="uid://bo0snj0tw7ong" path="res://assets/area_01/ui/dialogo_loja_atlas.png" id="14_ui"]
-[ext_resource type="Texture2D" uid="uid://ct8j78ncwqjr4" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/08_objetos_interativos_e_estados.png" id="15_interactive"]
-[ext_resource type="Texture2D" uid="uid://dh5px13dqifm8" path="res://assets/area_01/environment/traversal_props_atlas.png" id="16_traversal"]
+[ext_resource type="Texture2D" uid="uid://bo0snj0tw7ong" path="res://assets/sprites/usados/interface/dialogo_loja/dialogo_loja_atlas.png" id="14_ui"]
+[ext_resource type="Texture2D" uid="uid://ct8j78ncwqjr4" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_expansao/08_objetos_interativos_e_estados.png" id="15_interactive"]
+[ext_resource type="Texture2D" uid="uid://dh5px13dqifm8" path="res://assets/sprites/usados/cenarios/area_01/traversal_props_atlas.png" id="16_traversal"]
+[ext_resource type="Script" path="res://scripts/world/camera_composition_zone.gd" id="17_camera_zone"]
 
 [sub_resource type="Gradient" id="Gradient_home"]
 colors = PackedColorArray(0.352941, 0.254902, 0.188235, 1, 0.129412, 0.0901961, 0.0666667, 1)
@@ -199,6 +200,7 @@ region_rect = Rect2(90, 697, 500, 158)
 region_filter_clip_enabled = true
 
 [node name="FloorWestLower" type="Sprite2D" parent="Environment/Architecture/Interior/Floor"]
+visible = false
 z_index = -6
 texture_filter = 1
 position = Vector2(160, 293.2)
@@ -209,6 +211,7 @@ region_rect = Rect2(90, 697, 500, 158)
 region_filter_clip_enabled = true
 
 [node name="FloorEastLower" type="Sprite2D" parent="Environment/Architecture/Interior/Floor"]
+visible = false
 z_index = -6
 texture_filter = 1
 position = Vector2(480, 293.2)
@@ -656,5 +659,14 @@ metadata/_edit_lock_ = true
 visible = false
 shape = SubResource("RoomShape")
 metadata/_edit_lock_ = true
+
+[node name="InteriorCompositionZone" type="Area2D" parent="Gameplay/Triggers"]
+position = Vector2(320, 120)
+script = ExtResource("17_camera_zone")
+vertical_offset = -22.0
+composition_priority = 10
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gameplay/Triggers/InteriorCompositionZone"]
+shape = SubResource("RoomShape")
 
 [node name="Camera" type="Node2D" parent="." unique_id=1636387399]

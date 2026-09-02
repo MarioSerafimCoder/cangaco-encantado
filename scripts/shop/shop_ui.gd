@@ -3,8 +3,8 @@ extends CanvasLayer
 
 const PIXEL_FONT := preload("res://assets/ui/fonts/Tiny5-Regular.ttf")
 const CATALOG_PATH := "res://resources/shop/area_01_shop.json"
-const UI_ATLAS := preload("res://assets/area_01/ui/dialogo_loja_atlas.png")
-const SHOP_ICON_ATLAS := preload("res://assets/ui/generated_0_4_2/atlas_itens_loja.png")
+const UI_ATLAS := preload("res://assets/sprites/usados/interface/dialogo_loja/dialogo_loja_atlas.png")
+const SHOP_ICON_ATLAS := preload("res://assets/sprites/usados/interface/menu_diario/atlas_itens_loja.png")
 const SHOP_ORNAMENT := Rect2(390, 305, 535, 145)
 const SHOP_ICON_CELL := Vector2(418.0, 627.0)
 const SHOP_ICON_INDEX := {

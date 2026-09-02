@@ -3,11 +3,11 @@
 [ext_resource type="Script" uid="uid://dvifhv6p8unas" path="res://scripts/world/room_controller.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_1280.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/ground_960.tscn" id="3"]
-[ext_resource type="Texture2D" uid="uid://b1w1hl4r3m83v" path="res://assets/environments/vila_umbuzeiro/atlases/06_beco_e_poco_romaozinho.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://b1w1hl4r3m83v" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_base/06_beco_e_poco_romaozinho.png" id="4"]
 [ext_resource type="Script" uid="uid://bx61cfuhdut77" path="res://scripts/world/enemy_spawn.gd" id="5"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/pistoleiro.tscn" id="6"]
-[ext_resource type="Texture2D" uid="uid://cgjbgn8osm6ao" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/01_arquitetura_civil_casas_igreja_beco.png" id="7"]
-[ext_resource type="Texture2D" uid="uid://bjqimmaohcr3t" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/06_elementos_atmosfericos.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://cgjbgn8osm6ao" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_expansao/01_arquitetura_civil_casas_igreja_beco.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://bjqimmaohcr3t" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_expansao/06_elementos_atmosfericos.png" id="8"]
 
 [sub_resource type="RectangleShape2D" id="RoomShape"]
 size = Vector2(960, 480)

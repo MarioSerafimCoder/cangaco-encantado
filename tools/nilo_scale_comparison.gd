@@ -1,7 +1,7 @@
 extends Node2D
 
-const BASE_TEXTURE := preload("res://assets/sprite_guides/generic_sertanejo_chibi_4x4_64px.png")
-const SHOOT_TEXTURE := preload("res://assets/player/nilo_animacoes_de_tiro.png")
+const BASE_TEXTURE := preload("res://assets/sprites/usados/ferramentas/generic_sertanejo_chibi_4x4_64px.png")
+const SHOOT_TEXTURE := preload("res://assets/sprites/usados/personagens/jogador/nilo_animacoes_de_tiro.png")
 const OUTPUT_DIRECTORY := "res://prints_do_jogo/iteracao_0_2_4"
 const TARGET_HEIGHT := 53.0 * 0.68
 const BASELINE_Y := 126.0

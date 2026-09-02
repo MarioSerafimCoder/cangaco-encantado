@@ -2,7 +2,7 @@ class_name DialogueDirector
 extends CanvasLayer
 
 const PIXEL_FONT := preload("res://assets/ui/fonts/Tiny5-Regular.ttf")
-const UI_ATLAS := preload("res://assets/area_01/ui/dialogo_loja_atlas.png")
+const UI_ATLAS := preload("res://assets/sprites/usados/interface/dialogo_loja/dialogo_loja_atlas.png")
 const TOP_ORNAMENT := Rect2(178, 30, 900, 260)
 const BOTTOM_ORNAMENT := Rect2(395, 304, 575, 145)
 const DIALOGUE_BOX_SCENE := preload("res://scenes/ui/components/dialogue_box.tscn")

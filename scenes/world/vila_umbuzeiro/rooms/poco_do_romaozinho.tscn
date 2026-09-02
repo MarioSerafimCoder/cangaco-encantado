@@ -3,9 +3,9 @@
 [ext_resource type="Script" path="res://scripts/world/room_controller.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/vila_parallax_1280.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/world/vila_umbuzeiro/shared/ground_960.tscn" id="3"]
-[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/atlases/06_beco_e_poco_romaozinho.png" id="4"]
-[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/05_conjuntos_de_transicao_e_preenchimento.png" id="5"]
-[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/06_elementos_atmosfericos.png" id="6"]
+[ext_resource type="Texture2D" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_base/06_beco_e_poco_romaozinho.png" id="4"]
+[ext_resource type="Texture2D" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_expansao/05_conjuntos_de_transicao_e_preenchimento.png" id="5"]
+[ext_resource type="Texture2D" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_expansao/06_elementos_atmosfericos.png" id="6"]
 
 [sub_resource type="RectangleShape2D" id="RoomShape"]
 size = Vector2(960, 480)

@@ -1,7 +1,7 @@
 class_name NPCActor
 extends Area2D
 
-const NPC_ATLAS := preload("res://assets/environments/vila_umbuzeiro/generated_0_2_5/07_moradores_chibi_da_vila.png")
+const NPC_ATLAS := preload("res://assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_expansao/07_moradores_chibi_da_vila.png")
 const PIXEL_FONT := preload("res://assets/ui/fonts/Tiny5-Regular.ttf")
 const ATLAS_COLUMNS := 4
 const ATLAS_ROWS := 2
@@ -21,6 +21,7 @@ var origin_x := 0.0
 var facing := 1.0
 var _idle_time := 0.0
 var _base_sprite_scale := Vector2(BASE_SCALE, BASE_SCALE)
+var _encantado_reaction_time := 0.0
 
 
 func _ready() -> void:
@@ -76,13 +77,21 @@ func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 	EventBus.room_entered.connect(_on_room_entered)
+	EventBus.world_flag_changed.connect(_on_world_flag_changed)
 	_refresh_room_visibility(GameState.current_room_id)
 
 
 func _process(delta: float) -> void:
 	_idle_time += delta
 	var breathe := sin(_idle_time * 2.1) * 0.004
-	sprite.scale = Vector2(_base_sprite_scale.x, _base_sprite_scale.y + breathe)
+	if _encantado_reaction_time > 0.0:
+		_encantado_reaction_time = maxf(0.0, _encantado_reaction_time - delta)
+		var pulse := sin(_encantado_reaction_time * 22.0) * 0.025
+		sprite.scale = _base_sprite_scale * (1.0 + pulse)
+		sprite.position.x = sin(_encantado_reaction_time * 31.0) * 1.5
+	else:
+		sprite.scale = Vector2(_base_sprite_scale.x, _base_sprite_scale.y + breathe)
+		sprite.position.x = 0.0
 	if player_inside != null:
 		facing = signf(player_inside.global_position.x - global_position.x)
 		sprite.flip_h = facing < 0
@@ -121,6 +130,11 @@ func _on_body_exited(body: Node) -> void:
 
 func _on_room_entered(active_room_id: StringName, _display_name: String) -> void:
 	_refresh_room_visibility(active_room_id)
+
+
+func _on_world_flag_changed(flag_id: StringName, value: bool) -> void:
+	if flag_id == &"area01_encantado_discovered" and value and npc_id in [&"raimundo", &"dona_tereza", &"anselmo", &"tome"]:
+		_encantado_reaction_time = 1.4
 
 
 func _refresh_room_visibility(active_room_id: StringName) -> void:

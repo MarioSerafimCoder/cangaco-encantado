@@ -1,6 +1,6 @@
 extends Node
 
-const OUTPUT_DIRECTORY := "res://prints_do_jogo/area_01_vertical_slice"
+const OUTPUT_DIRECTORY := "res://prints_do_jogo/area_01_vertical_slice/current"
 
 var _capture_failed := false
 
@@ -83,7 +83,7 @@ func _capture_room(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, hud: 
 	camera.limit_right = roundi(bounds.end.x)
 	camera.limit_top = -120
 	camera.limit_bottom = 360
-	camera.position = Vector2.ZERO if room_id == &"casa_nilo" else Vector2(0, -42)
+	camera.position = Vector2(0, -42)
 	camera.position_smoothing_enabled = false
 	hud.room_fade = 0.0
 	hud.help_fade = 0.0
@@ -100,7 +100,7 @@ func _capture_home_exit(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D, 
 	camera.limit_right = roundi(bounds.end.x)
 	camera.limit_top = -120
 	camera.limit_bottom = 360
-	camera.position = Vector2.ZERO
+	camera.position = Vector2(0, -42)
 	camera.position_smoothing_enabled = false
 	camera.reset_smoothing()
 	hud.room_fade = 0.0
@@ -314,6 +314,8 @@ func _hide_review_overlays(hud: GameHUD) -> void:
 	hud.help_fade = 0.0
 	hud.room_panel.visible = false
 	hud.help_panel.visible = false
+	hud.call("_set_objective_compact")
+	hud.ability_presentation.visible = false
 	NotificationManager.set_suppressed(true)
 
 
@@ -383,9 +385,9 @@ func _capture_hud_states(world: VilaGraybox, nilo: NiloPlayer, camera: Camera2D,
 
 
 func _capture_notification() -> void:
-	NotificationManager.enqueue("NOVA HABILIDADE\nPASSO DA PEDRA", 100, &"ability", 4.0)
+	EventBus.ability_unlocked.emit(&"wall_jump", "PASSO DA PEDRA")
 	await _wait_frames(4)
-	await _capture(OUTPUT_DIRECTORY.path_join("12_notificacao_nova_habilidade.png"))
+	await _capture(OUTPUT_DIRECTORY.path_join("12_apresentacao_nova_habilidade.png"))
 
 
 func _capture(path: String) -> void:

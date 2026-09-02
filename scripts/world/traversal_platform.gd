@@ -1,8 +1,8 @@
 class_name TraversalPlatform
 extends StaticBody2D
 
-const TRAVERSAL_ATLAS := preload("res://assets/area_01/environment/traversal_props_atlas.png")
-const CAVERN_ATLAS := preload("res://assets/area_01/environment/cavernas_estrutura_atlas.png")
+const TRAVERSAL_ATLAS := preload("res://assets/sprites/usados/cenarios/area_01/traversal_props_atlas.png")
+const CAVERN_ATLAS := preload("res://assets/sprites/usados/cenarios/area_01/cavernas_estrutura_atlas.png")
 const WOOD_HORIZONTAL_REGION := Rect2(38, 820, 292, 44)
 const WOOD_VERTICAL_REGION := Rect2(40, 670, 60, 210)
 const STONE_HORIZONTAL_REGION := Rect2(812, 744, 630, 82)

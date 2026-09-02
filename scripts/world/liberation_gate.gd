@@ -1,7 +1,7 @@
 class_name LiberationGate
 extends StaticBody2D
 
-const INTERACTIVE_ATLAS := preload("res://assets/environments/vila_umbuzeiro/generated_0_2_5/08_objetos_interativos_e_estados.png")
+const INTERACTIVE_ATLAS := preload("res://assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_expansao/08_objetos_interativos_e_estados.png")
 const CLOSED_REGION := Rect2(848, 474, 377, 365)
 const OPEN_REGION := Rect2(1255, 474, 402, 365)
 

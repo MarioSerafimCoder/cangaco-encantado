@@ -65,6 +65,8 @@ Os scripts de gameplay usam somente ações do `InputMap`; nenhum controle depen
 ```text
 res://
   assets/source/reference/   material conceitual original, sem modificações
+  assets/sprites/usados/     sprites carregados pelo jogo e validadores
+  assets/sprites/nao_utilizados/ folhas, fontes e conceitos ainda não integrados
   autoload/                  input, glyphs, notificações, eventos, estado global, mundo e save
   resources/                 parâmetros de player, armas, inimigos e habilidades
   scenes/                    cenas de player, inimigos, boss, mundo e HUD
@@ -87,11 +89,11 @@ res://
 
 As imagens de referência permanecem em `assets/source/reference/`. Nilo e os inimigos usam regiões individuais para preservar a baseline e impedir cortes em folhas de espaçamento irregular.
 
-Seis atlas produzidos para a Área 01 foram tratados com transparência e integrados em `assets/area_01/`: interior da Casa de Nilo, elementos de travessia, arquitetura da Vila, Cripta/Subterrâneo, Grutas/Cavernas e UI de diálogo/loja. As folhas originais para tratamento continuam em `assets_para_remover_fundo/area_01_vertical_slice/`.
+Os atlas produzidos para a Área 01 foram tratados com transparência e integrados em `assets/sprites/usados/cenarios/area_01/` e `assets/sprites/usados/interface/dialogo_loja/`: interior da Casa de Nilo, elementos de travessia, arquitetura da Vila, Cripta/Subterrâneo, Grutas/Cavernas e UI de diálogo/loja. As folhas originais para tratamento continuam em `assets/sprites/nao_utilizados/aguardando_tratamento/area_01_e_interface/area_01_vertical_slice/`.
 
-Os oito atlas ambientais corrigidos usam transparência RGBA real e estão integrados em `assets/environments/vila_umbuzeiro/atlases/`. O kit complementar 0.2.5 está em `assets/environments/vila_umbuzeiro/generated_0_2_5/` e substitui os fundos, chãos, moradores e interativos provisórios nas salas restantes.
+Os oito atlas ambientais corrigidos usam transparência RGBA real e estão integrados em `assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_base/`. O kit complementar 0.2.5 está em `assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_expansao/` e substitui os fundos, chãos, moradores e interativos provisórios nas salas restantes.
 
-O kit visual 0.2.3 permanece arquivado em `imagens_para_remover_fundo_0_2_3/`, junto do registro de prompts. As cinco folhas corrigidas já estão integradas ao runtime: molduras da HUD, preenchimentos e transições da Rua das Cinzas, fogo/fumaça animados e as poses dedicadas de revólver e espingarda de Nilo.
+O kit visual 0.2.3 permanece arquivado em `assets/sprites/nao_utilizados/aguardando_tratamento/pacote_0_2_3/`, junto do registro de prompts. As cinco folhas corrigidas já estão integradas ao runtime: molduras da HUD, preenchimentos e transições da Rua das Cinzas, fogo/fumaça animados e as poses dedicadas de revólver e espingarda de Nilo.
 
 O histórico da base está em [Iteração 0.2.1](docs/ITERATION_0_2_1.md), e as mudanças atuais estão no [changelog](CHANGELOG.md).
 

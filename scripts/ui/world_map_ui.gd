@@ -2,9 +2,9 @@ class_name WorldMapUI
 extends CanvasLayer
 
 const PIXEL_FONT := preload("res://assets/ui/fonts/Tiny5-Regular.ttf")
-const SHOP_ICON_ATLAS := preload("res://assets/ui/generated_0_4_2/atlas_itens_loja.png")
-const PROGRESSION_ATLAS := preload("res://assets/ui/generated_0_4_2/atlas_progressao.png")
-const MAP_ICON_ATLAS := preload("res://assets/ui/generated_0_4_2/atlas_mapa_13_areas.png")
+const SHOP_ICON_ATLAS := preload("res://assets/sprites/usados/interface/menu_diario/atlas_itens_loja.png")
+const PROGRESSION_ATLAS := preload("res://assets/sprites/usados/interface/menu_diario/atlas_progressao.png")
+const MAP_ICON_ATLAS := preload("res://assets/sprites/usados/interface/menu_diario/atlas_mapa_13_areas.png")
 const SHOP_ICON_CELL := Vector2(418.0, 627.0)
 const PROGRESSION_CELL := Vector2(313.5, 418.0)
 const MAP_ICON_CELL := Vector2(313.5, 313.5)
@@ -410,8 +410,6 @@ func _on_progress_changed_one(_id: StringName) -> void:
 
 func _on_progress_changed_two(_id: StringName, _display_name: String) -> void:
 	_canvas.queue_redraw()
-	var command := "C: INVESTIDA" if _id == &"dash" else "ESPAÇO JUNTO À PAREDE"
-	_show_toast("NOVA HABILIDADE: %s\n%s" % [_display_name, command])
 
 
 func _on_upgrade_collected(_id: StringName, display_name: String) -> void:

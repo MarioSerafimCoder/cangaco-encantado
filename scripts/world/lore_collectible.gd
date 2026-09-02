@@ -1,7 +1,7 @@
 class_name LoreCollectible
 extends Area2D
 
-const UI_ATLAS := preload("res://assets/area_01/ui/dialogo_loja_atlas.png")
+const UI_ATLAS := preload("res://assets/sprites/usados/interface/dialogo_loja/dialogo_loja_atlas.png")
 const CORDEL_REGION := Rect2(242, 778, 205, 180)
 
 @export var collectible_id: StringName

@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3]
 
-[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_5/03_sistema_de_chao_e_transicoes.png" id="1_ground"]
-[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/generated_0_2_7/rua_chao_continuo.png" id="2_road"]
+[ext_resource type="Texture2D" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_expansao/03_sistema_de_chao_e_transicoes.png" id="1_ground"]
+[ext_resource type="Texture2D" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/fundos/rua_chao_continuo.png" id="2_road"]
 
 [sub_resource type="RectangleShape2D" id="GroundShape"]
 size = Vector2(320, 30)

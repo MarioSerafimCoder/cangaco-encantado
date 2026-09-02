@@ -1,6 +1,6 @@
 [gd_resource type="AtlasTexture" load_steps=2 format=3]
 
-[ext_resource type="Texture2D" path="res://assets/environments/vila_umbuzeiro/atlases/01_casa_nilo_e_rua_props.png" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/usados/cenarios/vila_umbuzeiro/atlases_base/01_casa_nilo_e_rua_props.png" id="1"]
 
 [resource]
 atlas = ExtResource("1")
