@@ -1,4 +1,4 @@
 interface:
-  display_name: "CangaÁo Economy Designer"
-  short_description: "Equilibra loja, preÁos e recompensas"
-  default_prompt: "Use $cangaco-economy-designer para revisar a economia desta progress„o."
+  display_name: "Canga√ßo Economy Designer"
+  short_description: "Equilibra loja, pre√ßos e recompensas"
+  default_prompt: "Use $cangaco-economy-designer para revisar a economia desta progress√£o."

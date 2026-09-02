@@ -1,4 +1,4 @@
 interface:
-  display_name: "Cangaço Game AI"
-  short_description: "Projeta inimigos legíveis, justos e críveis"
+  display_name: "CangaÃ§o Game AI"
+  short_description: "Projeta inimigos legÃ­veis, justos e crÃ­veis"
   default_prompt: "Use $cangaco-game-ai para diagnosticar e melhorar este comportamento inimigo."

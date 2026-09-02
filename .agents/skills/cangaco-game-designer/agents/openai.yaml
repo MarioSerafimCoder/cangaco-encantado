@@ -1,4 +1,4 @@
 interface:
-  display_name: "CangaÁo Game Designer"
+  display_name: "Canga√ßo Game Designer"
   short_description: "Orienta gameplay, combate e game feel"
-  default_prompt: "Use $cangaco-game-designer para avaliar e melhorar esta mec‚nica do jogo."
+  default_prompt: "Use $cangaco-game-designer para avaliar e melhorar esta mec√¢nica do jogo."

@@ -1,4 +1,4 @@
 interface:
-  display_name: "Cangaço Game Studio"
+  display_name: "CangaÃ§o Game Studio"
   short_description: "Coordena passes multidisciplinares do jogo"
   default_prompt: "Use $cangaco-game-studio para coordenar esta melhoria multidisciplinar no vertical slice."

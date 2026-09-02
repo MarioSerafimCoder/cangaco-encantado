@@ -1,4 +1,4 @@
 interface:
-  display_name: "Cangaço 2D Assets"
+  display_name: "CangaÃ§o 2D Assets"
   short_description: "Audita sprites, atlas, escala e alinhamento"
   default_prompt: "Use $cangaco-2d-assets para auditar e integrar estes sprites no Godot."
