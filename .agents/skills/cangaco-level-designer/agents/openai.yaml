@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cangaço Level Designer"
+  short_description: "Orienta espaços, rotas e arquitetura jogável"
+  default_prompt: "Use $cangaco-level-designer para melhorar esta sala preservando sua arquitetura."

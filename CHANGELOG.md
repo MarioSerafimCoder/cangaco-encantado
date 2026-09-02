@@ -1,5 +1,13 @@
 # Changelog
 
+## Workflow assistido por Skills
+
+- Adicionado `AGENTS.md` como constituição permanente do projeto, com preservação incremental, identidade visual, classificação P0–P3 e gates de verificação.
+- Criadas seis Skills locais para coordenação, game design, level design, IA, assets 2D e economia.
+- Documentadas as Skills externas recomendadas sem copiar dependências ou templates de terceiros para o repositório.
+- Configurado roteamento por domínio para evitar que tarefas simples acionem processos multidisciplinares desnecessários.
+- Adicionados checklists específicos para QC de sprites e para verificação do vertical slice.
+
 ## Direção visual da experiência inicial — 0.4.4
 
 - Materializadas em cena as composições da Vila Baixa, Praça do Umbu, Igreja/Cemitério e Telhados, junto com seus moradores estáticos e superfícies caminháveis.
